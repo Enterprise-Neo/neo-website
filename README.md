@@ -8,11 +8,11 @@ Static site for [Neo Tariff](https://enterprise-neo.com), the Tariff Intelligenc
 
 1. **Push this folder to GitHub:**
    ```bash
-   cd neo-tariff-site
+   cd neo-website
    git init
    git add .
    git commit -m "Initial commit"
-   git remote add origin git@github.com:enterprise-neo/neo-tariff-site.git
+   git remote add origin git@github.com:enterprise-neo/neo-website.git
    git push -u origin main
    ```
 
@@ -55,7 +55,7 @@ Then open `http://localhost:8000` (or `:3000` for npx serve).
 ## Site Architecture
 
 ```
-neo-tariff-site/
+neo-website/
 ├── index.html                 ← Overview / landing page
 ├── technology/index.html      ← Technology deep dive
 ├── platform/index.html        ← Platform features
