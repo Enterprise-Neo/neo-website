@@ -219,6 +219,50 @@ html,body{margin:0;padding:0;background:var(--bg)}
 /* ── Platform Page — Feature Card ── */
 .feature-card { border:1px solid var(--border); background:var(--bg-card); overflow:hidden }
 
+/* ── Screenshot Component ── */
+.neo-screenshot { border:1px solid var(--border); transition:border-color 0.3s }
+.neo-screenshot:hover { border-color:rgba(108,99,255,0.3) }
+.neo-screenshot:hover img { transform-origin:inherit; filter:brightness(1.04) }
+.neo-screenshot-hint {
+  position:absolute; bottom:10px; right:12px;
+  display:flex; align-items:center; gap:5px;
+  font-size:10.5px; color:rgba(255,255,255,0.35);
+  background:rgba(0,0,0,0.45); backdrop-filter:blur(6px);
+  padding:4px 10px; border-radius:3px;
+  opacity:0; transition:opacity 0.25s; pointer-events:none;
+}
+.neo-screenshot:hover .neo-screenshot-hint { opacity:1 }
+
+/* Lightbox overlay */
+.neo-lightbox {
+  position:fixed; inset:0; z-index:999999;
+  background:rgba(6,8,18,0.92); backdrop-filter:blur(12px);
+  display:flex; align-items:center; justify-content:center;
+  cursor:zoom-out; animation:lbFadeIn 0.2s ease both;
+  padding:40px;
+}
+.neo-lightbox img { cursor:default; animation:lbScaleIn 0.25s ease both; max-width:min(1200px, 90vw); max-height:85vh }
+.neo-lightbox-close {
+  position:fixed; top:20px;
+  right:24px;
+  z-index:999999;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.18);
+  color:rgba(255,255,255,0.8);
+  font-size:18px;
+  width:35px;
+  height:35px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:5px;
+  transition:all 0.2s;
+}
+.neo-lightbox-close:hover { background:rgba(255,255,255,0.22); color:#fff }
+@keyframes lbFadeIn { from{opacity:0} to{opacity:1} }
+@keyframes lbScaleIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+
 /* ════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════ */

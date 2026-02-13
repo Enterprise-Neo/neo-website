@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel" src="/shared/components.js"></script>
 <script type="text/babel">
-const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoScreenshot, useScrollAnimation, ArrowIcon } = window;
 const { useState, useEffect } = React;
 
 const Overview = () => {
@@ -38,12 +38,12 @@ const Overview = () => {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior:"smooth", block:"start" });
 
   const features = [
-    { title:"Tariff Simulator", subtitle:"Scenario-true landed cost for any shipment", desc:"Enter an HTS code, country, import date, and values — get the full duty breakdown instantly. Base MFN rates, Section 301/232/IEEPA surcharges, Chapter 99 rules, and conditional flags all evaluated together with a transparent component-by-component breakdown.", tags:["Scenario-true","HTS + 232/301 aware","No setup required"], note:"Screenshot: Tariff Simulator showing a China import (HTS 6109.10.00.12) with 44% net effective rate", grad:"linear-gradient(135deg,#2D2A6E,#1A1845)" },
-    { title:"Bulk Tariff Simulator", subtitle:"Portfolio-wide tariff exposure from your data", desc:"Upload entry histories or SKU catalogs via CSV and run the deterministic tariff engine across your full portfolio. Compare as-reported duty vs. latest schedule, surface rate deltas, and aggregate exposure by origin, HTS, description, or date.", tags:["CSV / ERP uploads","Portfolio analytics","Scenario modeling"], note:"Screenshot: Bulk Simulator processing 120 records with per-line tariff results and duty breakdown", grad:"linear-gradient(135deg,#1A2745,#162040)" },
-    { title:"HTS Documentation Browser", subtitle:"Navigate HTS schedules, notes, and revisions", desc:"Explore the full U.S. Harmonized Tariff Schedule through Neo Tariff's structured tariff graph. Browse by section, chapter, and code. View reciprocal rate details, rule conditions, defining notes, and timeline history.", tags:["Official USITC source","Notes + schedule views","Revision-aware"], note:"Screenshot: HTS Browser showing Chapter 99 reciprocal trade rules with schedule view and rule detail", grad:"linear-gradient(135deg,#1E2A4A,#141D38)" },
-    { title:"Scenario Dashboard", subtitle:"Portfolio duty analytics and scenario optimization", desc:"Turn bulk tariff simulations into executive-ready scenario analysis. Track current duty spend, compare baseline vs. what-if scenarios, and quantify how tariff changes or sourcing decisions affect your P&L.", tags:["Scenario comparison","P&L impact","Executive-ready"], note:"Screenshot: Scenario Dashboard with current vs. optimized tariff scenario views", grad:"linear-gradient(135deg,#1B2D4A,#132240)" },
-    { title:"Alternate Vendor Discovery", subtitle:"Find alternative suppliers by profile or capability", desc:"Search for alternative vendors by business profile similarity or specific product capabilities. Filter by country, region, and capability match. Each result includes a fit score, industry classifications, and product specs.", tags:["Supplier intelligence","Fit scoring","Country filtering"], note:"Screenshot: Alternate Vendor search showing results for Japan-based apparel companies with fit scores", grad:"linear-gradient(135deg,#2A1E4A,#1D1540)" },
-    { title:"News & Insights", subtitle:"Tariff-related news and HTSUS revision tracking", desc:"Stay current with curated tariff-related news from global sources alongside a real-time feed of HTSUS revision releases. Browse perspectives, filter by topic, and keep regulatory changes on your radar.", tags:["Curated news","Revision tracking","Regulatory alerts"], note:"Screenshot: News feed with tariff articles plus sidebar showing HTSUS revision history", grad:"linear-gradient(135deg,#1A2842,#131D35)" },
+    { title:"Tariff Simulator", subtitle:"Scenario-true landed cost for any shipment", desc:"Enter an HTS code, country, import date, and values — get the full duty breakdown instantly. Base MFN rates, Section 301/232/IEEPA surcharges, Chapter 99 rules, and conditional flags all evaluated together with a transparent component-by-component breakdown.", tags:["Scenario-true","HTS + 232/301 aware","No setup required"], note:"Screenshot: Tariff Simulator showing a China import (HTS 6109.10.00.12) with 44% net effective rate", grad:"linear-gradient(135deg,#2D2A6E,#1A1845)", img:"/images/simulatorSingle.png", zoom:1.3, focusX:"0%", focusY:"0%" },
+    { title:"Bulk Tariff Simulator", subtitle:"Portfolio-wide tariff exposure from your data", desc:"Upload entry histories or SKU catalogs via CSV and run the deterministic tariff engine across your full portfolio. Compare as-reported duty vs. latest schedule, surface rate deltas, and aggregate exposure by origin, HTS, description, or date.", tags:["CSV / ERP uploads","Portfolio analytics","Scenario modeling"], note:"Screenshot: Bulk Simulator processing 120 records with per-line tariff results and duty breakdown", grad:"linear-gradient(135deg,#1A2745,#162040)", img:"/images/simulatorBulk.png", zoom:1.3, focusX:"0%", focusY:"0%" },
+    { title:"HTS Documentation Browser", subtitle:"Navigate HTS schedules, notes, and revisions", desc:"Explore the full U.S. Harmonized Tariff Schedule through Neo Tariff's structured tariff graph. Browse by section, chapter, and code. View reciprocal rate details, rule conditions, defining notes, and timeline history.", tags:["Official USITC source","Notes + schedule views","Revision-aware"], note:"Screenshot: HTS Browser showing Chapter 99 reciprocal trade rules with schedule view and rule detail", grad:"linear-gradient(135deg,#1E2A4A,#141D38)", img:"/images/docBrowserSchedule.png", zoom:1.3, focusX:"0%", focusY:"0%" },
+    { title:"Scenario Dashboard", subtitle:"Portfolio duty analytics and scenario optimization", desc:"Turn bulk tariff simulations into executive-ready scenario analysis. Track current duty spend, compare baseline vs. what-if scenarios, and quantify how tariff changes or sourcing decisions affect your P&L.", tags:["Scenario comparison","P&L impact","Executive-ready"], note:"Screenshot: Scenario Dashboard with current vs. optimized tariff scenario views", grad:"linear-gradient(135deg,#1B2D4A,#132240)", img:null },
+    { title:"Alternate Vendor Discovery", subtitle:"Find alternative suppliers by profile or capability", desc:"Search for alternative vendors by business profile similarity or specific product capabilities. Filter by country, region, and capability match. Each result includes a fit score, industry classifications, and product specs.", tags:["Supplier intelligence","Fit scoring","Country filtering"], note:"Screenshot: Alternate Vendor search showing results for Japan-based apparel companies with fit scores", grad:"linear-gradient(135deg,#2A1E4A,#1D1540)", img:"/images/altVendor.png", zoom:1.3, focusX:"0%", focusY:"0%" },
+    { title:"News & Insights", subtitle:"Tariff-related news and HTSUS revision tracking", desc:"Stay current with curated tariff-related news from global sources alongside a real-time feed of HTSUS revision releases. Browse perspectives, filter by topic, and keep regulatory changes on your radar.", tags:["Curated news","Revision tracking","Regulatory alerts"], note:"Screenshot: News feed with tariff articles plus sidebar showing HTSUS revision history", grad:"linear-gradient(135deg,#1A2842,#131D35)", img:"/images/newfeed.png", zoom:1.3, focusX:"0%", focusY:"0%" },
   ];
 
   const stats = [
@@ -232,15 +232,19 @@ const Overview = () => {
                 ))}
               </div>
               <div style={{ padding:"32px 36px",display:"flex",flexDirection:"column",gap:24 }}>
-                <div className="img-placeholder" style={{ height:260,background:features[activeFeature].grad,position:"relative" }}>
-                  <div style={{ textAlign:"center",padding:"0 40px",zIndex:1 }}>
-                    <div style={{ width:48,height:48,borderRadius:10,background:"rgba(108,99,255,0.15)",border:"1px solid rgba(108,99,255,0.25)",display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:12 }}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--accent)" strokeWidth="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)"/></svg>
+                {features[activeFeature].img ? (
+                  <NeoScreenshot src={features[activeFeature].img} alt={features[activeFeature].title} height={260} zoom={features[activeFeature].zoom || 1.5} focusX={features[activeFeature].focusX} focusY={features[activeFeature].focusY} gradient={features[activeFeature].grad} />
+                ) : (
+                  <div className="img-placeholder" style={{ height:260,background:features[activeFeature].grad,position:"relative" }}>
+                    <div style={{ textAlign:"center",padding:"0 40px",zIndex:1 }}>
+                      <div style={{ width:48,height:48,borderRadius:10,background:"rgba(108,99,255,0.15)",border:"1px solid rgba(108,99,255,0.25)",display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:12 }}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--accent)" strokeWidth="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)"/></svg>
+                      </div>
+                      <p className="sans" style={{ fontSize:12.5,color:"rgba(255,255,255,0.5)",lineHeight:1.5,maxWidth:480,margin:"0 auto" }}>{features[activeFeature].note}</p>
                     </div>
-                    <p className="sans" style={{ fontSize:12.5,color:"rgba(255,255,255,0.5)",lineHeight:1.5,maxWidth:480,margin:"0 auto" }}>{features[activeFeature].note}</p>
+                    <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 50%,rgba(108,99,255,0.08) 0%,transparent 70%)" }}/>
                   </div>
-                  <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 50%,rgba(108,99,255,0.08) 0%,transparent 70%)" }}/>
-                </div>
+                )}
                 <div>
                   <h3 className="serif" style={{ fontSize:24,fontWeight:600,marginBottom:10 }}>{features[activeFeature].title}</h3>
                   <p className="sans" style={{ fontSize:14,lineHeight:1.75,color:"var(--text-secondary)",marginBottom:16 }}>{features[activeFeature].desc}</p>

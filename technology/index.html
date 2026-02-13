@@ -29,7 +29,7 @@ const stages = [
 const NeoTariffTechnology = () => {
     const [activeStage, setActiveStage] = useState("parse");
   const [hoveredLayer, setHoveredLayer] = useState(null);
-    
+
   const isV = useScrollAnimation();
 return (
     <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"#0C0E1A", color:"#E4E2DD", minHeight:"100vh" }}>
@@ -157,7 +157,7 @@ return (
         <div style={{ maxWidth:860,margin:"0 auto" }}>
           <div id="pipe" data-animate className={`anim ${isV("pipe")?"vis":""}`}>
             <div className="section-label">The Pipeline</div>
-            <h2 style={{ fontSize:34,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:16 }}>From government PDF to<br/>duty determination.</h2>
+            <h2 style={{ fontSize:34,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:16 }}>From government PDF to duty determination.</h2>
             <p className="sans" style={{ fontSize:15,lineHeight:1.8,color:"var(--text-secondary)",maxWidth:520,marginBottom:48 }}>Seven stages, each solving a distinct technical problem. Five contain proprietary algorithms built specifically for the tariff domain. No off-the-shelf NLP. No LLM in the decision path.</p>
 
             <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:24 }}>
@@ -318,7 +318,7 @@ return (
       </section>
       <NeoFooter />
 
-      
+
     </div>
   );
 };

@@ -9,7 +9,7 @@
 
 const { useState, useEffect, useCallback } = React;
 
-/* ── Site Config ── 
+/* ── Site Config ──
    Change URLs, labels, and external links here.
 */
 const SITE = {
@@ -200,6 +200,60 @@ window.NeoFooter = () => (
     </div>
   </footer>
 );
+
+/* ════════════════════════════════════════════
+   SCREENSHOT COMPONENT — zoom + lightbox
+   ────────────────────────────────────────────
+   Props:
+     src:       image path (required)
+     alt:       alt text
+     height:    container height in px (default 300)
+     zoom:      scale factor (default 1.5) — higher = more zoomed in
+     focusX:    CSS transform-origin X (default "50%")
+     focusY:    CSS transform-origin Y (default "20%")
+     gradient:  fallback background gradient
+   ════════════════════════════════════════════ */
+window.NeoScreenshot = ({ src, alt = "", height = 300, zoom = 1.5, focusX = "50%", focusY = "20%", gradient }) => {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [open]);
+
+  return (
+    <>
+      <div
+        className="neo-screenshot"
+        onClick={() => setOpen(true)}
+        style={{ height, background: gradient || "var(--bg-elevated)", overflow:"hidden", position:"relative", cursor:"zoom-in", borderRadius:4 }}
+      >
+        <img
+          src={src}
+          alt={alt}
+          style={{ width:"100%", display:"block", transform:`scale(${zoom})`, transformOrigin:`${focusX} ${focusY}`, transition:"transform 0.4s ease" }}
+        />
+        <div className="neo-screenshot-hint sans">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink:0 }}>
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.3"/>
+            <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            <path d="M5 7h4M7 5v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+          </svg>
+          Click to expand
+        </div>
+      </div>
+      {open && ReactDOM.createPortal(
+        <div className="neo-lightbox" onClick={() => setOpen(false)}>
+          <img src={src} alt={alt} onClick={(e) => e.stopPropagation()} style={{ objectFit:"contain", borderRadius:6, boxShadow:"0 24px 80px rgba(0,0,0,0.6)" }} />
+          <button className="neo-lightbox-close sans" onClick={() => setOpen(false)}>✕</button>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+};
 
 /* ════════════════════════════════════════════
    UTILITY COMPONENTS
