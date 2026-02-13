@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neo Tariff — Pricing</title>
+<link rel="stylesheet" href="/shared/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel" src="/shared/components.js"></script>
+<script type="text/babel">
+const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+const { useState, useEffect } = React;
+
+const NeoTariffPricing = () => {
+        const [activeFaq, setActiveFaq] = useState(null);
+
+  const isV = useScrollAnimation();
+
+  const tiers = [
+    { name:"Pay-As-You-Go", icon:"💳", iconBg:"rgba(108,99,255,0.12)", annualCredits:null, monthlyCredits:null, price:"$0", pricePer:"/ month", perCredit:"$0.35", highlight:false, cta:"Get Started", ctaOutline:false, lastFeature:"No monthly commitment" },
+    { name:"Small", icon:"🟣", iconBg:"rgba(139,92,246,0.15)", annualCredits:"42,000", monthlyCredits:"3,500 credits / month", price:"$1,000", pricePer:"/ month", perCredit:"$0.30", highlight:false, cta:"Get Started", ctaOutline:false, lastFeature:"Volume pricing included" },
+    { name:"Medium", icon:"🟢", iconBg:"rgba(74,222,128,0.12)", annualCredits:"174,000", monthlyCredits:"14,500 credits / month", price:"$2,500", pricePer:"/ month", perCredit:"$0.18", highlight:true, cta:"Get Started", ctaOutline:false, lastFeature:"Volume pricing included" },
+    { name:"Large", icon:"🔵", iconBg:"rgba(96,165,250,0.12)", annualCredits:"504,000", monthlyCredits:"42,000 credits / month", price:"$5,000", pricePer:"/ month", perCredit:"$0.12", highlight:false, cta:"Get Started", ctaOutline:false, lastFeature:"Volume pricing included" },
+    { name:"X-Large", icon:"🟠", iconBg:"rgba(251,191,36,0.12)", annualCredits:null, monthlyCredits:null, price:"Unlimited", pricePer:"", perCredit:null, highlight:false, cta:"Contact Us", ctaOutline:true, isCustom:true, lastFeature:"Volume pricing included" },
+  ];
+
+  const sharedFeatures = [
+    { text:"Full platform & API access", isNew:false },
+    { text:"Duty & landed cost engine", isNew:false },
+    { text:"Portfolio-wide duty analysis", isNew:false },
+    { text:"Interactive HTS browser", isNew:true },
+    { text:"Scenario comparison tools", isNew:false },
+    { text:"Global supplier matching", isNew:false },
+    { text:"Complete HTS schedule history", isNew:false },
+    { text:"Updates within hrs of release", isNew:false },
+    { text:"Traceable rate determinations", isNew:false },
+    { text:"Full 232/301 coverage", isNew:false },
+    { text:"Actively managed API docs", isNew:true },
+  ];
+
+  const faqs = [
+    { q:"What is a credit?", a:"A credit is the unit of consumption across the Neo Tariff platform. Each API call or platform action consumes credits based on complexity. A single duty calculation is 1 credit. Batch calculations consume 1 credit per entry. Search, context lookups, and HTS browsing actions are typically fractional credits. Your account dashboard shows real-time usage and remaining balance." },
+    { q:"Do all plans include the same features?", a:"Yes. Every plan — including Pay-As-You-Go — gets full access to the entire Neo Tariff platform: the duty & landed cost engine, portfolio analysis, interactive HTS browser, scenario comparison, supplier matching, REST API, Python SDK, and all 50 API endpoints. The only difference between plans is the volume of credits and per-credit cost." },
+    { q:"How does the Pay-As-You-Go plan work?", a:"Pay-As-You-Go has no monthly fee and no commitment. You pay $0.35 per credit, billed only for what you use. It's the easiest way to start using Neo Tariff — you get full platform and API access from day one, with no minimum spend." },
+    { q:"What happens if I exceed my included credits?", a:"On subscription plans (Small through Large), overage credits are available at your plan's per-credit rate. Your dashboard tracks usage in real-time so there are no surprises. If you're consistently exceeding your allocation, upgrading to the next tier will lower your effective per-credit cost." },
+    { q:"Can I switch plans?", a:"Yes. You can upgrade your plan at any time to access a higher credit allocation and lower per-credit rate. Contact our team to discuss plan changes or to move to a custom arrangement." },
+    { q:"Is there a free trial?", a:"Pay-As-You-Go is effectively a free-to-start plan — $0/month with no commitment. You only pay for what you use at $0.35 per credit. This lets you explore the full platform and API with real duty calculations before committing to a subscription." },
+    { q:"Can I use just the API without the web platform?", a:"Yes. All plans include full REST API access (50 endpoints, 16 groups) and the Python SDK (pip install neo-tariff). You can integrate Neo Tariff directly into your systems — ERP, TMS, procurement platforms, or custom analytics — without ever using the web interface." },
+    { q:"How does Neo Tariff stay current with tariff changes?", a:"We continuously monitor the U.S. International Trade Commission for new HTS releases. When a new revision is published, our 7-stage pipeline ingests, parses, and validates the changes — typically within hours of official publication. We've tracked 34 revisions since early 2025. You always get calculations against the latest schedule." },
+    { q:"What tariff programs and surcharges are covered?", a:"Neo Tariff covers the full U.S. HTS including all Chapter 99 rules: Section 301 (China tariffs), Section 232 (steel & aluminum), IEEPA reciprocal duties, trade program benefits (USMCA, GSP, and 28 more), and all supersession, exclusion, and priority logic between overlapping rules. Every calculation is traceable to the specific rule and legal authority that produced it." },
+    { q:"How is this different from a tariff lookup tool or AI classifier?", a:"Lookup tools give you a rate from a table. AI classifiers suggest an HTS code. Neo Tariff is a deterministic rules engine that computes the complete duty outcome — evaluating base rates, additional duties, exclusions, conditions, material splits, transit windows, and rule priority — and explains every step with legal citations. If you need defensible, scenario-true numbers for real business decisions, that's the difference." },
+    { q:"Do you offer annual billing or custom volume pricing?", a:"Yes. Annual commitments come with volume savings, and X-Large plans are fully customizable for high-volume or enterprise requirements. Contact our sales team to discuss pricing that fits your usage patterns." },
+    { q:"What kind of support is included?", a:"All plans include access to actively managed API documentation, interactive Swagger docs, the PyPI package, and our knowledge base. Subscription plans (Small and above) include priority support. X-Large plans include dedicated support, guided onboarding, and optional advisory services." },
+    { q:"Is my data stored or shared?", a:"No. Neo Tariff is stateless by design. Cost and quantity values are used only for that request's duty math and are not logged, stored, or aggregated. Your HTS codes, countries, and values never leave the calculation pipeline." },
+  ];
+
+  return (
+    <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"#0C0E1A", color:"#E4E2DD", minHeight:"100vh" }}>
+      <NeoGrain />
+      <NeoNav activePage="pricing" />
+
+      {/* ━━━ Hero ━━━ */}
+      <section style={{ padding:"140px 48px 48px", position:"relative", textAlign:"center" }}>
+        <div style={{ position:"absolute", top:0, left:"20%", width:"60%", height:"100%", background:"radial-gradient(ellipse at 50% 25%, rgba(108,99,255,0.06) 0%, transparent 55%)", pointerEvents:"none" }} />
+        <div style={{ maxWidth:700, margin:"0 auto" }}>
+          <h1 style={{ fontSize:46, fontWeight:700, lineHeight:1.12, letterSpacing:"-0.03em", marginBottom:16, fontStyle:"italic", animation:"fadeUp 0.6s ease 0.15s both" }}>All features included. Pick your scale.</h1>
+          <p className="sans" style={{ fontSize:16.5, lineHeight:1.7, color:"var(--text-secondary)", maxWidth:540, margin:"0 auto", animation:"fadeUp 0.6s ease 0.3s both" }}>
+            Full platform and direct API access on every plan — pay only for what you need.
+          </p>
+        </div>
+      </section>
+
+      {/* ━━━ Tier Cards ━━━ */}
+      <section style={{ padding:"24px 48px 72px" }}>
+        <div style={{ maxWidth:1300, margin:"0 auto" }}>
+          <div id="tiers" data-animate className={`anim ${isV("tiers")?"vis":""}`} style={{ display:"flex", gap:14, alignItems:"stretch" }}>
+            {tiers.map((t, i) => (
+              <div key={i} className={`tier-card ${t.highlight?"pop":""}`}>
+                {/* Header */}
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:22 }}>
+                  <span style={{ fontSize:16 }}>{t.icon}</span>
+                  <span className="sans" style={{ fontSize:15.5, fontWeight:700 }}>{t.name}</span>
+                </div>
+
+                {/* Credits / Volume */}
+                {t.annualCredits ? (
+                  <div style={{ marginBottom:14 }}>
+                    <div>
+                      <span className="mono" style={{ fontSize:26, fontWeight:700, color:"var(--text-primary)", letterSpacing:"-0.02em" }}>{t.annualCredits}</span>
+                      <span className="sans" style={{ fontSize:11.5, color:"var(--text-muted)", marginLeft:5 }}>annual credits</span>
+                    </div>
+                    <div className="sans" style={{ fontSize:11, color:"var(--text-muted)", marginTop:2 }}>{t.monthlyCredits}</div>
+                  </div>
+                ) : t.isCustom ? null : (
+                  <div style={{ marginBottom:14, minHeight:48 }}/>
+                )}
+
+                {/* Price */}
+                <div style={{ marginBottom:2 }}>
+                  <span style={{ fontSize:t.isCustom?22:30, fontWeight:700, letterSpacing:"-0.02em" }}>{t.price}</span>
+                  {t.pricePer && <span className="sans" style={{ fontSize:13, color:"var(--text-muted)", marginLeft:4 }}>{t.pricePer}</span>}
+                </div>
+                {t.perCredit ? (
+                  <div className="mono" style={{ fontSize:12, color:"var(--accent)", marginBottom:20, letterSpacing:"0.01em" }}>{t.perCredit} <span style={{ color:"var(--text-muted)" }}>per credit</span></div>
+                ) : t.isCustom ? (
+                  <div className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", marginBottom:20 }}>Customize Pricing</div>
+                ) : (
+                  <div style={{ marginBottom:20 }}/>
+                )}
+
+                {/* CTA */}
+                <button className={`tier-btn ${t.ctaOutline?"tier-btn-ghost":"tier-btn-fill"}`}>{t.cta}</button>
+
+                {/* Features */}
+                <div style={{ marginTop:22, borderTop:"1px solid var(--border-light)", paddingTop:16, flex:1 }}>
+                  <div className="sans" style={{ fontSize:10, fontWeight:700, letterSpacing:"0.1em", color:"var(--text-muted)", marginBottom:12 }}>FEATURES INCLUDED:</div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                    {sharedFeatures.map((f, j) => (
+                      <div key={j} className="sans" style={{ display:"flex", alignItems:"center", gap:7, fontSize:12, color:"var(--text-secondary)", lineHeight:1.35 }}>
+                        <svg width="13" height="13" viewBox="0 0 16 16" style={{ flexShrink:0 }}><path d="M3.5 8.5l3 3 6-6" stroke="var(--accent)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <span>{f.text}{f.isNew && <span className="new-tag">New</span>}</span>
+                      </div>
+                    ))}
+                    {/* Tier-specific last feature */}
+                    <div className="sans" style={{ display:"flex", alignItems:"center", gap:7, fontSize:12, color:"var(--text-secondary)", lineHeight:1.35 }}>
+                      <svg width="13" height="13" viewBox="0 0 16 16" style={{ flexShrink:0 }}><path d="M3.5 8.5l3 3 6-6" stroke="var(--accent)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <span>{t.lastFeature}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* ━━━ Scale Savings ━━━ */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:900, margin:"0 auto" }}>
+          <div id="save" data-animate className={`anim ${isV("save")?"vis":""}`}>
+            <div style={{ textAlign:"center", marginBottom:40 }}>
+              <div className="section-label" style={{ textAlign:"center" }}>Volume Savings</div>
+              <h2 style={{ fontSize:30, fontWeight:600, letterSpacing:"-0.02em" }}>Higher volume, lower cost per credit.</h2>
+            </div>
+            <div style={{ display:"flex", gap:0, alignItems:"flex-end", justifyContent:"center", height:220, padding:"0 40px" }}>
+              {[
+                { label:"Pay-As-You-Go", rate:"$0.35", h:140, color:"#6B697A" },
+                { label:"Small", rate:"$0.30", h:120, color:"#8B5CF6" },
+                { label:"Medium", rate:"$0.18", h:72, color:"var(--green)" },
+                { label:"Large", rate:"$0.12", h:48, color:"var(--blue)" },
+              ].map((b, i) => (
+                <div key={i} style={{ display:"flex", flexDirection:"column", alignItems:"center", flex:1, gap:8 }}>
+                  <span className="mono" style={{ fontSize:14, fontWeight:600, color:b.color }}>{b.rate}</span>
+                  <div style={{ width:"55%", maxWidth:80, height:b.h, background:`linear-gradient(180deg, ${b.color} 0%, rgba(108,99,255,0.08) 100%)`, borderRadius:"4px 4px 0 0", opacity:0.8 }}/>
+                  <span className="sans" style={{ fontSize:11.5, color:"var(--text-muted)", marginTop:4, textAlign:"center" }}>{b.label}</span>
+                </div>
+              ))}
+            </div>
+            <p className="sans" style={{ fontSize:13, color:"var(--text-muted)", textAlign:"center", marginTop:24 }}>Large plan saves <span style={{ color:"var(--accent)", fontWeight:600 }}>66%</span> per credit vs. Pay-As-You-Go</p>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* ━━━ What Every Plan Includes ━━━ */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:1000, margin:"0 auto" }}>
+          <div id="inc" data-animate className={`anim ${isV("inc")?"vis":""}`}>
+            <div style={{ textAlign:"center", marginBottom:36 }}>
+              <div className="section-label" style={{ textAlign:"center" }}>What You Get</div>
+              <h2 style={{ fontSize:30, fontWeight:600, letterSpacing:"-0.02em" }}>Same engine. Same accuracy. Every plan.</h2>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14 }}>
+              {[
+                { title:"Deterministic Duty Engine", desc:"Every calculation is rules-based, regression-tested, and fully traceable. No LLM in the decision path. Legal citations attached to every answer." },
+                { title:"Full HTS + Chapter 99", desc:"~18,000 tariff lines per revision. 276 reciprocal rules. Section 301, 232, IEEPA duties with supersession, exclusion, and priority logic." },
+                { title:"REST API + Python SDK", desc:"50 endpoints across 16 groups. Typed Python client with sync/async. Embed tariff intelligence into any system." },
+                { title:"Portfolio & Scenario Analysis", desc:"Upload CSV data, run bulk calculations, compare as-reported vs. latest schedule, and model the impact of tariff or sourcing changes." },
+                { title:"Updates Within Hours", desc:"New HTS revisions reflected within ~1 hour of USITC publication. 34 versions tracked since early 2025 and counting." },
+                { title:"Global Supplier Matching", desc:"Discover alternate vendors by business profile or product capability. Fit scoring, country filtering, and industry classification." },
+              ].map((item,i) => (
+                <div key={i} style={{ padding:"24px 22px", border:"1px solid var(--border)", background:"var(--bg-card)" }}>
+                  <div className="sans" style={{ fontSize:14, fontWeight:600, marginBottom:8 }}>{item.title}</div>
+                  <div className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", lineHeight:1.6 }}>{item.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* ━━━ FAQ ━━━ */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:740, margin:"0 auto" }}>
+          <div id="pfaq" data-animate className={`anim ${isV("pfaq")?"vis":""}`}>
+            <div style={{ textAlign:"center", marginBottom:36 }}>
+              <div className="section-label" style={{ textAlign:"center" }}>FAQ</div>
+              <h2 style={{ fontSize:30, fontWeight:600, letterSpacing:"-0.02em" }}>Frequently asked questions</h2>
+            </div>
+            {faqs.map((f,i)=>(
+              <div key={i} className="faq-item">
+                <div className="faq-q sans" onClick={()=>setActiveFaq(activeFaq===i?null:i)}>
+                  <span style={{ fontSize:15, fontWeight:500, paddingRight:16 }}>{f.q}</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" style={{ flexShrink:0, transform:activeFaq===i?"rotate(180deg)":"rotate(0)", transition:"transform 0.3s" }}><path d="M4 6l4 4 4-4" stroke={activeFaq===i?"var(--accent)":"var(--text-muted)"} strokeWidth="1.3" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <div className={`faq-a sans ${activeFaq===i?"open":""}`}>
+                  <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-secondary)" }}>{f.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* ━━━ CTA ━━━ */}
+      <section style={{ padding:"96px 48px", textAlign:"center" }}>
+        <div style={{ maxWidth:600, margin:"0 auto" }}>
+          <div id="pcta" data-animate className={`anim ${isV("pcta")?"vis":""}`}>
+            <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Ready to get started?</h2>
+            <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Start with Pay-As-You-Go at no monthly cost, or talk to our team about the right plan for your volume.</p>
+            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+              <a href="https://enterprise-neo.com/register" className="cta-btn sans" style={{ textDecoration:"none" }}>Get Started Free</a>
+              <button className="cta-btn cta-btn-outline sans">Contact Sales</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <NeoFooter />
+
+      
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<NeoTariffPricing />);
+</script>
+</body>
+</html>

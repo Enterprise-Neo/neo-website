@@ -1,0 +1,11 @@
+# Neo Tariff — Netlify Redirects
+# Clean URLs are handled automatically by folder/index.html structure.
+# These catch edge cases and ensure proper routing.
+
+# Trailing slash normalization
+/technology   /technology/   301
+/platform     /platform/     301
+/api          /api/          301
+/sdk          /sdk/          301
+/pricing      /pricing/      301
+/company      /company/      301

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neo Tariff — Tariff Intelligence Engine</title>
+<link rel="stylesheet" href="/shared/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel" src="/shared/components.js"></script>
+<script type="text/babel">
+const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+const { useState, useEffect } = React;
+
+const Overview = () => {
+  const [activeFaq, setActiveFaq] = useState(null);
+  const [activeFeature, setActiveFeature] = useState(0);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [hoveredDot, setHoveredDot] = useState(null);
+  const isV = useScrollAnimation(0.12);
+
+  const sections = [
+    { id:"hero",label:"Top" },{ id:"problem",label:"The Problem" },{ id:"personas",label:"Who It's For" },
+    { id:"how-it-works",label:"How It Works" },{ id:"how-you-use-it",label:"How You Use It" },
+    { id:"comparison",label:"Lookup vs. Logic" },{ id:"ai-approach",label:"AI Approach" },
+    { id:"faq",label:"FAQ" },{ id:"cta",label:"Get Started" },
+  ];
+
+  useEffect(() => {
+    const o = new IntersectionObserver((entries)=>{entries.forEach((e)=>{if(e.isIntersecting&&e.intersectionRatio>=0.25)setActiveSection(e.target.id);});},{threshold:0.25,rootMargin:"-80px 0px -35% 0px"});
+    sections.forEach(s=>{const el=document.getElementById(s.id);if(el)o.observe(el);}); return()=>o.disconnect();
+  }, []);
+
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior:"smooth", block:"start" });
+
+  const features = [
+    { title:"Tariff Simulator", subtitle:"Scenario-true landed cost for any shipment", desc:"Enter an HTS code, country, import date, and values — get the full duty breakdown instantly. Base MFN rates, Section 301/232/IEEPA surcharges, Chapter 99 rules, and conditional flags all evaluated together with a transparent component-by-component breakdown.", tags:["Scenario-true","HTS + 232/301 aware","No setup required"], note:"Screenshot: Tariff Simulator showing a China import (HTS 6109.10.00.12) with 44% net effective rate", grad:"linear-gradient(135deg,#2D2A6E,#1A1845)" },
+    { title:"Bulk Tariff Simulator", subtitle:"Portfolio-wide tariff exposure from your data", desc:"Upload entry histories or SKU catalogs via CSV and run the deterministic tariff engine across your full portfolio. Compare as-reported duty vs. latest schedule, surface rate deltas, and aggregate exposure by origin, HTS, description, or date.", tags:["CSV / ERP uploads","Portfolio analytics","Scenario modeling"], note:"Screenshot: Bulk Simulator processing 120 records with per-line tariff results and duty breakdown", grad:"linear-gradient(135deg,#1A2745,#162040)" },
+    { title:"HTS Documentation Browser", subtitle:"Navigate HTS schedules, notes, and revisions", desc:"Explore the full U.S. Harmonized Tariff Schedule through Neo Tariff's structured tariff graph. Browse by section, chapter, and code. View reciprocal rate details, rule conditions, defining notes, and timeline history.", tags:["Official USITC source","Notes + schedule views","Revision-aware"], note:"Screenshot: HTS Browser showing Chapter 99 reciprocal trade rules with schedule view and rule detail", grad:"linear-gradient(135deg,#1E2A4A,#141D38)" },
+    { title:"Scenario Dashboard", subtitle:"Portfolio duty analytics and scenario optimization", desc:"Turn bulk tariff simulations into executive-ready scenario analysis. Track current duty spend, compare baseline vs. what-if scenarios, and quantify how tariff changes or sourcing decisions affect your P&L.", tags:["Scenario comparison","P&L impact","Executive-ready"], note:"Screenshot: Scenario Dashboard with current vs. optimized tariff scenario views", grad:"linear-gradient(135deg,#1B2D4A,#132240)" },
+    { title:"Alternate Vendor Discovery", subtitle:"Find alternative suppliers by profile or capability", desc:"Search for alternative vendors by business profile similarity or specific product capabilities. Filter by country, region, and capability match. Each result includes a fit score, industry classifications, and product specs.", tags:["Supplier intelligence","Fit scoring","Country filtering"], note:"Screenshot: Alternate Vendor search showing results for Japan-based apparel companies with fit scores", grad:"linear-gradient(135deg,#2A1E4A,#1D1540)" },
+    { title:"News & Insights", subtitle:"Tariff-related news and HTSUS revision tracking", desc:"Stay current with curated tariff-related news from global sources alongside a real-time feed of HTSUS revision releases. Browse perspectives, filter by topic, and keep regulatory changes on your radar.", tags:["Curated news","Revision tracking","Regulatory alerts"], note:"Screenshot: News feed with tariff articles plus sidebar showing HTSUS revision history", grad:"linear-gradient(135deg,#1A2842,#131D35)" },
+  ];
+
+  const stats = [
+    { value:"30,067",label:"HTS Entries",sub:"per revision" },{ value:"41,462",label:"Rate Components",sub:"parsed & structured" },
+    { value:"276",label:"Reciprocal Rules",sub:"actively managed" },{ value:"249",label:"Countries",sub:"with program eligibility" },
+    { value:"30",label:"Trade Programs",sub:"GSP, USMCA, & more" },{ value:"<1hr",label:"Update Speed",sub:"after official publication" },
+  ];
+
+  const comparisonRows = [
+    { cap:"Duty determination",market:"Lookup tables — you figure out the rest",neo:"Deterministic engine evaluates all conditions → final duty + rationale" },
+    { cap:"Chapter 99 / Additional duties",market:"Manual lookups or incomplete coverage",neo:"Full 301, 232, IEEPA with priority, supersession, and exclusion logic" },
+    { cap:"Explainability",market:"A number without context",neo:"Rule path + pinpoint legal citations for every answer" },
+    { cap:"Versioning & history",market:"Current rates only; no change tracking",neo:"Every HTS release stored, diffed, and queryable historically" },
+    { cap:"Scenario modeling",market:"Spreadsheet-based, manual",neo:"Engine-backed what-if analysis at portfolio scale" },
+    { cap:"Update freshness",market:"Weekly to monthly",neo:"Daily checks; live within ~1 hour of official publication" },
+  ];
+
+  const faqs = [
+    { q:"What data sources does Neo Tariff use?", a:"Official sources only: HTSUS text from the U.S. International Trade Commission, USTR Federal Register notices, Department of Commerce and CBP guidance. We encode the actual legal rules — country/product scope, effective windows, transit exclusions — not headlines or news reports." },
+    { q:"Is Neo Tariff an AI tool?", a:"The core engine is deterministic and test-backed — it does not use LLMs to interpret tariff law. We use AI in supporting roles: mapping product descriptions to candidate HTS codes (with reasoning) and summarizing complex outputs. The actual duty decisions are deterministic, traceable, and regression-tested." },
+    { q:"What duty types are covered?", a:"Base MFN rates (ad valorem, specific, compound), Section 301, Section 232 (steel/aluminum with melt & pour context), IEEPA reciprocal duties, trade program eligibility (USMCA, GSP, etc.), and FTZ/warehouse adjustments. We handle component-based surcharges, threshold rules, exclusions, and priority/supersession logic." },
+    { q:"Does Neo Tariff store my transaction data?", a:"No. The API is stateless. Cost and quantity fields are used only for the math in that request — they are not logged, aggregated, or stored. Every API call is independent." },
+    { q:"How quickly are rate changes reflected?", a:"We check for updates daily. Once an official change is published, it is reflected within approximately one hour. Each HTS revision is stored independently for accurate historical and current determination." },
+    { q:"What is intentionally out of scope?", a:"AD/CVD case rates, real-time quota fill status, 9902 MTB temporary suspensions, and MPF/HMF entry fees. These are documented boundaries, not gaps — they reflect the line between deterministic automation and case-specific adjudication." },
+  ];
+
+  return (
+    <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"var(--bg)", color:"var(--text-primary)", minHeight:"100vh", overflowX:"hidden" }}>
+      <NeoGrain />
+      <NeoNav activePage="overview" transparent={true} />
+
+      {/* Side Nav */}
+      <div className="side-nav-container" style={{ position:"fixed",right:20,top:"50%",transform:"translateY(-50%)",zIndex:150,display:"flex",flexDirection:"column",gap:18,alignItems:"center" }}>
+        {sections.map(s=>(
+          <div key={s.id} className={`side-dot ${activeSection===s.id?"active":""}`} onClick={()=>scrollTo(s.id)} onMouseEnter={()=>setHoveredDot(s.id)} onMouseLeave={()=>setHoveredDot(null)}>
+            <div className={`side-dot-label sans ${hoveredDot===s.id?"show":""}`}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ══ Hero ══ */}
+      <section id="hero" style={{ minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",padding:"140px 48px 80px",position:"relative" }}>
+        <div style={{ position:"absolute",top:0,right:0,width:"55%",height:"100%",background:"radial-gradient(ellipse at 65% 35%,rgba(108,99,255,0.07) 0%,transparent 55%)",pointerEvents:"none" }}/>
+        <div style={{ position:"absolute",bottom:0,left:0,width:"40%",height:"50%",background:"radial-gradient(ellipse at 20% 80%,rgba(108,99,255,0.04) 0%,transparent 50%)",pointerEvents:"none" }}/>
+        <div style={{ maxWidth:880,position:"relative" }}>
+          <div className="section-label" style={{ animation:"fadeIn 1s ease 0.05s both" }}>Tariff Intelligence Engine</div>
+          <div style={{ marginBottom:32 }}>
+            <div className="hero-line"><span style={{ fontSize:64,fontWeight:700,lineHeight:1.08,letterSpacing:"-0.03em" }}>From lookup to logic.</span></div>
+            <div className="hero-line"><span style={{ fontSize:64,fontWeight:300,lineHeight:1.08,letterSpacing:"-0.03em",color:"var(--text-secondary)" }}>Precise, explainable duties</span></div>
+            <div className="hero-line"><span style={{ fontSize:64,fontWeight:300,lineHeight:1.08,letterSpacing:"-0.03em",color:"var(--text-secondary)" }}>for any scenario.</span></div>
+          </div>
+          <p className="sans" style={{ fontSize:17,lineHeight:1.75,color:"var(--text-secondary)",maxWidth:600,marginBottom:44,animation:"fadeIn 1s ease 0.65s both" }}>
+            Neo Tariff transforms the full U.S. HTS into a structured, version-controlled tariff graph — and uses a deterministic calculation engine to deliver accurate, auditable duty answers. Not a lookup tool. Not an AI guess. A rules engine that shows its work.
+          </p>
+          <div style={{ display:"flex",gap:14,animation:"fadeIn 1s ease 0.85s both" }}>
+            <button className="cta-btn sans">Request a Demo <ArrowIcon /></button>
+            <a href="/pricing" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>See Pricing</a>
+          </div>
+        </div>
+        <div style={{ position:"absolute",bottom:36,left:"50%",transform:"translateX(-50%)",display:"flex",flexDirection:"column",alignItems:"center",gap:6,animation:"fadeIn 1s ease 1.3s both" }}>
+          <span className="mono" style={{ fontSize:9.5,color:"var(--text-muted)",letterSpacing:"0.12em" }}>SCROLL</span>
+          <div style={{ width:1,height:36,background:"linear-gradient(180deg,var(--text-muted),transparent)" }}/>
+        </div>
+      </section>
+
+      {/* ══ The Problem ══ */}
+      <section id="problem" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:960,margin:"0 auto" }}>
+          <div id="prob" data-animate className={`anim ${isV("prob")?"vis":""}`}>
+            <div className="section-label">The Problem</div>
+            <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:14 }}>Tariffs are not "a rate on a code."</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.8,color:"var(--text-secondary)",marginBottom:28,maxWidth:680 }}>They're a moving target of overlapping rules, Chapter 99 additions, country-specific conditions, supersession logic, and constant revisions. Current workflows rely on a patchwork of spreadsheets, vendor feeds, brokers, and ad-hoc tools — none of which produce fast, defensible, scenario-true duty numbers.</p>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
+              {[
+                { t:"Constant change", d:"The U.S. HTS has been revised 34 times since early 2025. Each revision can alter rates, conditions, and rule priority for thousands of products." },
+                { t:"Layered complexity", d:"Base MFN rates, Section 301 duties, Section 232 duties, IEEPA reciprocal tariffs, exclusions, and trade program benefits — all interacting with priority and supersession rules." },
+                { t:"Fragmented tools", d:"Spreadsheets for lookups, broker portals for filing, vendor feeds for alerts — but nothing that computes scenario-true duties with full legal traceability." },
+                { t:"Opaque answers", d:"Most tools give you a number. They don't show you which rules applied, which conditions were met, or which legal authority governs the result." },
+              ].map((c,i)=>(
+                <div key={i} style={{ padding:"24px 22px",border:"1px solid var(--border)",background:"var(--bg-card)" }}>
+                  <div className="sans" style={{ fontSize:14,fontWeight:600,marginBottom:8 }}>{c.t}</div>
+                  <div className="sans" style={{ fontSize:13,color:"var(--text-muted)",lineHeight:1.6 }}>{c.d}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ Who It's For ══ */}
+      <section id="personas" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="wh-h" data-animate className={`anim ${isV("wh-h")?"vis":""}`} style={{ marginBottom:40 }}>
+            <div className="section-label">Who It's For</div>
+            <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:580 }}>Built for organizations that take tariffs seriously.</h2>
+          </div>
+          <div id="wh-g" data-animate className={`anim ${isV("wh-g")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:14 }}>
+            {[
+              { role:"Trade & Logistics Platforms",pain:"Need tariff logic inside your systems without building it from scratch.",sol:"REST API and Python SDK for real-time duty calculations, HTS lookups, and scenario analysis — embed directly into ERP, TMS, or procurement platforms.",icon:"⚡" },
+              { role:"Trade & Customs",pain:"Manually combining HTS tables, broker advice, and Chapter 99 rules for every entry.",sol:"Instant, defensible duty calculations with full legal citations and complete rule-path traceability.",icon:"⚖️" },
+              { role:"Supply Chain & Sourcing",pain:"Can't evaluate the tariff impact of changing suppliers or countries of origin.",sol:"Model country-shift and supplier-change scenarios across your catalog with landed cost impact.",icon:"🔗" },
+              { role:"Finance & FP&A",pain:"Tariff assumptions in financial models are stale, incomplete, or unverifiable.",sol:"Precise duty numbers tied to landed cost and margin, updated within hours of official changes.",icon:"📊" },
+              { role:"PE & Due Diligence",pain:"No fast, defensible way to quantify a target's tariff exposure or model policy risk.",sol:"Portfolio-level tariff analysis and scenario modeling for investments, with auditable outputs.",icon:"🎯" },
+            ].map((a,i)=>(
+              <div key={i} style={{ border:"1px solid var(--border)",background:"var(--bg-card)",padding:"28px 22px",transition:"all 0.3s" }}>
+                <div style={{ fontSize:24,marginBottom:14 }}>{a.icon}</div>
+                <div className="sans" style={{ fontSize:13.5,fontWeight:600,marginBottom:14 }}>{a.role}</div>
+                <div className="sans" style={{ fontSize:12,color:"var(--text-muted)",lineHeight:1.55,marginBottom:14,fontStyle:"italic" }}>"{a.pain}"</div>
+                <div style={{ height:1,background:"var(--border)",marginBottom:14 }}/>
+                <div className="sans" style={{ fontSize:12,color:"var(--text-secondary)",lineHeight:1.55 }}>{a.sol}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ How It Works — 3-col + stats ══ */}
+      <section id="how-it-works" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:1100,margin:"0 auto" }}>
+          <div id="pill-h" data-animate className={`anim ${isV("pill-h")?"vis":""}`} style={{ textAlign:"center",marginBottom:48 }}>
+            <div className="section-label" style={{ textAlign:"center" }}>How It Works</div>
+            <h2 style={{ fontSize:36,fontWeight:600,letterSpacing:"-0.02em",marginBottom:14 }}>Three pillars. One engine.</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.7,color:"var(--text-secondary)",maxWidth:580,margin:"0 auto" }}>Ingest the law, model it as a graph, compute against it deterministically, and let you explore scenarios on top.</p>
+          </div>
+          <div id="pill-g" data-animate className={`anim ${isV("pill-g")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20,marginBottom:48 }}>
+            {[
+              { num:"01",title:"Versioned Tariff Graph",hl:"The tariff schedule as a structured, version-controlled knowledge graph.",desc:"We continuously ingest official U.S. HTS releases and transform them into a machine-readable graph — codes, rates, conditions, Chapter 99 rules, notes, cross-references, and relationships. Every release is stored as a distinct version with full change history.",color:"var(--accent)" },
+              { num:"02",title:"Deterministic Duty Engine",hl:"Accurate, explainable duty calculations — not guesses, not lookups.",desc:"Given a tariff version, rules graph, and your transaction inputs, the engine deterministically computes duties. It handles the complexity most tools skip: component-based surcharges, supersessions, priority logic, exclusion hierarchies, and transit windows. Every answer includes legal citations.",color:"var(--green)" },
+              { num:"03",title:"Scenario & Portfolio Modeling",hl:"From single entries to portfolio-wide what-if analysis.",desc:"Model the financial impact of changing suppliers, shifting countries of origin, or new tariff policies — across your entire product catalog. See tariffs in the context of total landed cost, gross margin, and portfolio-level exposure.",color:"var(--orange)" },
+            ].map((p,i)=>(
+              <div key={i} style={{ padding:"36px 28px",border:"1px solid var(--border)",background:"var(--bg-card)",position:"relative",overflow:"hidden",transition:"all 0.3s" }}>
+                <div style={{ position:"absolute",top:0,left:0,right:0,height:2,background:`linear-gradient(90deg,transparent,${p.color},transparent)` }}/>
+                <div className="mono" style={{ fontSize:11,color:p.color,letterSpacing:"0.08em",marginBottom:14 }}>{p.num}</div>
+                <h3 className="sans" style={{ fontSize:17,fontWeight:600,marginBottom:8 }}>{p.title}</h3>
+                <p className="sans" style={{ fontSize:13,fontWeight:500,color:"var(--text-primary)",lineHeight:1.45,marginBottom:12 }}>{p.hl}</p>
+                <p className="sans" style={{ fontSize:12.5,lineHeight:1.7,color:"var(--text-muted)" }}>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div id="st-h" data-animate className={`anim ${isV("st-h")?"vis":""}`} style={{ marginBottom:20 }}>
+            <div className="section-label">By the Numbers</div>
+            <p className="sans" style={{ fontSize:13.5,color:"var(--text-secondary)",maxWidth:480 }}>Coverage as of 2025 Revision 23 — sourced from HTSUS, USTR, and CBP official publications.</p>
+          </div>
+          <div id="st-g" data-animate className={`anim ${isV("st-g")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:0 }}>
+            {stats.map((s,i)=>(
+              <div key={i} className="stat-card" style={{ borderRight:i<5?"none":undefined }}>
+                <div className="mono" style={{ fontSize:30,fontWeight:500,color:"var(--accent)",letterSpacing:"-0.02em",marginBottom:6 }}>{s.value}</div>
+                <div className="sans" style={{ fontSize:13.5,fontWeight:600,marginBottom:3 }}>{s.label}</div>
+                <div className="sans" style={{ fontSize:11.5,color:"var(--text-muted)" }}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:28,textAlign:"center" }}>
+            <a href="/technology" className="sans" style={{ color:"var(--accent)",fontSize:13.5,fontWeight:500,textDecoration:"none",display:"inline-flex",alignItems:"center",gap:6 }}>Explore the full technology deep dive <ArrowIcon size={14} /></a>
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ How You Use It ══ */}
+      <section id="how-you-use-it" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="use-h" data-animate className={`anim ${isV("use-h")?"vis":""}`} style={{ marginBottom:48 }}>
+            <div className="section-label">How You Use It</div>
+            <h2 style={{ fontSize:38,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:700,marginBottom:16 }}>One engine, four ways in.</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.7,color:"var(--text-secondary)",maxWidth:600 }}>Every tool, API endpoint, and SDK method is powered by the same versioned tariff graph and deterministic calculation engine.</p>
+          </div>
+          <div id="use-p" data-animate className={`anim ${isV("use-p")?"vis":""}`} style={{ marginBottom:20 }}>
+            <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
+              <div style={{ display:"flex",alignItems:"center",gap:12 }}>
+                <div className="mono" style={{ fontSize:10.5,letterSpacing:"0.1em",color:"var(--accent)",padding:"3px 9px",border:"1px solid rgba(108,99,255,0.25)" }}>WEB APP</div>
+                <span className="sans" style={{ fontSize:18,fontWeight:600 }}>Platform</span>
+              </div>
+              <a href="/platform" className="sans" style={{ color:"var(--accent)",fontSize:12.5,fontWeight:500,textDecoration:"none",display:"flex",alignItems:"center",gap:4 }}>Explore all tools <ArrowIcon size={12}/></a>
+            </div>
+            <div style={{ display:"grid",gridTemplateColumns:"320px 1fr",gap:0,border:"1px solid var(--border)",background:"var(--bg-card)",minHeight:520 }}>
+              <div style={{ borderRight:"1px solid var(--border)",display:"flex",flexDirection:"column" }}>
+                <div className="sans" style={{ padding:"16px 20px",borderBottom:"1px solid var(--border)",fontSize:11,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)" }}>PLATFORM TOOLS</div>
+                {features.map((f,i)=>(
+                  <div key={i} className={`feature-tab ${activeFeature===i?"active":""}`} onClick={()=>setActiveFeature(i)}>
+                    <div className="sans" style={{ fontSize:14,fontWeight:600,color:activeFeature===i?"var(--text-primary)":"var(--text-secondary)",marginBottom:3 }}>{f.title}</div>
+                    <div className="sans" style={{ fontSize:12,color:"var(--text-muted)",lineHeight:1.4 }}>{f.subtitle}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding:"32px 36px",display:"flex",flexDirection:"column",gap:24 }}>
+                <div className="img-placeholder" style={{ height:260,background:features[activeFeature].grad,position:"relative" }}>
+                  <div style={{ textAlign:"center",padding:"0 40px",zIndex:1 }}>
+                    <div style={{ width:48,height:48,borderRadius:10,background:"rgba(108,99,255,0.15)",border:"1px solid rgba(108,99,255,0.25)",display:"inline-flex",alignItems:"center",justifyContent:"center",marginBottom:12 }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--accent)" strokeWidth="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)"/></svg>
+                    </div>
+                    <p className="sans" style={{ fontSize:12.5,color:"rgba(255,255,255,0.5)",lineHeight:1.5,maxWidth:480,margin:"0 auto" }}>{features[activeFeature].note}</p>
+                  </div>
+                  <div style={{ position:"absolute",inset:0,background:"radial-gradient(ellipse at 50% 50%,rgba(108,99,255,0.08) 0%,transparent 70%)" }}/>
+                </div>
+                <div>
+                  <h3 className="serif" style={{ fontSize:24,fontWeight:600,marginBottom:10 }}>{features[activeFeature].title}</h3>
+                  <p className="sans" style={{ fontSize:14,lineHeight:1.75,color:"var(--text-secondary)",marginBottom:16 }}>{features[activeFeature].desc}</p>
+                  <div style={{ display:"flex",gap:8,flexWrap:"wrap" }}>
+                    {features[activeFeature].tags.map((t,j)=>(
+                      <span key={j} className="mono" style={{ fontSize:10.5,padding:"4px 10px",border:"1px solid var(--border)",color:"var(--text-muted)",letterSpacing:"0.03em" }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="use-lanes" data-animate className={`anim ${isV("use-lanes")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:20 }}>
+            {[
+              { tag:"REST API",title:"Programmatic Access",desc:"50 endpoints across 16 groups. Send an HTS code, country, and value — get back the complete duty breakdown with every rule that applied and the legal rationale.",items:["Rates & duty calculations","HTS search & autocomplete","Version history & comparison","Context, notes, & programs","Stateless — nothing stored"],link:"/api",linkText:"API Reference" },
+              { tag:"PYTHON SDK",title:"Typed Python Client",desc:"Full API surface in a typed Python package with sync/async support, Pydantic response models, automatic retries, and batch methods.",items:["Rates, Search, Context, Compare","Typed Pydantic response models","Sync + async clients","Batch & multi-country methods"],link:"/sdk",linkText:"SDK Reference",pip:true },
+              { tag:"ADVISORY",title:"Consulting Services",desc:"Targeted assessments to map duty drivers, identify savings levers, and operationalize tariff intelligence workflows — powered by the same engine behind the platform.",items:["Tariff exposure analysis","Classification optimization","Sourcing scenario modeling","Due diligence support","Post-summary correction sizing"],link:"/company",linkText:"Contact Us" },
+            ].map((lane,i)=>(
+              <div key={i} className="lane-card">
+                <div className="mono" style={{ fontSize:10.5,letterSpacing:"0.1em",color:"var(--accent)",marginBottom:18,padding:"3px 9px",border:"1px solid rgba(108,99,255,0.25)",display:"inline-block" }}>{lane.tag}</div>
+                <h3 className="serif" style={{ fontSize:20,fontWeight:600,marginBottom:10 }}>{lane.title}</h3>
+                <p className="sans" style={{ fontSize:13.5,lineHeight:1.7,color:"var(--text-secondary)",marginBottom:20 }}>{lane.desc}</p>
+                {lane.pip && <div style={{ padding:"12px 16px",background:"var(--bg-elevated)",border:"1px solid var(--border)",marginBottom:16 }}><code className="mono" style={{ fontSize:12,color:"var(--accent)" }}>pip install neo-tariff</code></div>}
+                <div style={{ display:"flex",flexDirection:"column",gap:6,marginBottom:24 }}>
+                  {lane.items.map((f,j)=>(
+                    <div key={j} className="sans" style={{ display:"flex",gap:8,alignItems:"center" }}><span style={{ color:"var(--accent)",fontSize:11 }}>→</span><span style={{ fontSize:12.5,color:"var(--text-secondary)" }}>{f}</span></div>
+                  ))}
+                </div>
+                <a href={lane.link} className="sans" style={{ color:"var(--accent)",fontSize:12.5,fontWeight:500,textDecoration:"none",display:"flex",alignItems:"center",gap:4 }}>{lane.linkText} <ArrowIcon size={12}/></a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ Lookup vs. Logic ══ */}
+      <section id="comparison" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="cmp-h" data-animate className={`anim ${isV("cmp-h")?"vis":""}`} style={{ marginBottom:40 }}>
+            <div className="section-label">Lookup vs. Logic</div>
+            <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:680 }}>Most tools help you find codes and text.<br/><span style={{ color:"var(--accent)" }}>Neo Tariff decides what applies — and shows why.</span></h2>
+          </div>
+          <div id="cmp-t" data-animate className={`anim ${isV("cmp-t")?"vis":""}`} style={{ border:"1px solid var(--border)" }}>
+            <div className="comparison-row sans" style={{ background:"var(--bg-elevated)",borderBottom:"1px solid var(--border)" }}>
+              <div style={{ fontSize:11,fontWeight:600,letterSpacing:"0.06em",color:"var(--text-muted)" }}>CAPABILITY</div>
+              <div style={{ fontSize:11,fontWeight:600,letterSpacing:"0.06em",color:"var(--text-muted)" }}>TYPICAL TOOLS</div>
+              <div style={{ fontSize:11,fontWeight:600,letterSpacing:"0.06em",color:"var(--accent)" }}>NEO TARIFF</div>
+            </div>
+            {comparisonRows.map((r,i)=>(
+              <div key={i} className="comparison-row sans">
+                <div style={{ fontSize:13.5,fontWeight:600 }}>{r.cap}</div>
+                <div style={{ fontSize:13.5,color:"var(--text-muted)",lineHeight:1.6 }}>{r.market}</div>
+                <div style={{ fontSize:13.5,color:"var(--text-secondary)",lineHeight:1.6 }}>{r.neo}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ AI Approach ══ */}
+      <section id="ai-approach" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="ai-s" data-animate className={`anim ${isV("ai-s")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:72 }}>
+            <div>
+              <div className="section-label">Our Approach to AI</div>
+              <h2 style={{ fontSize:34,fontWeight:600,lineHeight:1.2,letterSpacing:"-0.02em",marginBottom:22 }}>We don't ask AI to interpret tariff law.</h2>
+              <p className="sans" style={{ fontSize:15,lineHeight:1.8,color:"var(--text-secondary)",marginBottom:22 }}>The tariff engine is not an LLM. It's a deterministic rules engine backed by a tested tariff graph. We use AI in supporting roles — helping humans get into the tariff graph faster. The actual duty decisions are deterministic, test-backed, and traceable.</p>
+              <div style={{ padding:"22px 26px",background:"var(--bg-card)",border:"1px solid var(--border)",borderLeft:"3px solid var(--accent)" }}>
+                <p className="serif" style={{ fontSize:16,lineHeight:1.65,fontStyle:"italic",color:"var(--text-primary)" }}>"We use AI to help humans get into and understand the tariff graph faster. The actual duty decisions are deterministic, test-backed, and traceable."</p>
+              </div>
+            </div>
+            <div style={{ display:"flex",flexDirection:"column",gap:18,paddingTop:36 }}>
+              <div style={{ padding:"28px 24px",border:"1px solid var(--border)",background:"var(--bg-card)" }}>
+                <div className="sans" style={{ fontSize:12,fontWeight:600,color:"var(--green)",marginBottom:10,letterSpacing:"0.04em" }}>THE CORE ENGINE</div>
+                <div className="sans" style={{ fontSize:14,fontWeight:600,marginBottom:8 }}>Deterministic & Test-Backed</div>
+                <p className="sans" style={{ fontSize:13,color:"var(--text-secondary)",lineHeight:1.65 }}>PDF parsing, cross-reference scanning, rule construction, evaluation — all deterministic regex, pattern matching, and tree traversal. No LLM in the decision path. Regression-tested against real-world scenarios.</p>
+              </div>
+              <div style={{ padding:"28px 24px",border:"1px solid var(--border)",background:"var(--bg-card)" }}>
+                <div className="sans" style={{ fontSize:12,fontWeight:600,color:"var(--accent)",marginBottom:10,letterSpacing:"0.04em" }}>SUPPORTING ROLES</div>
+                <div className="sans" style={{ fontSize:14,fontWeight:600,marginBottom:8 }}>AI as Assistant, Not Decision-Maker</div>
+                <p className="sans" style={{ fontSize:13,color:"var(--text-secondary)",lineHeight:1.65 }}>AI maps product descriptions to candidate HTS codes (with reasoning). Summarizes complex outputs. Provides confidence assessments. Never influences the deterministic pipeline.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ FAQ ══ */}
+      <section id="faq" style={{ padding:"var(--section-pad)" }}>
+        <div style={{ maxWidth:780,margin:"0 auto" }}>
+          <div id="fq-h" data-animate className={`anim ${isV("fq-h")?"vis":""}`} style={{ marginBottom:40,textAlign:"center" }}>
+            <div className="section-label" style={{ textAlign:"center" }}>FAQ</div>
+            <h2 style={{ fontSize:34,fontWeight:600,letterSpacing:"-0.02em" }}>Common questions</h2>
+          </div>
+          <div id="fq-l" data-animate className={`anim ${isV("fq-l")?"vis":""}`}>
+            {faqs.map((f,i)=>(
+              <div key={i} className="faq-item">
+                <div className="faq-q sans" onClick={()=>setActiveFaq(activeFaq===i?null:i)}>
+                  <span style={{ fontSize:15.5,fontWeight:500 }}>{f.q}</span>
+                  <span style={{ color:"var(--accent)",fontSize:20,transform:activeFaq===i?"rotate(45deg)":"rotate(0)",transition:"transform 0.3s",flexShrink:0 }}>+</span>
+                </div>
+                <div className={`faq-a sans ${activeFaq===i?"open":""}`}><p style={{ fontSize:14.5,lineHeight:1.7,color:"var(--text-secondary)" }}>{f.a}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <NeoDivider />
+
+      {/* ══ CTA ══ */}
+      <section id="cta" style={{ padding:"100px 48px",textAlign:"center" }}>
+        <div style={{ maxWidth:680,margin:"0 auto" }}>
+          <div id="cta-b" data-animate className={`anim ${isV("cta-b")?"vis":""}`}>
+            <div className="section-label" style={{ textAlign:"center" }}>Get Started</div>
+            <h2 style={{ fontSize:42,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:18 }}>Turn tariff complexity into<br/><span style={{ color:"var(--accent)" }}>clear, auditable answers.</span></h2>
+            <p className="sans" style={{ fontSize:16,lineHeight:1.7,color:"var(--text-secondary)",marginBottom:36 }}>Whether you need an API for your systems, a platform for your teams, or expert analysis for a specific engagement — Neo Tariff delivers tariff intelligence you can defend.</p>
+            <div style={{ display:"flex",gap:14,justifyContent:"center" }}>
+              <button className="cta-btn sans">Request a Demo <ArrowIcon /></button>
+              <a href="/pricing" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>See Pricing</a>
+              <a href="/technology" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>How It Works</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <NeoFooter />
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Overview />);
+</script>
+</body>
+</html>

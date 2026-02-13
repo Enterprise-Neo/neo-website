@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neo Tariff — Platform</title>
+<link rel="stylesheet" href="/shared/styles.css">
+<style>html,body{margin:0;padding:0;background:#0C0E1A;}</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="/shared/config.js"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const NeoTariffPlatform = () => {
+  const [scrollY, setScrollY] = useState(0);
+  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [expandedFeature, setExpandedFeature] = useState(0);
+  const [productOpen, setProductOpen] = useState(false);
+  const [resourcesOpen, setResourcesOpen] = useState(false);
+
+  useEffect(() => { const h=()=>setScrollY(window.scrollY); window.addEventListener("scroll",h); return()=>window.removeEventListener("scroll",h); }, []);
+  useEffect(() => {
+    const o = new IntersectionObserver((entries)=>{entries.forEach((e)=>{if(e.isIntersecting)setVisibleSections((p)=>new Set([...p,e.target.id]));});},{threshold:0.1,rootMargin:"0px 0px -30px 0px"});
+    document.querySelectorAll("[data-animate]").forEach((el)=>o.observe(el)); return()=>o.disconnect();
+  }, []);
+  useEffect(() => { const h=(e)=>{if(!e.target.closest('.dropdown-product'))setProductOpen(false);if(!e.target.closest('.dropdown-resources'))setResourcesOpen(false);}; document.addEventListener('click',h); return()=>document.removeEventListener('click',h); }, []);
+  const isVisible = (id) => visibleSections.has(id);
+
+  const essentials = [
+    { id:"tariff-simulator", title:"Tariff Simulator", subtitle:"Scenario-true landed cost for any shipment", desc:"The Tariff Simulator is the primary interface for single-entry duty calculations. Enter an HTS code, country of origin, import date, declared value, and quantity — and get back the complete duty picture instantly. The engine evaluates base MFN rates alongside all applicable Chapter 99 rules (Section 301, Section 232, IEEPA reciprocal duties) with automatic handling of supersession, exclusion, and priority logic.", keyFeatures:["Compute base and additional duties per shipment, including Sections 232 and 301","Compare duty impact by origin under a shared HTS and value","Export clear duty breakdowns for quotes, approvals, and documentation","Toggle general conditions: donation, informational material, personal baggage, civil aircraft","Rates by Country comparison to evaluate alternative origins side-by-side"], tags:["Scenario-true","HTS + 232/301 aware","No setup required"], screenshotCaption:"Tariff Simulator calculating duties for a cotton t-shirt (HTS 6109.10.00.12) imported from China. The result shows a $1,440 total landed cost with a 44% net effective rate — broken down across base duty (16.5%), 9903.01.24 (10%), 9903.01.25 (10%), and 9903.88.15 (7.5%).", gradient:"linear-gradient(135deg, #2D2A6E 0%, #1A1845 100%)", highlight:"44% net effective rate — 4 duty components evaluated automatically" },
+    { id:"bulk-simulator", title:"Bulk Tariff Simulator", subtitle:"Portfolio-wide tariff exposure from your data", desc:"Upload entry histories or SKU catalogs via CSV and run the same deterministic tariff engine across your entire portfolio. The Bulk Simulator compares as-reported duties against the latest tariff schedule, surfacing rate deltas and quantifying exposure. Use it for portfolio audits, identifying overcharges, or modeling the impact of tariff changes across thousands of SKUs.", keyFeatures:["Ingest thousands of records via CSV or system exports for calculation","Run portfolio-wide duty calculations with per-line summaries and exceptions","Aggregate exposure by origin, HTS, description, or date to prioritize work","As-Reported vs. Latest Schedule comparison with delta columns (Δ$ and Δ%)","Detailed item view with record info, cost summary, and duty breakdown per line","Rate Scenarios tab for modeling alternative tariff policies"], tags:["CSV / ERP uploads","Portfolio analytics","Scenario modeling"], screenshotCaption:"Bulk Tariff Simulator processing 120 apparel records. The grid shows per-line results with As-Reported vs. Latest Schedule columns side by side. Red delta values highlight where current tariffs deviate from reported rates.", gradient:"linear-gradient(135deg, #1A2745 0%, #162040 100%)", highlight:"$28,171 total portfolio delta identified across 120 records" },
+    { id:"hts-browser-schedule", title:"HTS Documentation Browser — Schedule View", subtitle:"Navigate HTS schedules, notes, and revisions", desc:"Explore the full U.S. Harmonized Tariff Schedule through Neo Tariff's structured tariff graph. The Schedule view shows codes by chapter and section with general, special, and column 2 rates. Click any code to see its reciprocal rate details — including rule scope, conditions, effective dates, deference chains, and defining notes.", keyFeatures:["Complete U.S. HTS schedule coverage with structured navigation","General and special duty rates alongside controlling notes","Browse notes and amendments by chapter, section, and revision","Reciprocal Rate Details panel: HTS code, description, location, program, program type, role, status, duty rates, rule conditions, and timeline","Version selector to compare across HTS revisions (e.g., 2026 Basic, 2025 Rev 32)","Popular section quick filters for common trade areas"], tags:["Official USITC source","Notes + schedule views","Revision-aware"], screenshotCaption:"HTS Documentation Browser showing Chapter 99, Subchapter 3 (temporary legislation and modifications). The schedule view lists reciprocal trade rules with the detail panel showing reciprocal rate details for 9903.01.24.", gradient:"linear-gradient(135deg, #1E2A4A 0%, #141D38 100%)", highlight:"65 of 691 active rules shown — 359 deprecated rules hidden by default" },
+    { id:"hts-browser-notes", title:"HTS Documentation Browser — Notes View", subtitle:"Deep-dive into U.S. Notes, chapter notes, and legal text", desc:"The Notes view surfaces the legal text that drives tariff rules — U.S. Notes, chapter notes, subchapter notes, and general notes. Navigate a structured tree of all 4,406+ notes across the HTS. Each note shows its content, type, level, and referenced HTS codes. This is where the \"defining notes\" behind Chapter 99 rules live — the actual legal language that determines which products are subject to which duties.", keyFeatures:["Navigate 4,406+ notes via structured tree (U.S. Notes, chapter notes, general notes)","Full note content with referenced HTS codes linked inline","Note details panel: type, level, referenced codes, and chapter 99 indicators","Scroll through notes at any granularity — from note 1 down to sub-sub-items like 19-a-iii","Load earlier/later notes on demand within any chapter or subchapter"], tags:["Legal text","Note navigation","Cross-referenced"], screenshotCaption:"HTS Notes view for Chapter 99, showing U.S. Notes (38 total). Note 19-a-iii is expanded, displaying the full legal text for derivative aluminum products with referenced HTS codes.", gradient:"linear-gradient(135deg, #1B2840 0%, #131D35 100%)", highlight:"4,406 notes structured and cross-referenced across the full HTS" },
+  ];
+
+  const intelligence = [
+    { id:"scenario-dashboard", title:"Scenario Dashboard", premium:true, subtitle:"Portfolio duty analytics and scenario optimization", desc:"Turn bulk tariff simulations into executive-ready scenario analysis. The Scenario Dashboard connects multiple bulk simulation datasets into a single analytical workspace. Track current duty spend, compare baseline vs. optimized scenarios, and quantify how tariff changes or sourcing decisions move your P&L over time.", keyFeatures:["Connect bulk-simulation datasets into one scenario dashboard","Compare current vs. future or optimized tariff scenarios over time","Drill into drivers with current, future, time-series, and granular views","Quantify P&L impact of tariff policy changes or sourcing shifts"], tags:["Scenario comparison","P&L impact","Executive-ready"], screenshotCaption:"Scenario Dashboard providing portfolio duty analytics and executive scenario views", gradient:"linear-gradient(135deg, #1B2D4A 0%, #132240 100%)", highlight:"Connect multiple simulation datasets for cross-scenario comparison" },
+    { id:"alternate-vendor", title:"Alternate Vendor Discovery", premium:true, subtitle:"Find alternative suppliers by profile or capability", desc:"Search for alternative vendors using two discovery modes: Business Profile (find vendors with a similar fingerprint to a reference company) and Product Capability (find vendors by specific product capability). Results include a fit score out of 100, company summary, capabilities, industry classifications, and specs.", keyFeatures:["Two search modes: Business Profile similarity and Product Capability match","Fit Score (0-100) ranking for each result based on match quality","Filter results by country, region, city, and capability facets","Industry classifications and product specs for each vendor","Pagination across large result sets (587+ results typical)"], tags:["Supplier intelligence","Fit scoring","Country filtering"], screenshotCaption:"Alternate Vendor search for companies similar to 'Bando Global' filtered to Japan. 587 results returned with fit scores and capability matching.", gradient:"linear-gradient(135deg, #2A1E4A 0%, #1D1540 100%)", highlight:"587 alternative vendors identified with fit scoring and capability matching" },
+    { id:"news-insights", title:"News & Insights", premium:false, subtitle:"Tariff-related news and HTSUS revision tracking", desc:"Stay current with curated tariff-related news from global sources alongside a real-time log of HTSUS revision releases. The News tab aggregates articles from international business publications, filtered by default to tariff-relevant content. The sidebar tracks every HTSUS revision release with dates.", keyFeatures:["Curated news feed from global sources with tariff relevance filtering","Tariff-Related Perspectives tab for opinion and analysis pieces","Useful Links sidebar: HTSUS, Federal Register, CROSS, CFR Title 19, USTR","Latest Updates sidebar showing every HTSUS revision release with dates","Search and filter by keyword, category, or time range"], tags:["Curated news","Revision tracking","Regulatory alerts"], screenshotCaption:"News & Insights showing tariff news with articles from global sources. Sidebar shows HTSUS revisions from 2025 Rev 25 through 2026 Rev 0.", gradient:"linear-gradient(135deg, #1A2842 0%, #131D35 100%)", highlight:"Real-time news aggregation paired with HTSUS revision tracking" },
+  ];
+
+  const allFeatures = [...essentials, ...intelligence];
+
+  const renderFeatureCard = (feature, idx) => (
+    <section key={idx} id={feature.id} style={{ padding:"48px 48px" }}>
+      <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div id={`f-${idx}`} data-animate className={`feature-card anim ${isVisible(`f-${idx}`)?"vis":""}`}>
+          <div className="img-placeholder" style={{ height:380, background:feature.gradient, position:"relative" }}>
+            <div style={{ textAlign:"center", padding:"0 60px", zIndex:1, maxWidth:700 }}>
+              <div style={{ width:56, height:56, borderRadius:12, background:"rgba(108,99,255,0.15)", border:"1px solid rgba(108,99,255,0.25)", display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:16 }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--accent)" strokeWidth="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)"/></svg>
+              </div>
+              <p className="sans" style={{ fontSize:12.5, color:"rgba(255,255,255,0.45)", lineHeight:1.55 }}>{feature.screenshotCaption}</p>
+            </div>
+            <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse at 50% 50%, rgba(108,99,255,0.06) 0%, transparent 60%)" }} />
+          </div>
+          <div style={{ padding:"36px 40px 40px" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
+              <h3 style={{ fontSize:28, fontWeight:600, letterSpacing:"-0.015em" }}>{feature.title}</h3>
+              {feature.premium && <span className="mono" style={{ fontSize:9, letterSpacing:"0.1em", color:"var(--orange)", background:"rgba(251,191,36,0.08)", border:"1px solid rgba(251,191,36,0.2)", padding:"3px 9px" }}>Premium Access</span>}
+            </div>
+            <p className="sans" style={{ fontSize:16, fontWeight:500, color:"var(--accent)", marginBottom:14 }}>{feature.subtitle}</p>
+            <p className="sans" style={{ fontSize:14.5, lineHeight:1.8, color:"var(--text-secondary)", marginBottom:24, maxWidth:800 }}>{feature.desc}</p>
+            <div style={{ padding:"14px 20px", background:"var(--accent-subtle)", borderLeft:"3px solid var(--accent)", marginBottom:24, display:"inline-block" }}>
+              <span className="mono" style={{ fontSize:12, color:"var(--accent)", letterSpacing:"0.03em" }}>{feature.highlight}</span>
+            </div>
+            <div style={{ marginBottom:20 }}>
+              <div className="mono" style={{ fontSize:10.5, color:"var(--text-muted)", letterSpacing:"0.1em", marginBottom:12 }}>KEY FEATURES</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                {feature.keyFeatures.map((kf, j) => (
+                  <div key={j} className="sans" style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"10px 14px", background:"rgba(108,99,255,0.03)", borderLeft:"2px solid rgba(108,99,255,0.15)" }}>
+                    <span style={{ color:"var(--accent)", fontSize:11, marginTop:3, flexShrink:0 }}>→</span>
+                    <span style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.55 }}>{kf}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+              {feature.tags.map((t, j) => (
+                <span key={j} className="mono" style={{ fontSize:10.5, padding:"4px 10px", border:"1px solid var(--border)", color:"var(--text-muted)", letterSpacing:"0.03em" }}>{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  return (
+    <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"#0C0E1A", color:"#E4E2DD", minHeight:"100vh" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--accent:#6C63FF;--accent-bright:#7B73FF;--accent-dim:#5A52E0;--accent-glow:rgba(108,99,255,0.15);--accent-subtle:rgba(108,99,255,0.08);--bg:#0C0E1A;--bg-card:#131627;--bg-card-hover:#181C32;--bg-elevated:#1A1E34;--text-primary:#E4E2DD;--text-secondary:#9B99A3;--text-muted:#6B697A;--border:#252840;--border-light:#1E2038;--green:#4ADE80;--orange:#FBBF24}
+        .sans{font-family:'DM Sans',-apple-system,sans-serif}.mono{font-family:'JetBrains Mono',monospace}.serif{font-family:'Source Serif 4',Georgia,serif}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+        .anim{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease}.anim.vis{opacity:1;transform:translateY(0)}
+        .section-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+        .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto}
+        .nav-link{color:var(--text-secondary);text-decoration:none;font-size:13.5px;transition:color 0.2s}.nav-link:hover{color:var(--text-primary)}
+        .grain{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;opacity:0.025;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+        .feature-card{border:1px solid var(--border);background:var(--bg-card);overflow:hidden}
+        .img-placeholder{display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+        .img-placeholder::after{content:'';position:absolute;inset:0;border:1px solid rgba(108,99,255,0.1);pointer-events:none}
+        .cta-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 30px;background:var(--accent);color:#fff;text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.02em;border:none;cursor:pointer;transition:all 0.3s;border-radius:2px}
+        .cta-btn:hover{background:var(--accent-bright);transform:translateY(-1px);box-shadow:0 4px 24px rgba(108,99,255,0.35)}
+        .cta-btn-outline{background:transparent;border:1px solid var(--accent);color:var(--accent)}.cta-btn-outline:hover{background:var(--accent-subtle)}
+        .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:rgba(19,22,39,0.98);border:1px solid var(--border);backdrop-filter:blur(16px);padding:12px 0;min-width:200px;opacity:0;pointer-events:none;transition:all 0.2s ease;transform:translateX(-50%) translateY(4px);z-index:200}
+        .dropdown-menu.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+        .dropdown-menu a,.dropdown-menu .dd-label{display:block;padding:8px 20px;font-size:13px;color:var(--text-secondary);text-decoration:none;transition:all 0.15s}
+        .dropdown-menu a:hover{color:var(--text-primary);background:var(--accent-subtle)}
+        .dropdown-menu .dd-label{font-size:10px;font-weight:600;letter-spacing:0.1em;color:var(--text-muted);padding:10px 20px 4px;cursor:default}
+      `}</style>
+      <div className="grain"/>
+
+      {/* ── Nav ── */}
+      <nav className="sans" style={{ position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"0 48px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(12,14,26,0.94)",backdropFilter:"blur(14px)",borderBottom:"1px solid rgba(37,40,64,0.6)" }}>
+        <div style={{ display:"flex",alignItems:"center",gap:28 }}>
+          <a href="/" style={{ textDecoration:"none",display:"flex",alignItems:"center",gap:8 }}>
+            <div style={{ width:26,height:26,borderRadius:6,background:"var(--accent)",display:"flex",alignItems:"center",justifyContent:"center" }}><span style={{ color:"#fff",fontSize:13,fontWeight:800,fontFamily:"'DM Sans',sans-serif" }}>N</span></div>
+            <span style={{ color:"var(--text-primary)",fontSize:16,fontWeight:700,letterSpacing:"-0.01em" }}>Neo</span><span style={{ color:"var(--text-muted)",fontSize:16,fontWeight:300 }}>Tariff</span>
+          </a>
+          <div style={{ width:1,height:18,background:"var(--border)" }}/><span className="mono" style={{ fontSize:10,color:"var(--text-muted)",letterSpacing:"0.08em" }}>by Enterprise-Neo</span>
+        </div>
+        <div style={{ display:"flex",alignItems:"center",gap:0 }}>
+          <div className="dropdown-product" style={{ position:"relative" }}>
+            <button onClick={(e)=>{e.stopPropagation();setProductOpen(!productOpen);setResourcesOpen(false);}} className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:600,color:"var(--text-primary)",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:4,borderBottom:"2px solid var(--accent)",marginBottom:-1 }}>Product <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ transition:"transform 0.2s",transform:productOpen?"rotate(180deg)":"" }}><path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+            <div className={`dropdown-menu ${productOpen?"open":""}`}><a href="/platform" style={{ color:"var(--accent)" }}>Platform</a><a href="/api">REST API</a><a href="/sdk">Python SDK</a></div>
+          </div>
+          <a href="/technology" className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:400,color:"var(--text-secondary)",textDecoration:"none" }}>Technology</a>
+          <a href="/pricing" className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:400,color:"var(--text-secondary)",textDecoration:"none" }}>Pricing</a>
+          <a href="/company" className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:400,color:"var(--text-secondary)",textDecoration:"none" }}>Company</a>
+          <div className="dropdown-resources" style={{ position:"relative" }}>
+            <button onClick={(e)=>{e.stopPropagation();setResourcesOpen(!resourcesOpen);setProductOpen(false);}} className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:400,color:"var(--text-secondary)",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:4 }}>Resources <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ transition:"transform 0.2s",transform:resourcesOpen?"rotate(180deg)":"" }}><path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+            <div className={`dropdown-menu ${resourcesOpen?"open":""}`}><div className="dd-label sans">DEVELOPER DOCS</div><a href="https://tariff-data-dev.enterprise-neo.com/docs" target="_blank">Swagger API Docs ↗</a><a href="https://pypi.org/project/neo-tariff/" target="_blank">PyPI: neo-tariff ↗</a></div>
+          </div>
+          <div style={{ width:1,height:18,background:"var(--border)",margin:"0 10px" }}/>
+          <a href="https://enterprise-neo.com/login" className="sans" style={{ padding:"8px 14px",fontSize:13,fontWeight:400,color:"var(--text-secondary)",textDecoration:"none" }}>Sign In</a>
+          <a href="https://enterprise-neo.com/register" className="cta-btn sans" style={{ padding:"8px 20px",fontSize:12.5,borderRadius:2,textDecoration:"none" }}>Get Started</a>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ padding:"140px 48px 64px", position:"relative" }}>
+        <div style={{ position:"absolute", top:0, right:0, width:"55%", height:"100%", background:"radial-gradient(ellipse at 65% 35%, rgba(108,99,255,0.06) 0%, transparent 50%)", pointerEvents:"none" }} />
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>Product Tour</div>
+          <h1 style={{ fontSize:52, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>Platform Features</h1>
+          <p className="sans" style={{ fontSize:17, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:640, marginBottom:32, animation:"fadeUp 0.6s ease 0.3s both" }}>Every tool in the Neo Tariff platform is powered by the same versioned tariff graph and deterministic calculation engine. From single-entry simulations to portfolio analytics and supplier discovery — here's what you get.</p>
+          <div className="sans" style={{ display:"flex", gap:20, fontSize:13, color:"var(--text-muted)", animation:"fadeUp 0.6s ease 0.4s both" }}>
+            <span>7 tools</span><span style={{ color:"var(--border)" }}>·</span><span>4 tariff management essentials</span><span style={{ color:"var(--border)" }}>·</span><span>3 market & supplier intelligence</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* Jump nav */}
+      <section style={{ padding:"16px 48px", position:"sticky", top:60, zIndex:90, background:"rgba(12,14,26,0.92)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--border-light)" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto", display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center", overflowX:"auto" }}>
+          {[
+            { id:"tariff-simulator", short:"Tariff Simulator" },
+            { id:"bulk-simulator", short:"Bulk Simulator" },
+            { id:"hts-browser-schedule", short:"HTS Browser" },
+            { id:"hts-browser-notes", short:"HTS Notes" },
+            { id:"scenario-dashboard", short:"Scenario Dashboard" },
+            { id:"alternate-vendor", short:"Vendor Discovery" },
+            { id:"news-insights", short:"News & Insights" },
+          ].map((item, i) => (
+            <a key={i} href={`#${item.id}`} className="sans" style={{ padding:"5px 12px", fontSize:11.5, fontWeight:500, color:"var(--text-muted)", textDecoration:"none", transition:"all 0.2s", borderRadius:2, lineHeight:"1.4", whiteSpace:"nowrap" }}>{item.short}</a>
+          ))}
+        </div>
+      </section>
+
+      {/* Tariff Management Essentials */}
+      <section style={{ padding:"64px 48px 0" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div id="ess-h" data-animate className={`anim ${isVisible("ess-h")?"vis":""}`} style={{ marginBottom:48 }}>
+            <div className="mono" style={{ fontSize:10.5, letterSpacing:"0.12em", color:"var(--accent)", marginBottom:8, padding:"3px 10px", border:"1px solid rgba(108,99,255,0.2)", display:"inline-block" }}>TARIFF MANAGEMENT ESSENTIALS</div>
+            <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginTop:14 }}>Core tools for tariff calculation and HTS navigation</h2>
+            <p className="sans" style={{ fontSize:15, color:"var(--text-secondary)", marginTop:10, maxWidth:580, lineHeight:1.7 }}>The foundation of the Neo Tariff platform — deterministic duty calculations, bulk portfolio analysis, and structured HTS documentation browsing.</p>
+          </div>
+        </div>
+      </section>
+
+      {essentials.map((f, i) => renderFeatureCard(f, i))}
+
+      <div className="divider" style={{ maxWidth:1180, marginTop:32 }} />
+
+      {/* Market & Supplier Intelligence */}
+      <section style={{ padding:"64px 48px 0" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div id="int-h" data-animate className={`anim ${isVisible("int-h")?"vis":""}`} style={{ marginBottom:48 }}>
+            <div className="mono" style={{ fontSize:10.5, letterSpacing:"0.12em", color:"var(--orange)", marginBottom:8, padding:"3px 10px", border:"1px solid rgba(251,191,36,0.2)", display:"inline-block" }}>MARKET & SUPPLIER INTELLIGENCE</div>
+            <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginTop:14 }}>Analytics, scenarios, and supplier discovery</h2>
+            <p className="sans" style={{ fontSize:15, color:"var(--text-secondary)", marginTop:10, maxWidth:580, lineHeight:1.7 }}>Turn tariff data into strategic intelligence — scenario modeling, portfolio analytics, alternative sourcing, and market awareness.</p>
+          </div>
+        </div>
+      </section>
+
+      {intelligence.map((f, i) => renderFeatureCard(f, i + essentials.length))}
+
+      <div className="divider" style={{ maxWidth:1180, marginTop:32 }} />
+
+      {/* Powered by section */}
+      <section style={{ padding:"80px 48px" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div id="pwrd" data-animate className={`anim ${isVisible("pwrd")?"vis":""}`} style={{ textAlign:"center" }}>
+            <div className="section-label" style={{ textAlign:"center" }}>What Powers It All</div>
+            <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginBottom:36 }}>Every tool runs on the same engine.</h2>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:20, maxWidth:900, margin:"0 auto" }}>
+              {[
+                { title:"Versioned Tariff Graph", desc:"Every HTS release ingested, parsed, and stored as a distinct version. Codes, rates, conditions, Chapter 99 rules, notes, and cross-references — all structured and queryable." },
+                { title:"Deterministic Duty Engine", desc:"Rules-based computation handles supersession, priority, exclusion, material splitting, and transit windows. No LLM in the decision path. Full legal citations attached to every answer." },
+                { title:"Scenario Framework", desc:"From single entries to 1,000-line bulk analysis. Model policy changes, country shifts, and supplier alternatives with the same engine, same accuracy, same explainability." },
+              ].map((p, i) => (
+                <div key={i} style={{ padding:"32px 26px", border:"1px solid var(--border)", background:"var(--bg-card)", textAlign:"left" }}>
+                  <div className="mono" style={{ fontSize:10.5, color:"var(--accent)", letterSpacing:"0.08em", marginBottom:14 }}>0{i+1}</div>
+                  <h3 className="sans" style={{ fontSize:16, fontWeight:600, marginBottom:10 }}>{p.title}</h3>
+                  <p className="sans" style={{ fontSize:13, lineHeight:1.65, color:"var(--text-secondary)" }}>{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* CTA */}
+      <section style={{ padding:"96px 48px", textAlign:"center" }}>
+        <div style={{ maxWidth:600, margin:"0 auto" }}>
+          <div id="cta" data-animate className={`anim ${isVisible("cta")?"vis":""}`}>
+            <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Ready to see it in action?</h2>
+            <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Get a guided walkthrough of the Neo Tariff platform tailored to your team's use case.</p>
+            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+              <button className="cta-btn sans">Request a Demo</button>
+              <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Explore the API</a>
+              <a href="/pricing" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>See Pricing</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="sans" style={{ padding:"48px 48px 36px",borderTop:"1px solid var(--border)" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div style={{ display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",gap:40,marginBottom:40 }}>
+            <div><div style={{ display:"flex",alignItems:"center",gap:6,marginBottom:16 }}><div style={{ width:22,height:22,borderRadius:5,background:"var(--accent)",display:"flex",alignItems:"center",justifyContent:"center" }}><span style={{ color:"#fff",fontSize:11,fontWeight:800 }}>N</span></div><span style={{ fontSize:14,fontWeight:700 }}>Neo Tariff</span></div><p style={{ fontSize:12.5,color:"var(--text-muted)",lineHeight:1.65,maxWidth:260 }}>Tariff intelligence engine by Enterprise-Neo. Precise, explainable duties for any scenario.</p></div>
+            <div><div style={{ fontSize:10.5,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:16 }}>PRODUCT</div><div style={{ display:"flex",flexDirection:"column",gap:10 }}><a href="/platform" className="nav-link" style={{ fontSize:12.5 }}>Platform</a><a href="/api" className="nav-link" style={{ fontSize:12.5 }}>REST API</a><a href="/sdk" className="nav-link" style={{ fontSize:12.5 }}>Python SDK</a></div></div>
+            <div><div style={{ fontSize:10.5,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:16 }}>LEARN</div><div style={{ display:"flex",flexDirection:"column",gap:10 }}><a href="/technology" className="nav-link" style={{ fontSize:12.5 }}>Technology</a><a href="/pricing" className="nav-link" style={{ fontSize:12.5 }}>Pricing</a></div></div>
+            <div><div style={{ fontSize:10.5,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:16 }}>DEVELOPERS</div><div style={{ display:"flex",flexDirection:"column",gap:10 }}><a href="https://tariff-data-dev.enterprise-neo.com/docs" className="nav-link" style={{ fontSize:12.5 }}>Swagger Docs ↗</a><a href="https://pypi.org/project/neo-tariff/" className="nav-link" style={{ fontSize:12.5 }}>PyPI Package ↗</a></div></div>
+            <div><div style={{ fontSize:10.5,fontWeight:600,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:16 }}>COMPANY</div><div style={{ display:"flex",flexDirection:"column",gap:10 }}><a href="/company" className="nav-link" style={{ fontSize:12.5 }}>About</a><a href="https://enterprise-neo.com" className="nav-link" style={{ fontSize:12.5 }}>enterprise-neo.com ↗</a></div></div>
+          </div>
+          <div style={{ borderTop:"1px solid var(--border-light)",paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+            <span style={{ fontSize:11.5,color:"var(--text-muted)" }}>© 2025 Enterprise-Neo. All rights reserved.</span>
+            <div style={{ display:"flex",gap:20 }}><a href="#" className="nav-link" style={{ fontSize:11.5 }}>Privacy</a><a href="#" className="nav-link" style={{ fontSize:11.5 }}>Terms</a></div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<NeoTariffPlatform />);
+</script>
+</body>
+</html>

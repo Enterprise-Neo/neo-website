@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neo Tariff — Python SDK</title>
+<link rel="stylesheet" href="/shared/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel" src="/shared/components.js"></script>
+<script type="text/babel">
+const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+const { useState, useEffect } = React;
+
+const NeoTariffSDK = () => {
+        const [expandedGroup, setExpandedGroup] = useState("rates");
+
+  const isV = useScrollAnimation();
+const resources = [
+    { id:"rates", title:"Rates", desc:"Tariff duty calculations — single entries, batch processing, and multi-country comparisons. The core of the SDK.", methods:[
+      { name:"evaluate_entry", desc:"Calculate total duties for a single import entry with all Chapter 99 rules.", maps:"POST /rates/entry" },
+      { name:"evaluate_entries", desc:"Process up to 1,000 entries in parallel with per-entry overrides.", maps:"POST /rates/entries" },
+      { name:"evaluate_multicountry", desc:"Calculate duties for one product from multiple countries of origin.", maps:"POST /rates/multicountry" },
+    ]},
+    { id:"search", title:"Search", desc:"Find HTS codes by code prefix, description text, or natural language. Includes autocomplete and full-text document search.", methods:[
+      { name:"hts", desc:"Search HTS codes by code prefix or description text.", maps:"GET /search/hts" },
+      { name:"autocomplete_hts", desc:"Lightweight autocomplete for HTS code lookup.", maps:"GET /search/autocomplete/hts" },
+      { name:"hts_by_description", desc:"Find HTS codes matching a natural language description.", maps:"GET /search/hts/by-description" },
+      { name:"hts_docs", desc:"Unified search across all HTS documentation types.", maps:"GET /search/hts-docs" },
+      { name:"semantic_context", desc:"AI-powered semantic search across notes and components.", maps:"GET /search/semantic/context" },
+    ]},
+    { id:"context", title:"Context", desc:"HTS code details, schedule navigation, country data, trade programs, notes, and materials — everything needed to understand the tariff landscape.", methods:[
+      { name:"get_hts_code", desc:"Comprehensive context for a single HTS code.", maps:"GET /context/hts/{hts_code}" },
+      { name:"get_hts_details", desc:"Description, rates, units in a flat structure.", maps:"GET /context/hts/{hts_code}/details" },
+      { name:"get_hts_hub", desc:"Consolidated context hub with selectable sections.", maps:"GET /context/hts/{hts_code}/hub" },
+      { name:"list_sections", desc:"All 22 HTS sections with metadata.", maps:"GET /context/hts/sections" },
+      { name:"list_chapters_by_section", desc:"Chapters within a specific HTS section.", maps:"GET /context/hts/sections/{id}/chapters" },
+      { name:"list_countries", desc:"All countries with ISO codes and program eligibility.", maps:"GET /context/countries" },
+      { name:"get_country", desc:"Detailed reference for a specific country.", maps:"GET /context/countries/{code}" },
+    ]},
+    { id:"compare", title:"Compare", desc:"Version-to-version diffs, cross-country tariff comparisons, and HTS code change history.", methods:[
+      { name:"tariff", desc:"Compare tariff duties across multiple countries.", maps:"POST /compare/tariff" },
+      { name:"hts_rates", desc:"Compare duty rates between two HTS revisions.", maps:"GET /compare/hts/{code}" },
+      { name:"sources", desc:"Comprehensive diff between two HTS source versions.", maps:"GET /compare/sources" },
+    ]},
+    { id:"versions", title:"Versions", desc:"List all available HTS source versions with metadata, effective dates, and active status.", methods:[
+      { name:"list", desc:"All HTS revisions available in the system.", maps:"GET /versions" },
+    ]},
+  ];
+
+  const features = [
+    { title:"Typed Responses", desc:"Every method returns Pydantic-validated response models. No untyped dicts.", icon:"📐" },
+    { title:"Sync + Async", desc:"NeoTariffClient for sync, AsyncNeoTariffClient for async. Identical API surface.", icon:"⚡" },
+    { title:"Automatic Retries", desc:"Configurable retry with exponential backoff on transient failures.", icon:"🔄" },
+    { title:"Error Hierarchy", desc:"9 typed exception classes covering auth, validation, rate limit, and server errors.", icon:"🛡️" },
+    { title:"Batch Methods", desc:"evaluate_entries processes up to 1,000 entries per request.", icon:"📦" },
+    { title:"API Key Auth", desc:"Simple API key via constructor or NEOTARIFF_API_KEY environment variable.", icon:"🔑" },
+  ];
+
+  const errorClasses = [
+    { name:"NeoTariffError", desc:"Base for all SDK errors" },
+    { name:"NeoTariffHTTPError", desc:"Non-2xx HTTP response" },
+    { name:"AuthenticationError", desc:"401/403 — check your API key" },
+    { name:"NotFoundError", desc:"404 — resource not found" },
+    { name:"ValidationError", desc:"422 — request body failed validation" },
+    { name:"RateLimitError", desc:"429 — slow down" },
+    { name:"ServerError", desc:"500+ — server error" },
+    { name:"NeoTariffAPIError", desc:"2xx but success=False" },
+    { name:"NeoTariffConnectionError", desc:"Network/timeout errors" },
+  ];
+
+  return (
+    <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"#0C0E1A", color:"#E4E2DD", minHeight:"100vh" }}>
+      <NeoGrain />
+      <NeoNav activePage="sdk" />
+
+      {/* Hero */}
+      <section style={{ padding:"140px 48px 64px", position:"relative" }}>
+        <div style={{ position:"absolute", top:0, left:"30%", width:"40%", height:"100%", background:"radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)", pointerEvents:"none" }} />
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>Developer Reference</div>
+          <h1 style={{ fontSize:52, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>Python SDK</h1>
+          <p className="sans" style={{ fontSize:17, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:620, marginBottom:24, animation:"fadeUp 0.6s ease 0.3s both" }}>
+            Full API surface in a typed Python package. Sync and async clients, Pydantic response models, automatic retries, and batch methods. 5 resource groups, 15 typed response models.
+          </p>
+          <div style={{ padding:"14px 22px", background:"var(--bg-elevated)", border:"1px solid var(--border)", display:"inline-block", marginBottom:28, animation:"fadeUp 0.6s ease 0.35s both" }}>
+            <code className="mono" style={{ fontSize:14, color:"var(--accent)" }}>pip install neo-tariff</code>
+          </div>
+          <div style={{ display:"flex", gap:14, animation:"fadeUp 0.6s ease 0.4s both" }}>
+            <a href="https://pypi.org/project/neo-tariff/" target="_blank" className="cta-btn sans" style={{ textDecoration:"none" }}>View on PyPI <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></a>
+            <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>REST API Reference</a>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* SDK Features */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div id="feat" data-animate className={`anim ${isV("feat")?"vis":""}`}>
+            <div className="section-label">SDK Capabilities</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, marginTop:20 }}>
+              {features.map((f,i) => (
+                <div key={i} style={{ padding:"24px 22px", border:"1px solid var(--border)", background:"var(--bg-card)", transition:"all 0.3s" }}>
+                  <div style={{ fontSize:22, marginBottom:10 }}>{f.icon}</div>
+                  <div className="sans" style={{ fontSize:14, fontWeight:600, marginBottom:6 }}>{f.title}</div>
+                  <div className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", lineHeight:1.55 }}>{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* Resource Groups */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+          <div id="res-h" data-animate className={`anim ${isV("res-h")?"vis":""}`} style={{ marginBottom:32 }}>
+            <div className="section-label">Resource Groups</div>
+            <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginBottom:10 }}>5 resource groups. {resources.reduce((s,r)=>s+r.methods.length,0)} methods.</h2>
+            <p className="sans" style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.7, maxWidth:600 }}>Every SDK method maps 1:1 to a REST API endpoint. Typed inputs, Pydantic response models, and automatic error handling.</p>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            {resources.map((group, gi) => {
+              const isExp = expandedGroup === group.id;
+              return (
+                <div key={group.id} id={`r-${gi}`} data-animate className={`group-card anim ${isV(`r-${gi}`)?"vis":""} ${isExp?"expanded":""}`} style={{ transitionDelay:`${gi*0.03}s` }}>
+                  <div onClick={()=>setExpandedGroup(isExp?null:group.id)} style={{ padding:"22px 28px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+                      <span className="mono" style={{ fontSize:14, fontWeight:600, color:isExp?"var(--accent)":"var(--text-muted)", padding:"4px 10px", background:isExp?"rgba(108,99,255,0.08)":"transparent", border:"1px solid "+(isExp?"rgba(108,99,255,0.2)":"transparent"), transition:"all 0.3s" }}>client.{group.id}</span>
+                      <div>
+                        <h3 className="sans" style={{ fontSize:17, fontWeight:600, color:isExp?"var(--text-primary)":"var(--text-secondary)", transition:"color 0.3s" }}>{group.title}</h3>
+                        <p className="sans" style={{ fontSize:13, color:"var(--text-muted)", marginTop:3, lineHeight:1.5, maxWidth:500 }}>{group.desc}</p>
+                      </div>
+                    </div>
+                    <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                      <span className="mono" style={{ fontSize:12, color:isExp?"var(--accent)":"var(--text-muted)" }}>{group.methods.length} method{group.methods.length>1?"s":""}</span>
+                      <svg width="14" height="14" viewBox="0 0 14 14" style={{ transform:isExp?"rotate(180deg)":"rotate(0)", transition:"transform 0.3s" }}><path d="M3 5.5L7 9.5L11 5.5" stroke="var(--text-muted)" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg>
+                    </div>
+                  </div>
+                  {isExp && (
+                    <div style={{ padding:"0 28px 22px", paddingLeft:28 }}>
+                      <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                        {group.methods.map((m, mi) => (
+                          <div key={mi} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 14px", background:"var(--bg-elevated)", borderLeft:"2px solid rgba(108,99,255,0.15)" }}>
+                            <code className="mono" style={{ fontSize:12, color:"var(--accent)", flexShrink:0, marginTop:2 }}>.{m.name}()</code>
+                            <div style={{ flex:1 }}>
+                              <p className="sans" style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.5 }}>{m.desc}</p>
+                              <span className="mono" style={{ fontSize:10, color:"var(--text-muted)", marginTop:4, display:"inline-block" }}>→ {m.maps}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* Error Handling */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:860, margin:"0 auto" }}>
+          <div id="err" data-animate className={`anim ${isV("err")?"vis":""}`}>
+            <div className="section-label">Error Handling</div>
+            <h2 style={{ fontSize:28, fontWeight:600, letterSpacing:"-0.02em", marginBottom:24 }}>Typed exception hierarchy</h2>
+            <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+              {errorClasses.map((e, i) => (
+                <div key={i} style={{ display:"flex", gap:16, alignItems:"center", padding:"10px 16px", background:i%2===0?"var(--bg-card)":"transparent", borderLeft:i<2?"2px solid var(--border)":"2px solid rgba(251,191,36,0.2)" }}>
+                  <code className="mono" style={{ fontSize:12.5, color:i<2?"var(--text-secondary)":"var(--orange)", minWidth:200 }}>{e.name}</code>
+                  <span className="sans" style={{ fontSize:13, color:"var(--text-muted)" }}>{e.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* Quick Start */}
+      <section style={{ padding:"64px 48px" }}>
+        <div style={{ maxWidth:860, margin:"0 auto" }}>
+          <div id="qs" data-animate className={`anim ${isV("qs")?"vis":""}`}>
+            <div className="section-label">Quick Start</div>
+            <h2 style={{ fontSize:28, fontWeight:600, letterSpacing:"-0.02em", marginBottom:24 }}>Three lines to your first duty calculation</h2>
+            <div style={{ background:"var(--bg-card)", border:"1px solid var(--border)", padding:"24px 28px", fontFamily:"'JetBrains Mono',monospace", fontSize:13, lineHeight:1.8, color:"var(--text-secondary)" }}>
+              <div><span style={{ color:"var(--blue)" }}>from</span> <span style={{ color:"var(--text-primary)" }}>neo_tariff</span> <span style={{ color:"var(--blue)" }}>import</span> <span style={{ color:"var(--text-primary)" }}>NeoTariffClient</span></div>
+              <div style={{ height:8 }}/>
+              <div><span style={{ color:"var(--text-primary)" }}>client</span> = <span style={{ color:"var(--text-primary)" }}>NeoTariffClient</span>(<span style={{ color:"var(--green)" }}>api_key</span>=<span style={{ color:"var(--orange)" }}>"your-key"</span>)</div>
+              <div style={{ height:8 }}/>
+              <div><span style={{ color:"var(--text-primary)" }}>result</span> = <span style={{ color:"var(--text-primary)" }}>client</span>.<span style={{ color:"var(--accent)" }}>rates</span>.<span style={{ color:"var(--accent)" }}>evaluate_entry</span>(</div>
+              <div style={{ paddingLeft:32 }}><span style={{ color:"var(--green)" }}>hts_code</span>=<span style={{ color:"var(--orange)" }}>"6109.10.00.12"</span>,</div>
+              <div style={{ paddingLeft:32 }}><span style={{ color:"var(--green)" }}>country_of_origin</span>=<span style={{ color:"var(--orange)" }}>"CN"</span>,</div>
+              <div style={{ paddingLeft:32 }}><span style={{ color:"var(--green)" }}>cost</span>=<span style={{ color:"var(--orange)" }}>1000</span>, <span style={{ color:"var(--green)" }}>qty</span>=<span style={{ color:"var(--orange)" }}>1000</span>, <span style={{ color:"var(--green)" }}>reciprocal</span>=<span style={{ color:"var(--blue)" }}>True</span></div>
+              <div>)</div>
+            </div>
+            <p className="sans" style={{ fontSize:13, color:"var(--text-muted)", marginTop:14 }}>Or use <code className="mono" style={{ color:"var(--text-secondary)" }}>NEOTARIFF_API_KEY</code> environment variable — no key in code needed.</p>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }} />
+
+      {/* CTA */}
+      <section style={{ padding:"96px 48px", textAlign:"center" }}>
+        <div style={{ maxWidth:600, margin:"0 auto" }}>
+          <div id="cta" data-animate className={`anim ${isV("cta")?"vis":""}`}>
+            <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Start building with Neo Tariff</h2>
+            <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Install via pip and make your first duty calculation in minutes.</p>
+            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+              <a href="https://pypi.org/project/neo-tariff/" target="_blank" className="cta-btn sans" style={{ textDecoration:"none" }}>PyPI Package ↗</a>
+              <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>REST API Docs</a>
+              <a href="https://tariff-data-dev.enterprise-neo.com/docs" target="_blank" className="cta-btn sans" style={{ textDecoration:"none",background:"transparent",border:"1px solid var(--border)",color:"var(--text-secondary)" }}>Swagger Docs ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <NeoFooter />
+
+      
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<NeoTariffSDK />);
+</script>
+</body>
+</html>

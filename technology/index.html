@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neo Tariff — Technology</title>
+<link rel="stylesheet" href="/shared/styles.css">
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel" src="/shared/components.js"></script>
+<script type="text/babel">
+const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+const { useState, useEffect } = React;
+
+const stages = [
+  { id:"ingest", num:"01", label:"Data Ingestion", subtitle:"Raw Government Sources", desc:"HTS JSON schedules (~18,000 tariff lines per revision) and Chapter 99 PDF documents published by the U.S. International Trade Commission. Sanctions registries and trade program data are ingested in parallel. New revisions are detected and queued automatically.", ip:false, tags:["USITC JSON","Chapter 99 PDFs","Sanctions Registry","Auto-detection"] },
+  { id:"parse", num:"02", label:"Hierarchy Recovery", subtitle:"Deterministic PDF Parser", desc:"Reconstructs the nested legal hierarchy from ambiguous PDF markers, indentation, and visual positioning. An 8-strategy placement cascade resolves marker ambiguity using dynamic indentation discovery, family-state tracking, and roman/letter disambiguation. The result is a fully structured note tree from what starts as flat text.", ip:true, tags:["8-strategy placement cascade","Dynamic indentation tiering","Cross-reference filtering","Roman/letter disambiguation"] },
+  { id:"resolve", num:"03", label:"Cross-Reference Resolution", subtitle:"Multi-Confidence Scanner", desc:"Maps every rule to its defining notes using six confidence-scored pattern families (0.20–0.99). Follows cross-reference chains with visited-set cycle detection to resolve complete product scope. A single Chapter 99 rule can reference notes that reference other notes — the resolver traces the full graph.", ip:true, tags:["6 confidence-scored patterns","Recursive chain following","Cycle prevention","Full graph traversal"] },
+  { id:"build", num:"04", label:"Rule Construction", subtitle:"Structured Assembly", desc:"Integrates parsed hierarchy, resolved references, and conditions extracted from free text into machine-evaluable rules. Backward sentence scanning distinguishes inclusions from exclusions. Bidirectional supersession mapping establishes rule precedence across hundreds of overlapping provisions.", ip:true, tags:["Backward sentence scanning","Bidirectional supersession","Conditional code extraction","Inclusion/exclusion logic"] },
+  { id:"track", num:"05", label:"Version Intelligence", subtitle:"Change Classification", desc:"Tracks every field-level change across government revisions, algorithmically distinguishing direct material changes from cascading ripple effects caused by other rules being added or removed. Powers the compare API and change-alert features.", ip:true, tags:["Material vs. ripple classification","Retention-rate severity scoring","Targeted re-validation","Field-level diffing"] },
+  { id:"eval", num:"06", label:"Rule Evaluation", subtitle:"7-Phase Resolution Engine", desc:"Resolves hundreds of overlapping, conflicting rules into a single deterministic duty computation through progressive filtering and reconciliation — handling supersession, threshold pairs, specificity tie-breaking, and composite material line splitting. This is where the tariff graph becomes a number.", ip:true, tags:["Multi-phase filter-compute-reconcile","Threshold pair detection","Material line splitting","Program-type-aware stacking"] },
+  { id:"output", num:"07", label:"Structured Output", subtitle:"API & Full Traceability", desc:"Every duty determination is fully traceable — from final amount back through specific rules, source notes, PDF page numbers, and government revision identifiers. Exposed via REST API, Python SDK, and the web platform simultaneously.", ip:false, tags:["Duty Calculations","Rule Explanations","Audit Trails","Change Alerts"] },
+];
+
+const NeoTariffTechnology = () => {
+    const [activeStage, setActiveStage] = useState("parse");
+  const [hoveredLayer, setHoveredLayer] = useState(null);
+    
+  const isV = useScrollAnimation();
+return (
+    <div style={{ fontFamily:'"Source Serif 4",Georgia,serif', background:"#0C0E1A", color:"#E4E2DD", minHeight:"100vh" }}>
+      <NeoGrain />
+      <NeoNav activePage="technology" />
+
+      {/* ━━━ Hero ━━━ */}
+      <section style={{ padding:"140px 48px 64px",position:"relative" }}>
+        <div style={{ position:"absolute",top:0,left:"20%",width:"60%",height:"100%",background:"radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)",pointerEvents:"none" }}/>
+        <div style={{ maxWidth:1180,margin:"0 auto",textAlign:"center" }}>
+          <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>Technology</div>
+          <h1 style={{ fontSize:52,fontWeight:700,lineHeight:1.1,letterSpacing:"-0.03em",marginBottom:18,animation:"fadeUp 0.6s ease 0.2s both" }}>Inside the Engine</h1>
+          <p className="sans" style={{ fontSize:17,lineHeight:1.75,color:"var(--text-secondary)",maxWidth:600,margin:"0 auto 28px",animation:"fadeUp 0.6s ease 0.3s both" }}>Neo Tariff is a purpose-built rules engine — not a lookup tool, not an AI wrapper. A 7-stage deterministic pipeline ingests raw government documents and produces fully traceable duty determinations.</p>
+          <div className="sans" style={{ display:"flex",gap:28,justifyContent:"center",fontSize:13,animation:"fadeUp 0.6s ease 0.4s both" }}>
+            {[{val:"100%",label:"Deterministic"},{val:"5 / 7",label:"Proprietary stages"},{val:"Full",label:"Audit traceability"}].map((s,i)=>(
+              <div key={i} style={{ display:"flex",alignItems:"center",gap:8 }}><span className="mono" style={{ color:"var(--accent)",fontWeight:600,fontSize:15 }}>{s.val}</span><span style={{ color:"var(--text-muted)" }}>{s.label}</span></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }}/>
+
+      {/* ━━━ Architecture Overview ━━━ */}
+      <section style={{ padding:"80px 48px" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="arch" data-animate className={`anim ${isV("arch")?"vis":""}`}>
+            <div className="section-label">System Architecture</div>
+            <h2 style={{ fontSize:34,fontWeight:600,letterSpacing:"-0.02em",marginBottom:10 }}>Three access points. One engine.</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.75,color:"var(--text-secondary)",maxWidth:580,marginBottom:48 }}>Whether you use the web platform, REST API, or Python SDK — every request passes through the same versioned tariff graph and deterministic evaluation engine.</p>
+
+            <div style={{ display:"flex",flexDirection:"column",gap:0 }}>
+              {/* Layer 1: Access Points */}
+              <div style={{ marginBottom:4 }}>
+                <div className="mono" style={{ fontSize:10,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:8,paddingLeft:4 }}>ACCESS LAYER</div>
+                <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8 }}>
+                  {[
+                    { icon:"◻",title:"Web Platform",sub:"enterprise-neo.com",detail:"Full-featured UI with simulator, bulk tools, HTS browser, vendor discovery, and news",color:"var(--accent)" },
+                    { icon:"{ }",title:"REST API",sub:"50 endpoints · 16 groups",detail:"Programmatic access to every capability — duty calculation, search, context, compare, and market intelligence",color:"var(--green)" },
+                    { icon:"🐍",title:"Python SDK",sub:"pip install neo-tariff",detail:"Typed client with sync/async support, Pydantic models, automatic retries, and the full API surface",color:"var(--orange)" },
+                  ].map((ap,i)=>(
+                    <div key={i} className="arch-layer">
+                      <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:10 }}>
+                        <span style={{ fontSize:16 }}>{ap.icon}</span>
+                        <div><div className="sans" style={{ fontSize:14.5,fontWeight:600 }}>{ap.title}</div><div className="mono" style={{ fontSize:10.5,color:ap.color,letterSpacing:"0.03em" }}>{ap.sub}</div></div>
+                      </div>
+                      <p className="sans" style={{ fontSize:12.5,lineHeight:1.6,color:"var(--text-muted)" }}>{ap.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flow-arrow" style={{ padding:"8px 0" }}><div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:2 }}><div style={{ width:1,height:16,background:"var(--border)" }}/><svg width="14" height="10" viewBox="0 0 14 10"><path d="M1 1L7 8L13 1" stroke="var(--text-muted)" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg></div></div>
+
+              {/* Layer 2: API Surface */}
+              <div style={{ marginBottom:4 }}>
+                <div className="mono" style={{ fontSize:10,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:8,paddingLeft:4 }}>API SURFACE</div>
+                <div className="arch-layer" style={{ padding:"20px 28px" }}>
+                  <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14 }}>
+                    <div><div className="sans" style={{ fontSize:15,fontWeight:600 }}>Unified API Layer</div><div className="mono" style={{ fontSize:10.5,color:"var(--text-muted)",letterSpacing:"0.03em",marginTop:2 }}>50 public endpoints · 257 typed models · Standard JSON envelope</div></div>
+                    <div style={{ display:"flex",gap:6 }}>
+                      <span className="mono" style={{ fontSize:10,padding:"3px 8px",background:"rgba(96,165,250,0.1)",border:"1px solid rgba(96,165,250,0.2)",color:"var(--blue)" }}>37 GET</span>
+                      <span className="mono" style={{ fontSize:10,padding:"3px 8px",background:"rgba(74,222,128,0.1)",border:"1px solid rgba(74,222,128,0.2)",color:"var(--green)" }}>13 POST</span>
+                    </div>
+                  </div>
+                  <div style={{ display:"flex",flexWrap:"wrap",gap:5 }}>
+                    {["Duty Calculations","HTS Search","HTS Codes","Schedule Navigation","Version Comparison","Countries","Trade Programs","Notes & Documents","Materials","Documentation Search","Import Data","GIQ News","GIQ Organizations","Available Versions"].map((tag,i)=>(
+                      <span key={i} className="mono" style={{ fontSize:10,padding:"3px 9px",border:"1px solid var(--border)",color:"var(--text-muted)",letterSpacing:"0.02em" }}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flow-arrow" style={{ padding:"8px 0" }}><div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:2 }}><div style={{ width:1,height:16,background:"var(--border)" }}/><svg width="14" height="10" viewBox="0 0 14 10"><path d="M1 1L7 8L13 1" stroke="var(--text-muted)" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg></div></div>
+
+              {/* Layer 3: Engine */}
+              <div style={{ marginBottom:4 }}>
+                <div className="mono" style={{ fontSize:10,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:8,paddingLeft:4 }}>CORE ENGINE</div>
+                <div className="arch-layer" style={{ borderColor:"rgba(108,99,255,0.2)",background:"linear-gradient(135deg, rgba(108,99,255,0.04) 0%, var(--bg-card) 50%)" }}>
+                  <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start" }}>
+                    <div>
+                      <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:8 }}>
+                        <div className="sans" style={{ fontSize:15,fontWeight:600 }}>Versioned Tariff Graph + Deterministic Evaluation Engine</div>
+                        <span className="mono" style={{ fontSize:9,padding:"2px 7px",background:"rgba(108,99,255,0.08)",border:"1px solid rgba(108,99,255,0.15)",color:"var(--accent)",letterSpacing:"0.08em" }}>PROPRIETARY</span>
+                      </div>
+                      <p className="sans" style={{ fontSize:13,lineHeight:1.65,color:"var(--text-secondary)",maxWidth:700 }}>Every HTS release is ingested, parsed into a structured tariff graph, and stored as a distinct version. The evaluation engine resolves overlapping rules through deterministic multi-phase filtering — no LLM in the decision path. Full legal citations attached to every answer.</p>
+                    </div>
+                  </div>
+                  <div style={{ display:"flex",gap:20,marginTop:16 }}>
+                    {[{val:"34",label:"HTS versions tracked",sub:"32 in 2025 · 2 in 2026"},{val:"~18K",label:"tariff lines per revision"},{val:"4,406+",label:"structured legal notes"}].map((s,i)=>(
+                      <div key={i} style={{ padding:"12px 16px",background:"rgba(108,99,255,0.04)",borderLeft:"2px solid rgba(108,99,255,0.2)",flex:1 }}>
+                        <div className="mono" style={{ fontSize:17,fontWeight:600,color:"var(--accent)",letterSpacing:"-0.02em" }}>{s.val}</div>
+                        <div className="sans" style={{ fontSize:12,color:"var(--text-secondary)",marginTop:2 }}>{s.label}</div>
+                        {s.sub && <div className="mono" style={{ fontSize:10,color:"var(--text-muted)",marginTop:2 }}>{s.sub}</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flow-arrow" style={{ padding:"8px 0" }}><div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:2 }}><div style={{ width:1,height:16,background:"var(--border)" }}/><svg width="14" height="10" viewBox="0 0 14 10"><path d="M1 1L7 8L13 1" stroke="var(--text-muted)" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg></div></div>
+
+              {/* Layer 4: Data Pipeline */}
+              <div>
+                <div className="mono" style={{ fontSize:10,letterSpacing:"0.1em",color:"var(--text-muted)",marginBottom:8,paddingLeft:4 }}>DATA PIPELINE</div>
+                <div className="arch-layer" style={{ padding:"16px 28px" }}>
+                  <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+                    <div><div className="sans" style={{ fontSize:15,fontWeight:600 }}>7-Stage Processing Pipeline</div><div className="mono" style={{ fontSize:10.5,color:"var(--text-muted)",letterSpacing:"0.03em",marginTop:2 }}>Ingestion → Parsing → Resolution → Construction → Versioning → Evaluation → Output</div></div>
+                    <div style={{ display:"flex",gap:6,alignItems:"center" }}>
+                      <span className="mono" style={{ fontSize:9,padding:"2px 7px",background:"rgba(108,99,255,0.08)",border:"1px solid rgba(108,99,255,0.15)",color:"var(--accent)",letterSpacing:"0.08em" }}>5 PROPRIETARY STAGES</span>
+                      <a href="#pipeline" className="sans" style={{ fontSize:12,color:"var(--accent)",textDecoration:"none",fontWeight:500 }}>See details ↓</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }}/>
+
+      {/* ━━━ Pipeline Deep Dive ━━━ */}
+      <section id="pipeline" style={{ padding:"80px 48px" }}>
+        <div style={{ maxWidth:860,margin:"0 auto" }}>
+          <div id="pipe" data-animate className={`anim ${isV("pipe")?"vis":""}`}>
+            <div className="section-label">The Pipeline</div>
+            <h2 style={{ fontSize:34,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:16 }}>From government PDF to<br/>duty determination.</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.8,color:"var(--text-secondary)",maxWidth:520,marginBottom:48 }}>Seven stages, each solving a distinct technical problem. Five contain proprietary algorithms built specifically for the tariff domain. No off-the-shelf NLP. No LLM in the decision path.</p>
+
+            <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:24 }}>
+              <div style={{ display:"flex",alignItems:"center",gap:4 }}><div style={{ width:3,height:14,background:"rgba(108,99,255,0.25)",borderRadius:1 }}/><span className="mono" style={{ fontSize:10,color:"var(--accent)",letterSpacing:"0.06em" }}>Proprietary IP</span></div>
+              <div style={{ width:1,height:12,background:"var(--border)",margin:"0 8px" }}/>
+              <div style={{ display:"flex",alignItems:"center",gap:4 }}><div style={{ width:3,height:14,background:"var(--bg-elevated)",borderRadius:1 }}/><span className="mono" style={{ fontSize:10,color:"var(--text-muted)",letterSpacing:"0.06em" }}>Standard infrastructure</span></div>
+            </div>
+
+            <div style={{ display:"flex",flexDirection:"column",gap:5 }}>
+              {stages.map((stage)=>{
+                const isActive=activeStage===stage.id;const isIp=stage.ip;
+                return(
+                  <div key={stage.id} className={`stage-card ${isIp?"ip":"std"} ${isActive?"active":""}`} onClick={()=>setActiveStage(isActive?null:stage.id)} style={{ padding:isActive?"22px 28px 20px":"14px 28px" }}>
+                    {isIp&&isActive&&<div style={{ position:"absolute",top:0,left:0,right:0,height:1,background:"linear-gradient(90deg, var(--accent), transparent 70%)" }}/>}
+                    <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between" }}>
+                      <div style={{ display:"flex",alignItems:"center",gap:14 }}>
+                        <span className="mono" style={{ fontSize:12,color:isIp?(isActive?"var(--accent)":"rgba(108,99,255,0.4)"):"var(--text-muted)",letterSpacing:"0.04em",fontWeight:500,minWidth:22 }}>{stage.num}</span>
+                        <h3 className="sans" style={{ fontSize:15,fontWeight:600,margin:0,color:isActive?"var(--text-primary)":(isIp?"var(--text-secondary)":"var(--text-muted)"),letterSpacing:"-0.01em",transition:"color 0.25s" }}>{stage.label}</h3>
+                        <span className="mono" style={{ fontSize:10,color:"var(--text-muted)",letterSpacing:"0.03em" }}>{stage.subtitle}</span>
+                      </div>
+                      <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+                        {isIp&&<span className="mono" style={{ fontSize:9,letterSpacing:"0.1em",color:"var(--accent)",background:"rgba(108,99,255,0.08)",border:"1px solid rgba(108,99,255,0.15)",padding:"2px 7px" }}>Proprietary IP</span>}
+                        <svg width="14" height="14" viewBox="0 0 14 14" style={{ transform:isActive?"rotate(180deg)":"rotate(0)",transition:"transform 0.3s" }}><path d="M3 5.5L7 9.5L11 5.5" stroke="var(--text-muted)" strokeWidth="1.2" fill="none" strokeLinecap="round"/></svg>
+                      </div>
+                    </div>
+                    {isActive&&(
+                      <div style={{ marginTop:16,paddingLeft:36 }}>
+                        <p className="sans" style={{ fontSize:14,lineHeight:1.7,color:"var(--text-secondary)",margin:"0 0 16px",maxWidth:560 }}>{stage.desc}</p>
+                        <div style={{ display:"flex",flexWrap:"wrap",gap:6 }}>
+                          {stage.tags.map((t,j)=>(
+                            <span key={j} className="mono" style={{ fontSize:10.5,padding:"4px 10px",letterSpacing:"0.02em",color:isIp?"var(--accent)":(stage.id==="output"?"var(--green)":"var(--text-muted)"),background:isIp?"rgba(108,99,255,0.06)":(stage.id==="output"?"rgba(74,222,128,0.06)":"rgba(255,255,255,0.02)"),border:`1px solid ${isIp?"rgba(108,99,255,0.12)":(stage.id==="output"?"rgba(74,222,128,0.12)":"var(--border)")}` }}>{t}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ marginTop:40,padding:"28px 32px",border:"1px solid var(--border)",background:"var(--bg-card)",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:32,position:"relative",overflow:"hidden" }}>
+              <div style={{ position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg, transparent, rgba(108,99,255,0.4), transparent)" }}/>
+              {[
+                { v:"100%",l:"Deterministic",s:"Every duty calculation uses deterministic regex, pattern matching, and tree traversal. No LLM in the decision path." },
+                { v:"5 / 7",l:"Proprietary Stages",s:"Five of seven pipeline stages contain core IP — novel algorithms for hierarchy recovery, resolution, and evaluation." },
+                { v:"Full",l:"Traceability",s:"Every answer traces back to specific rules, source notes, PDF page numbers, and government revision identifiers." },
+              ].map((stat,i)=>(
+                <div key={i}><div style={{ fontSize:26,fontWeight:600,color:"var(--accent)",letterSpacing:"-0.02em",marginBottom:6 }}>{stat.v}</div><div className="sans" style={{ fontSize:13,fontWeight:600,marginBottom:8 }}>{stat.l}</div><p className="sans" style={{ fontSize:12.5,lineHeight:1.6,color:"var(--text-muted)",margin:0 }}>{stat.s}</p></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }}/>
+
+      {/* ━━━ By the Numbers ━━━ */}
+      <section style={{ padding:"80px 48px" }}>
+        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+          <div id="stats" data-animate className={`anim ${isV("stats")?"vis":""}`}>
+            <div style={{ textAlign:"center",marginBottom:48 }}>
+              <div className="section-label" style={{ textAlign:"center" }}>By the Numbers</div>
+              <h2 style={{ fontSize:34,fontWeight:600,letterSpacing:"-0.02em" }}>What's behind the API.</h2>
+            </div>
+            <div style={{ display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:10 }}>
+              {[
+                { val:"50",label:"API Endpoints",sub:"37 GET · 13 POST",accent:true },
+                { val:"257",label:"Typed Data Models",sub:"Pydantic-compatible response schemas" },
+                { val:"34",label:"HTS Versions Tracked",sub:"32 in 2025 · 2 in 2026 so far",accent:true },
+                { val:"~18K",label:"Tariff Lines / Revision",sub:"Full U.S. Harmonized Tariff Schedule" },
+                { val:"4,406+",label:"Structured Legal Notes",sub:"U.S. Notes, chapter notes, general notes" },
+              ].map((s,i)=>(
+                <div key={i} className="stat-cell">
+                  <div className="stat-val mono" style={{ fontSize:28,fontWeight:700,color:s.accent?"var(--accent)":"var(--text-primary)",letterSpacing:"-0.03em",marginBottom:6,transition:"color 0.3s" }}>{s.val}</div>
+                  <div className="sans" style={{ fontSize:12.5,fontWeight:600,marginBottom:6,lineHeight:1.3 }}>{s.label}</div>
+                  <div className="sans" style={{ fontSize:11,color:"var(--text-muted)",lineHeight:1.4 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginTop:10 }}>
+              {[
+                { val:"5",label:"SDK Resource Groups",sub:"rates · search · context · compare · versions" },
+                { val:"15",label:"Typed Response Models",sub:"Every method returns typed Pydantic objects" },
+                { val:"7",label:"Pipeline Stages",sub:"5 proprietary · 2 infrastructure" },
+                { val:"<1 hr",label:"Revision Turnaround",sub:"New USITC releases ingested and live" },
+              ].map((s,i)=>(
+                <div key={i} className="stat-cell">
+                  <div className="stat-val mono" style={{ fontSize:28,fontWeight:700,color:"var(--text-primary)",letterSpacing:"-0.03em",marginBottom:6,transition:"color 0.3s" }}>{s.val}</div>
+                  <div className="sans" style={{ fontSize:12.5,fontWeight:600,marginBottom:6,lineHeight:1.3 }}>{s.label}</div>
+                  <div className="sans" style={{ fontSize:11,color:"var(--text-muted)",lineHeight:1.4 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }}/>
+
+      {/* ━━━ AI Positioning ━━━ */}
+      <section style={{ padding:"80px 48px" }}>
+        <div style={{ maxWidth:860,margin:"0 auto" }}>
+          <div id="aipos" data-animate className={`anim ${isV("aipos")?"vis":""}`}>
+            <div className="section-label">AI Positioning</div>
+            <h2 style={{ fontSize:30,fontWeight:600,letterSpacing:"-0.02em",marginBottom:32 }}>What AI does — and doesn't — do.</h2>
+            <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:16 }}>
+              <div style={{ border:"1px solid var(--border)",background:"var(--bg-card)",padding:"28px" }}>
+                <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:16 }}>
+                  <div style={{ width:10,height:10,borderRadius:"50%",background:"var(--accent)" }}/><span className="sans" style={{ fontSize:14,fontWeight:600 }}>Core Engine</span>
+                  <span className="mono" style={{ fontSize:9,color:"var(--accent)",background:"rgba(108,99,255,0.08)",border:"1px solid rgba(108,99,255,0.15)",padding:"2px 7px",letterSpacing:"0.06em",marginLeft:"auto" }}>DETERMINISTIC</span>
+                </div>
+                <p className="sans" style={{ fontSize:13,lineHeight:1.65,color:"var(--text-secondary)",marginBottom:16 }}>The duty calculation path is fully deterministic. Rules-based computation handles supersession, priority, exclusion, material splitting, and transit windows.</p>
+                <div style={{ display:"flex",flexDirection:"column",gap:6 }}>
+                  {["Tariff rate evaluation","Rule supersession + priority","Chapter 99 resolution","Version comparison","Duty component stacking"].map((item,i)=>(
+                    <div key={i} style={{ display:"flex",alignItems:"center",gap:8,padding:"6px 10px",background:"rgba(108,99,255,0.03)",borderLeft:"2px solid rgba(108,99,255,0.15)" }}>
+                      <span className="mono" style={{ fontSize:10,color:"var(--accent)" }}>✓</span><span className="sans" style={{ fontSize:12.5,color:"var(--text-secondary)" }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ border:"1px solid var(--border)",background:"var(--bg-card)",padding:"28px" }}>
+                <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:16 }}>
+                  <div style={{ width:10,height:10,borderRadius:"50%",background:"var(--orange)" }}/><span className="sans" style={{ fontSize:14,fontWeight:600 }}>Supporting Roles</span>
+                  <span className="mono" style={{ fontSize:9,color:"var(--orange)",background:"rgba(251,191,36,0.08)",border:"1px solid rgba(251,191,36,0.15)",padding:"2px 7px",letterSpacing:"0.06em",marginLeft:"auto" }}>AI-ASSISTED</span>
+                </div>
+                <p className="sans" style={{ fontSize:13,lineHeight:1.65,color:"var(--text-secondary)",marginBottom:16 }}>AI enhances discovery and search quality. It never makes duty determinations. Results are always validated against the deterministic engine.</p>
+                <div style={{ display:"flex",flexDirection:"column",gap:6 }}>
+                  {["Semantic search (description → HTS)","News query generation","Vendor similarity scoring","Classification suggestions","Context search across notes"].map((item,i)=>(
+                    <div key={i} style={{ display:"flex",alignItems:"center",gap:8,padding:"6px 10px",background:"rgba(251,191,36,0.02)",borderLeft:"2px solid rgba(251,191,36,0.12)" }}>
+                      <span className="mono" style={{ fontSize:10,color:"var(--orange)" }}>~</span><span className="sans" style={{ fontSize:12.5,color:"var(--text-secondary)" }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop:20,padding:"20px 28px",border:"1px solid var(--border)",background:"var(--bg-card)",borderLeft:"3px solid var(--accent)" }}>
+              <p style={{ fontSize:16,fontStyle:"italic",lineHeight:1.6,color:"var(--text-secondary)",margin:0 }}>"If you can't explain why a specific rate applies to a specific product from a specific country on a specific date — citing the exact rule, its conditions, and its legal authority — then you don't have an answer. You have a guess."</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" style={{ maxWidth:1180 }}/>
+
+      {/* ━━━ CTA ━━━ */}
+      <section style={{ padding:"96px 48px",textAlign:"center" }}>
+        <div style={{ maxWidth:600,margin:"0 auto" }}>
+          <div id="cta2" data-animate className={`anim ${isV("cta2")?"vis":""}`}>
+            <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:16 }}>See the engine in action.</h2>
+            <p className="sans" style={{ fontSize:15,lineHeight:1.7,color:"var(--text-secondary)",marginBottom:32 }}>Walk through a live duty calculation from HTS code to fully traced result.</p>
+            <div style={{ display:"flex",gap:14,justifyContent:"center" }}>
+              <button className="cta-btn sans">Request a Demo</button>
+              <a href="/platform" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Explore Platform</a>
+              <a href="/api" className="cta-btn sans" style={{ textDecoration:"none",background:"transparent",border:"1px solid var(--border)",color:"var(--text-secondary)" }}>API Reference</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <NeoFooter />
+
+      
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<NeoTariffTechnology />);
+</script>
+</body>
+</html>
