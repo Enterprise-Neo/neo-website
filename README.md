@@ -88,6 +88,18 @@ Edit the individual page's `index.html`. Each page is a self-contained React com
 3. Update the title, `activePage` prop on `<NeoNav>`, and the content
 4. Add a link to the nav in `shared/components.js`
 
+## Formatting
+
+This project uses [Prettier](https://prettier.io/) for consistent code formatting. Configuration lives in `.prettierrc` and `.editorconfig`.
+
+To format all files:
+
+```bash
+npx prettier --write "**/*.{html,css,js,json}"
+```
+
+If you use Cursor or VS Code with the Prettier extension, files will format automatically on save.
+
 ## Tech Stack
 
 - **React 18** (loaded from CDN, no build step)
