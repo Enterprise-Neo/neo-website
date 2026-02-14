@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Tariff — Pricing</title>
     <link rel="stylesheet" href="/shared/styles.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body>
     <div id="root"></div>
@@ -13,7 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
+        window;
       const { useState, useEffect } = React;
 
       const NeoTariffPricing = () => {
@@ -48,7 +53,7 @@
             highlight: false,
             cta: 'Get Started',
             ctaOutline: false,
-            lastFeature: 'Volume pricing included',
+            lastFeature: 'Volume discounts',
           },
           {
             name: 'Medium',
@@ -62,7 +67,7 @@
             highlight: true,
             cta: 'Get Started',
             ctaOutline: false,
-            lastFeature: 'Volume pricing included',
+            lastFeature: 'Volume discounts',
           },
           {
             name: 'Large',
@@ -76,7 +81,7 @@
             highlight: false,
             cta: 'Get Started',
             ctaOutline: false,
-            lastFeature: 'Volume pricing included',
+            lastFeature: 'Volume discounts',
           },
           {
             name: 'Enterprise',
@@ -91,22 +96,22 @@
             cta: 'Contact Us',
             ctaOutline: true,
             isCustom: true,
-            lastFeature: 'Dedicated support & onboarding',
+            lastFeature: 'Priority support',
           },
         ];
 
         const sharedFeatures = [
-          { text: 'Full platform & API access', isNew: false },
-          { text: 'Duty & landed cost engine', isNew: false },
-          { text: 'Portfolio-wide duty analysis', isNew: false },
-          { text: 'Interactive HTS browser', isNew: true },
+          { text: 'Web-App, API, & SDK Access', isNew: false },
+          { text: 'Deterministic engine', isNew: false },
+          { text: 'Bulk rate processing', isNew: false },
+          { text: 'HTS browser', isNew: true },
           { text: 'Scenario comparison tools', isNew: false },
           { text: 'Global supplier matching', isNew: false },
-          { text: 'Complete HTS schedule history', isNew: false },
-          { text: 'Updates within hrs of release', isNew: false },
-          { text: 'Traceable rate determinations', isNew: false },
+          { text: 'HTS schedule history', isNew: false },
+          { text: 'Updates within hours', isNew: false },
+          { text: 'Rate traceability', isNew: false },
           { text: 'Full 232/301 coverage', isNew: false },
-          { text: 'Actively managed API docs', isNew: true },
+          { text: 'Detailed API docs', isNew: true },
         ];
 
         const faqs = [
@@ -177,54 +182,102 @@
             <NeoNav activePage="pricing" />
 
             {/* ━━━ Hero ━━━ */}
-            <section style={{ padding: '140px 48px 48px', position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '20%',
-                  width: '60%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 50% 25%, rgba(108,99,255,0.06) 0%, transparent 55%)',
-                  pointerEvents: 'none',
-                }}
-              />
+            <NeoHero
+              label="Pricing"
+              title="All features included. Pick your scale."
+              description="Full platform and direct API access on every plan — pay only for what you need."
+              glow="center-low"
+              paddingBottom={24}
+            />
+
+            {/* ━━━ Scale Savings (chart) ━━━ */}
+            <section style={{ padding: '0 48px 24px' }}>
               <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div className="section-label" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
-                  Pricing
+                <div id="save" data-animate className={`anim ${isV('save') ? 'vis' : ''}`}>
+                  <div
+                    className="mono"
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
+                      color: 'var(--text-muted)',
+                      marginBottom: 20,
+                    }}
+                  >
+                    COST PER CREDIT
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 0,
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      height: 170,
+                      padding: 0,
+                    }}
+                  >
+                    {[
+                      { label: 'Pay-As-You-Go', rate: '$0.35', h: 110, color: '#6B697A' },
+                      { label: 'Small', rate: '$0.30', h: 94, color: '#8B5CF6' },
+                      { label: 'Medium', rate: '$0.18', h: 56, color: 'var(--green)' },
+                      { label: 'Large', rate: '$0.12', h: 38, color: 'var(--blue)' },
+                      { label: 'Enterprise', rate: 'Custom', h: 16, color: '#FBBF24', dashed: true },
+                    ].map((b, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          flex: 1,
+                          gap: 8,
+                        }}
+                      >
+                        <span
+                          className="mono"
+                          style={{ fontSize: 14, fontWeight: 600, color: b.color }}
+                        >
+                          {b.rate}
+                        </span>
+                        <div
+                          style={{
+                            width: '55%',
+                            maxWidth: 80,
+                            height: b.h,
+                            background: b.dashed
+                              ? 'transparent'
+                              : `linear-gradient(180deg, ${b.color} 0%, rgba(108,99,255,0.08) 100%)`,
+                            borderRadius: '4px 4px 0 0',
+                            opacity: 0.8,
+                            ...(b.dashed
+                              ? {
+                                  border: `1.5px dashed ${b.color}`,
+                                  borderBottom: 'none',
+                                }
+                              : {}),
+                          }}
+                        />
+                        <span
+                          className="sans"
+                          style={{
+                            fontSize: 11.5,
+                            color: 'var(--text-muted)',
+                            marginTop: 4,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {b.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h1
-                  style={{
-                    fontSize: 52,
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    letterSpacing: '-0.03em',
-                    marginBottom: 18,
-                    animation: 'fadeUp 0.6s ease 0.2s both',
-                  }}
-                >
-                  All features included. Pick your scale.
-                </h1>
-                <p
-                  className="sans"
-                  style={{
-                    fontSize: 17,
-                    lineHeight: 1.75,
-                    color: 'var(--text-secondary)',
-                    maxWidth: 620,
-                    marginBottom: 28,
-                    animation: 'fadeUp 0.6s ease 0.3s both',
-                  }}
-                >
-                  Full platform and direct API access on every plan — pay only for what you need.
-                </p>
               </div>
             </section>
 
             {/* ━━━ Tier Cards ━━━ */}
-            <section style={{ padding: '24px 48px 72px' }}>
-              <div style={{ maxWidth: 1300, margin: '0 auto' }}>
+            <section style={{ padding: '8px 48px 72px' }}>
+              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
                 <div
                   id="tiers"
                   data-animate
@@ -438,93 +491,6 @@
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-            </section>
-
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
-
-            {/* ━━━ Scale Savings ━━━ */}
-            <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div id="save" data-animate className={`anim ${isV('save') ? 'vis' : ''}`}>
-                  <div style={{ textAlign: 'center', marginBottom: 40 }}>
-                    <div className="section-label" style={{ textAlign: 'center' }}>
-                      Volume Savings
-                    </div>
-                    <h2 style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em' }}>
-                      Higher volume, lower cost per credit.
-                    </h2>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 0,
-                      alignItems: 'flex-end',
-                      justifyContent: 'center',
-                      height: 220,
-                      padding: '0 40px',
-                    }}
-                  >
-                    {[
-                      { label: 'Pay-As-You-Go', rate: '$0.35', h: 140, color: '#6B697A' },
-                      { label: 'Small', rate: '$0.30', h: 120, color: '#8B5CF6' },
-                      { label: 'Medium', rate: '$0.18', h: 72, color: 'var(--green)' },
-                      { label: 'Large', rate: '$0.12', h: 48, color: 'var(--blue)' },
-                    ].map((b, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          flex: 1,
-                          gap: 8,
-                        }}
-                      >
-                        <span
-                          className="mono"
-                          style={{ fontSize: 14, fontWeight: 600, color: b.color }}
-                        >
-                          {b.rate}
-                        </span>
-                        <div
-                          style={{
-                            width: '55%',
-                            maxWidth: 80,
-                            height: b.h,
-                            background: `linear-gradient(180deg, ${b.color} 0%, rgba(108,99,255,0.08) 100%)`,
-                            borderRadius: '4px 4px 0 0',
-                            opacity: 0.8,
-                          }}
-                        />
-                        <span
-                          className="sans"
-                          style={{
-                            fontSize: 11.5,
-                            color: 'var(--text-muted)',
-                            marginTop: 4,
-                            textAlign: 'center',
-                          }}
-                        >
-                          {b.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 13,
-                      color: 'var(--text-muted)',
-                      textAlign: 'center',
-                      marginTop: 24,
-                    }}
-                  >
-                    Large plan saves{' '}
-                    <span style={{ color: 'var(--accent)', fontWeight: 600 }}>66%</span> per credit
-                    vs. Pay-As-You-Go
-                  </p>
                 </div>
               </div>
             </section>

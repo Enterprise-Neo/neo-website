@@ -17,6 +17,7 @@ const SITE = {
   tagline: 'by Enterprise-Neo',
   loginUrl: 'https://tariff.enterprise-neo.com/',
   signupUrl: 'https://tariff.enterprise-neo.com/signup',
+  apiBaseUrl: 'https://tariff-data.enterprise-neo.com',
   apiDocsUrl: 'https://tariff-data.enterprise-neo.com/docs',
   pypiUrl: 'https://pypi.org/project/neo-tariff/',
   githubUrl: 'https://github.com/Enterprise-Neo',
@@ -163,7 +164,6 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
             Tariff
           </span>
         </div>
-        <div style={{ width: 1, height: 14, background: 'var(--border)' }} />
         <span
           className="mono"
           style={{ fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.08em' }}
@@ -172,100 +172,100 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
         </span>
       </a>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-        {/* Product dropdown */}
-        <div className="dropdown-product" style={{ position: 'relative' }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setProductOpen(!productOpen);
-              setResourcesOpen(false);
-            }}
-            className="sans"
-            style={{
-              padding: '8px 14px',
-              fontSize: 13,
-              background: 'none',
-              borderTop: 'none',
-              borderLeft: 'none',
-              borderRight: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-              fontWeight: isProductPage ? 600 : 400,
-              color: isProductPage ? 'var(--text-primary)' : 'var(--text-secondary)',
-              borderBottom: isProductPage ? '2px solid var(--accent)' : 'none',
-              marginBottom: isProductPage ? -1 : 0,
-            }}
-          >
-            Product <ChevronDown open={productOpen} />
-          </button>
-          <div className={`dropdown-menu ${productOpen ? 'open' : ''}`}>
-            <a
-              href="/product/platform"
-              style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+          {/* Product dropdown */}
+          <div className="dropdown-product" style={{ position: 'relative' }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setProductOpen(!productOpen);
+                setResourcesOpen(false);
+              }}
+              className="sans"
+              style={{
+                padding: '8px 14px',
+                fontSize: 13,
+                background: 'none',
+                borderTop: 'none',
+                borderLeft: 'none',
+                borderRight: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                fontWeight: isProductPage ? 600 : 400,
+                color: isProductPage ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderBottom: isProductPage ? '2px solid var(--accent)' : 'none',
+                marginBottom: isProductPage ? -1 : 0,
+              }}
             >
-              Platform
-            </a>
-            <a href="/product/api" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
-              REST API
-            </a>
-            <a href="/product/sdk" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
-              Python SDK
-            </a>
+              Product <ChevronDown open={productOpen} />
+            </button>
+            <div className={`dropdown-menu ${productOpen ? 'open' : ''}`}>
+              <a
+                href="/product/platform"
+                style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
+              >
+                Platform
+              </a>
+              <a href="/product/api" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
+                REST API
+              </a>
+              <a href="/product/sdk" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
+                Python SDK
+              </a>
+            </div>
+          </div>
+
+          <a href="/technology" className="sans" style={linkStyle('technology')}>
+            Technology
+          </a>
+          <a href="/pricing" className="sans" style={linkStyle('pricing')}>
+            Pricing
+          </a>
+          <a href="/company" className="sans" style={linkStyle('company')}>
+            Company
+          </a>
+
+          {/* Resources dropdown */}
+          <div className="dropdown-resources" style={{ position: 'relative' }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setResourcesOpen(!resourcesOpen);
+                setProductOpen(false);
+              }}
+              className="sans"
+              style={{
+                padding: '8px 14px',
+                fontSize: 13,
+                fontWeight: 400,
+                color: 'var(--text-secondary)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              Resources <ChevronDown open={resourcesOpen} />
+            </button>
+            <div className={`dropdown-menu ${resourcesOpen ? 'open' : ''}`}>
+              <div className="dd-label sans">DEVELOPER DOCS</div>
+              <a href={SITE.apiDocsUrl} target="_blank">
+                Swagger API Docs ↗
+              </a>
+              <a href={SITE.pypiUrl} target="_blank">
+                PyPI: neo-tariff ↗
+              </a>
+              <a href={SITE.githubUrl} target="_blank">
+                GitHub ↗
+              </a>
+            </div>
           </div>
         </div>
-
-        <a href="/technology" className="sans" style={linkStyle('technology')}>
-          Technology
-        </a>
-        <a href="/pricing" className="sans" style={linkStyle('pricing')}>
-          Pricing
-        </a>
-        <a href="/company" className="sans" style={linkStyle('company')}>
-          Company
-        </a>
-
-        {/* Resources dropdown */}
-        <div className="dropdown-resources" style={{ position: 'relative' }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setResourcesOpen(!resourcesOpen);
-              setProductOpen(false);
-            }}
-            className="sans"
-            style={{
-              padding: '8px 14px',
-              fontSize: 13,
-              fontWeight: 400,
-              color: 'var(--text-secondary)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            Resources <ChevronDown open={resourcesOpen} />
-          </button>
-          <div className={`dropdown-menu ${resourcesOpen ? 'open' : ''}`}>
-            <div className="dd-label sans">DEVELOPER DOCS</div>
-            <a href={SITE.apiDocsUrl} target="_blank">
-              Swagger API Docs ↗
-            </a>
-            <a href={SITE.pypiUrl} target="_blank">
-              PyPI: neo-tariff ↗
-            </a>
-            <a href={SITE.githubUrl} target="_blank">
-              GitHub ↗
-            </a>
-          </div>
-        </div>
-
-        <div style={{ width: 1, height: 18, background: 'var(--border)', margin: '0 10px' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <a
             href={SITE.loginUrl}
@@ -313,15 +313,15 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
 window.NeoFooter = () => (
   <footer
     className="sans"
-    style={{ padding: '48px 48px 36px', borderTop: '1px solid var(--border)' }}
+    style={{ padding: '32px 48px 24px', borderTop: '1px solid var(--border)' }}
   >
     <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-          gap: 40,
-          marginBottom: 40,
+          gap: 32,
+          marginBottom: 24,
         }}
       >
         <div>
@@ -331,7 +331,7 @@ window.NeoFooter = () => (
               display: 'flex',
               alignItems: 'center',
               gap: 6,
-              marginBottom: 16,
+              marginBottom: 10,
               textDecoration: 'none',
             }}
           >
@@ -367,12 +367,12 @@ window.NeoFooter = () => (
               fontWeight: 600,
               letterSpacing: '0.1em',
               color: 'var(--text-muted)',
-              marginBottom: 16,
+              marginBottom: 10,
             }}
           >
             PRODUCT
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             <a href="/product/platform" className="nav-link" style={{ fontSize: 12.5 }}>
               Platform
             </a>
@@ -391,12 +391,12 @@ window.NeoFooter = () => (
               fontWeight: 600,
               letterSpacing: '0.1em',
               color: 'var(--text-muted)',
-              marginBottom: 16,
+              marginBottom: 10,
             }}
           >
             LEARN
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             <a href="/technology" className="nav-link" style={{ fontSize: 12.5 }}>
               Technology
             </a>
@@ -412,12 +412,12 @@ window.NeoFooter = () => (
               fontWeight: 600,
               letterSpacing: '0.1em',
               color: 'var(--text-muted)',
-              marginBottom: 16,
+              marginBottom: 10,
             }}
           >
             DEVELOPERS
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             <a href={SITE.apiDocsUrl} className="nav-link" style={{ fontSize: 12.5 }}>
               Swagger Docs ↗
             </a>
@@ -436,12 +436,12 @@ window.NeoFooter = () => (
               fontWeight: 600,
               letterSpacing: '0.1em',
               color: 'var(--text-muted)',
-              marginBottom: 16,
+              marginBottom: 10,
             }}
           >
             COMPANY
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
             <a href="/company" className="nav-link" style={{ fontSize: 12.5 }}>
               About
             </a>
@@ -454,7 +454,7 @@ window.NeoFooter = () => (
       <div
         style={{
           borderTop: '1px solid var(--border-light)',
-          paddingTop: 20,
+          paddingTop: 14,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -565,6 +565,164 @@ window.NeoScreenshot = ({
           document.body
         )}
     </>
+  );
+};
+
+/* ════════════════════════════════════════════
+   HERO COMPONENT
+   ────────────────────────────────────────────
+   Reusable hero section shared across all inner pages.
+   Props:
+     label:          section label text (e.g. "Technology")
+     title:          heading — string or JSX
+     description:    paragraph — string or JSX
+     stats:          optional array of { val, label }
+     ctas:           optional array of { href, label, external? }
+     descMaxWidth:   optional max-width for description (default 620)
+     paddingBottom:  optional bottom padding (default 64)
+     glow:           optional preset: 'center'|'center-low'|'right'|'narrow' (default 'center')
+   ════════════════════════════════════════════ */
+const GLOW_PRESETS = {
+  center: {
+    left: '20%',
+    width: '60%',
+    background:
+      'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+  },
+  'center-low': {
+    left: '20%',
+    width: '60%',
+    background:
+      'radial-gradient(ellipse at 50% 25%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+  },
+  right: {
+    right: 0,
+    width: '55%',
+    background:
+      'radial-gradient(ellipse at 65% 35%, rgba(108,99,255,0.06) 0%, transparent 50%)',
+  },
+  narrow: {
+    left: '30%',
+    width: '40%',
+    background:
+      'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+  },
+};
+
+const ExternalLinkIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+    <path
+      d="M4 12L12 4M12 4H6M12 4v6"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+window.NeoHero = ({
+  label,
+  title,
+  description,
+  stats,
+  ctas,
+  descMaxWidth = 620,
+  paddingBottom = 64,
+  glow = 'center',
+}) => {
+  const glowStyle = typeof glow === 'string' ? GLOW_PRESETS[glow] || GLOW_PRESETS.center : glow;
+  const hasCtas = ctas && ctas.length > 0;
+  const hasStats = stats && stats.length > 0;
+  const statsDelay = hasCtas ? 0.5 : 0.4;
+
+  return (
+    <section style={{ padding: `140px 48px ${paddingBottom}px`, position: 'relative' }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          height: '100%',
+          pointerEvents: 'none',
+          ...glowStyle,
+        }}
+      />
+      <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+        <div className="section-label" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
+          {label}
+        </div>
+        <h1
+          style={{
+            fontSize: 52,
+            fontWeight: 700,
+            lineHeight: 1.1,
+            letterSpacing: '-0.03em',
+            marginBottom: 18,
+            animation: 'fadeUp 0.6s ease 0.2s both',
+          }}
+        >
+          {title}
+        </h1>
+        <p
+          className="sans"
+          style={{
+            fontSize: 17,
+            lineHeight: 1.75,
+            color: 'var(--text-secondary)',
+            maxWidth: descMaxWidth,
+            marginBottom: 28,
+            animation: 'fadeUp 0.6s ease 0.3s both',
+          }}
+        >
+          {description}
+        </p>
+        {hasCtas && (
+          <div
+            style={{
+              display: 'flex',
+              gap: 14,
+              animation: 'fadeUp 0.6s ease 0.4s both',
+            }}
+          >
+            {ctas.map((cta, i) => (
+              <a
+                key={i}
+                href={cta.href}
+                target={cta.external ? '_blank' : undefined}
+                className="cta-btn sans"
+                style={{ textDecoration: 'none' }}
+              >
+                {cta.label} {cta.external && <ExternalLinkIcon />}
+              </a>
+            ))}
+          </div>
+        )}
+        {hasStats && (
+          <div
+            className="sans"
+            style={{
+              display: 'flex',
+              gap: 28,
+              fontSize: 13,
+              ...(hasCtas ? { marginTop: 28 } : {}),
+              animation: `fadeUp 0.6s ease ${statsDelay}s both`,
+            }}
+          >
+            {stats.map((s, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span
+                  className="mono"
+                  style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 15 }}
+                >
+                  {s.val}
+                </span>
+                <span style={{ color: 'var(--text-muted)' }}>{s.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

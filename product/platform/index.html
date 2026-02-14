@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Tariff — Platform</title>
     <link rel="stylesheet" href="/shared/styles.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body>
     <div id="root"></div>
@@ -18,6 +22,7 @@
         NeoFooter,
         NeoGrain,
         NeoDivider,
+        NeoHero,
         NeoScreenshot,
         useScrollAnimation,
         ArrowIcon,
@@ -151,7 +156,7 @@
           {
             id: 'scenario-dashboard',
             title: 'Scenario Dashboard',
-            premium: true,
+            premium: false,
             subtitle: 'Portfolio duty analytics and scenario optimization',
             desc: 'Turn bulk tariff simulations into executive-ready scenario analysis. The Scenario Dashboard connects multiple bulk simulation datasets into a single analytical workspace. Track current duty spend, compare baseline vs. optimized scenarios, and quantify how tariff changes or sourcing decisions move your P&L over time.',
             keyFeatures: [
@@ -170,7 +175,7 @@
           {
             id: 'alternate-vendor',
             title: 'Alternate Vendor Discovery',
-            premium: true,
+            premium: false,
             subtitle: 'Find alternative suppliers by profile or capability',
             desc: 'Search for alternative vendors using two discovery modes: Business Profile (find vendors with a similar fingerprint to a reference company) and Product Capability (find vendors by specific product capability). Results include a fit score out of 100, company summary, capabilities, industry classifications, and specs.',
             keyFeatures: [
@@ -443,84 +448,25 @@
             <NeoNav activePage="platform" />
 
             {/* Hero */}
-            <section style={{ padding: '140px 48px 64px', position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  width: '55%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 65% 35%, rgba(108,99,255,0.06) 0%, transparent 50%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div className="section-label" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
-                  Product Tour
-                </div>
-                <h1
-                  style={{
-                    fontSize: 52,
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    letterSpacing: '-0.03em',
-                    marginBottom: 18,
-                    animation: 'fadeUp 0.6s ease 0.2s both',
-                  }}
-                >
-                  Platform Features
-                </h1>
-                <p
-                  className="sans"
-                  style={{
-                    fontSize: 17,
-                    lineHeight: 1.75,
-                    color: 'var(--text-secondary)',
-                    maxWidth: 640,
-                    marginBottom: 32,
-                    animation: 'fadeUp 0.6s ease 0.3s both',
-                  }}
-                >
-                  Every tool in the Neo Tariff platform is powered by the same versioned tariff
-                  graph and deterministic calculation engine. From single-entry simulations to
-                  portfolio analytics and supplier discovery — here's what you get.
-                </p>
-                <div
-                  className="sans"
-                  style={{
-                    display: 'flex',
-                    gap: 28,
-                    fontSize: 13,
-                    animation: 'fadeUp 0.6s ease 0.4s both',
-                  }}
-                >
-                  {[
-                    { val: '7', label: 'Platform tools' },
-                    { val: '4', label: 'Tariff essentials' },
-                    { val: '3', label: 'Intelligence suite' },
-                  ].map((s, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span
-                        className="mono"
-                        style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 15 }}
-                      >
-                        {s.val}
-                      </span>
-                      <span style={{ color: 'var(--text-muted)' }}>{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
+            <NeoHero
+              label="Product Tour"
+              title="Platform Features"
+              description="Every tool in the Neo Tariff platform is powered by the same versioned tariff graph and deterministic calculation engine. From single-entry simulations to portfolio analytics and supplier discovery — here's what you get."
+              glow="right"
+              descMaxWidth={640}
+              stats={[
+                { val: '7', label: 'Platform tools' },
+                { val: '4', label: 'Tariff essentials' },
+                { val: '3', label: 'Intelligence suite' },
+              ]}
+            />
 
             <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
 
             {/* Jump nav */}
             <section
               style={{
-                padding: '16px 48px',
+                padding: '8px 48px',
                 position: 'sticky',
                 top: 60,
                 zIndex: 90,

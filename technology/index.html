@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neo Tariff — Technology</title>
     <link rel="stylesheet" href="/shared/styles.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
   <body>
     <div id="root"></div>
@@ -13,7 +17,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon } = window;
+      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
+        window;
       const { useState, useEffect } = React;
 
       const stages = [
@@ -108,7 +113,7 @@
       ];
 
       const NeoTariffTechnology = () => {
-        const [activeStage, setActiveStage] = useState('parse');
+        const [activeStage, setActiveStage] = useState(null);
         const [hoveredLayer, setHoveredLayer] = useState(null);
 
         const isV = useScrollAnimation();
@@ -125,77 +130,17 @@
             <NeoNav activePage="technology" />
 
             {/* ━━━ Hero ━━━ */}
-            <section style={{ padding: '140px 48px 64px', position: 'relative' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '20%',
-                  width: '60%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div className="section-label" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
-                  Technology
-                </div>
-                <h1
-                  style={{
-                    fontSize: 52,
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    letterSpacing: '-0.03em',
-                    marginBottom: 18,
-                    animation: 'fadeUp 0.6s ease 0.2s both',
-                  }}
-                >
-                  Inside the Engine
-                </h1>
-                <p
-                  className="sans"
-                  style={{
-                    fontSize: 17,
-                    lineHeight: 1.75,
-                    color: 'var(--text-secondary)',
-                    maxWidth: 620,
-                    marginBottom: 28,
-                    animation: 'fadeUp 0.6s ease 0.3s both',
-                  }}
-                >
-                  Neo Tariff is a purpose-built rules engine — not a lookup tool, not an AI wrapper.
-                  A 7-stage deterministic pipeline ingests raw government documents and produces
-                  fully traceable duty determinations.
-                </p>
-                <div
-                  className="sans"
-                  style={{
-                    display: 'flex',
-                    gap: 28,
-                    fontSize: 13,
-                    animation: 'fadeUp 0.6s ease 0.4s both',
-                  }}
-                >
-                  {[
-                    { val: '100%', label: 'Deterministic' },
-                    { val: '5 / 7', label: 'Proprietary stages' },
-                    { val: 'Full', label: 'Audit traceability' },
-                  ].map((s, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span
-                        className="mono"
-                        style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 15 }}
-                      >
-                        {s.val}
-                      </span>
-                      <span style={{ color: 'var(--text-muted)' }}>{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
+            <NeoHero
+              label="Technology"
+              title="Inside the Engine"
+              description="Neo Tariff is a purpose-built rules engine — not a lookup tool, not an AI wrapper. A 7-stage deterministic pipeline ingests raw government documents and produces fully traceable duty determinations."
+              glow="center"
+              stats={[
+                { val: '100%', label: 'Deterministic' },
+                { val: '5 / 7', label: 'Proprietary stages' },
+                { val: 'Full', label: 'Audit traceability' },
+              ]}
+            />
 
             <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
 
