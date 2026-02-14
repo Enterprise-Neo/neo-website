@@ -18,8 +18,20 @@ const { useState, useEffect } = React;
 
 const NeoTariffPlatform = () => {
     const [expandedFeature, setExpandedFeature] = useState(0);
-    
+    const [activeSection, setActiveSection] = useState(null);
+
   const isV = useScrollAnimation();
+
+  useEffect(() => {
+    const ids = ["tariff-simulator","bulk-simulator","hts-browser-schedule","hts-browser-notes","scenario-dashboard","alternate-vendor","news-insights"];
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) setActiveSection(e.target.id);
+      });
+    }, { rootMargin:"-40% 0px -55% 0px" });
+    ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
 const essentials = [
     { id:"tariff-simulator", title:"Tariff Simulator", subtitle:"Scenario-true landed cost for any shipment", desc:"The Tariff Simulator is the primary interface for single-entry duty calculations. Enter an HTS code, country of origin, import date, declared value, and quantity — and get back the complete duty picture instantly. The engine evaluates base MFN rates alongside all applicable Chapter 99 rules (Section 301, Section 232, IEEPA reciprocal duties) with automatic handling of supersession, exclusion, and priority logic.", keyFeatures:["Compute base and additional duties per shipment, including Sections 232 and 301","Compare duty impact by origin under a shared HTS and value","Export clear duty breakdowns for quotes, approvals, and documentation","Toggle general conditions: donation, informational material, personal baggage, civil aircraft","Rates by Country comparison to evaluate alternative origins side-by-side"], tags:["Scenario-true","HTS + 232/301 aware","No setup required"], screenshotCaption:"Tariff Simulator calculating duties for a cotton t-shirt (HTS 6109.10.00.12) imported from China. The result shows a $1,440 total landed cost with a 44% net effective rate — broken down across base duty (16.5%), 9903.01.24 (10%), 9903.01.25 (10%), and 9903.88.15 (7.5%).", gradient:"linear-gradient(135deg, #2D2A6E 0%, #1A1845 100%)", highlight:"44% net effective rate — 4 duty components evaluated automatically", img:"/images/simulatorSingle.png", zoom:1.3, focusX:"0%", focusY:"0%" },
     { id:"bulk-simulator", title:"Bulk Tariff Simulator", subtitle:"Portfolio-wide tariff exposure from your data", desc:"Upload entry histories or SKU catalogs via CSV and run the same deterministic tariff engine across your entire portfolio. The Bulk Simulator compares as-reported duties against the latest tariff schedule, surfacing rate deltas and quantifying exposure. Use it for portfolio audits, identifying overcharges, or modeling the impact of tariff changes across thousands of SKUs.", keyFeatures:["Ingest thousands of records via CSV or system exports for calculation","Run portfolio-wide duty calculations with per-line summaries and exceptions","Aggregate exposure by origin, HTS, description, or date to prioritize work","As-Reported vs. Latest Schedule comparison with delta columns (Δ$ and Δ%)","Detailed item view with record info, cost summary, and duty breakdown per line","Rate Scenarios tab for modeling alternative tariff policies"], tags:["CSV / ERP uploads","Portfolio analytics","Scenario modeling"], screenshotCaption:"Bulk Tariff Simulator processing 120 apparel records. The grid shows per-line results with As-Reported vs. Latest Schedule columns side by side. Red delta values highlight where current tariffs deviate from reported rates.", gradient:"linear-gradient(135deg, #1A2745 0%, #162040 100%)", highlight:"$28,171 total portfolio delta identified across 120 records", img:"/images/simulatorBulk.png", zoom:1.3, focusX:"0%", focusY:"0%" },
@@ -37,12 +49,12 @@ const essentials = [
 
   const renderFeatureCard = (feature, idx) => (
     <section key={idx} id={feature.id} style={{ padding:"48px 48px" }}>
-      <div style={{ maxWidth:1180, margin:"0 auto" }}>
+      <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
         <div id={`f-${idx}`} data-animate className={`feature-card anim ${isV(`f-${idx}`)?"vis":""}`}>
           {feature.img ? (
-            <NeoScreenshot src={feature.img} alt={feature.title} height={420} zoom={feature.zoom || 1.3} focusX={feature.focusX} focusY={feature.focusY} gradient={feature.gradient} />
+            <NeoScreenshot src={feature.img} alt={feature.title} height={320} zoom={feature.zoom || 1.3} focusX={feature.focusX} focusY={feature.focusY} gradient={feature.gradient} />
           ) : (
-            <div className="img-placeholder" style={{ height:420, background:feature.gradient, position:"relative" }}>
+            <div className="img-placeholder" style={{ height:320, background:feature.gradient, position:"relative" }}>
               <div style={{ textAlign:"center", padding:"0 60px", zIndex:1, maxWidth:700 }}>
                 <div style={{ width:56, height:56, borderRadius:12, background:"rgba(108,99,255,0.15)", border:"1px solid rgba(108,99,255,0.25)", display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:16 }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--accent)" strokeWidth="1.5"/><path d="M3 16l5-5 4 4 3-3 6 6" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)"/></svg>
@@ -92,21 +104,23 @@ const essentials = [
       {/* Hero */}
       <section style={{ padding:"140px 48px 64px", position:"relative" }}>
         <div style={{ position:"absolute", top:0, right:0, width:"55%", height:"100%", background:"radial-gradient(ellipse at 65% 35%, rgba(108,99,255,0.06) 0%, transparent 50%)", pointerEvents:"none" }} />
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>Product Tour</div>
           <h1 style={{ fontSize:52, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>Platform Features</h1>
           <p className="sans" style={{ fontSize:17, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:640, marginBottom:32, animation:"fadeUp 0.6s ease 0.3s both" }}>Every tool in the Neo Tariff platform is powered by the same versioned tariff graph and deterministic calculation engine. From single-entry simulations to portfolio analytics and supplier discovery — here's what you get.</p>
-          <div className="sans" style={{ display:"flex", gap:20, fontSize:13, color:"var(--text-muted)", animation:"fadeUp 0.6s ease 0.4s both" }}>
-            <span>7 tools</span><span style={{ color:"var(--border)" }}>·</span><span>4 tariff management essentials</span><span style={{ color:"var(--border)" }}>·</span><span>3 market & supplier intelligence</span>
+          <div className="sans" style={{ display:"flex", gap:28, fontSize:13, animation:"fadeUp 0.6s ease 0.4s both" }}>
+            {[{val:"7",label:"Platform tools"},{val:"4",label:"Tariff essentials"},{val:"3",label:"Intelligence suite"}].map((s,i)=>(
+              <div key={i} style={{ display:"flex",alignItems:"center",gap:8 }}><span className="mono" style={{ color:"var(--accent)",fontWeight:600,fontSize:15 }}>{s.val}</span><span style={{ color:"var(--text-muted)" }}>{s.label}</span></div>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* Jump nav */}
       <section style={{ padding:"16px 48px", position:"sticky", top:60, zIndex:90, background:"rgba(12,14,26,0.92)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--border-light)" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto", display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center", overflowX:"auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto", display:"flex", gap:4, flexWrap:"nowrap", alignItems:"center", overflowX:"auto" }}>
           {[
             { id:"tariff-simulator", short:"Tariff Simulator" },
             { id:"bulk-simulator", short:"Bulk Simulator" },
@@ -116,14 +130,14 @@ const essentials = [
             { id:"alternate-vendor", short:"Vendor Discovery" },
             { id:"news-insights", short:"News & Insights" },
           ].map((item, i) => (
-            <a key={i} href={`#${item.id}`} className="sans" style={{ padding:"5px 12px", fontSize:11.5, fontWeight:500, color:"var(--text-muted)", textDecoration:"none", transition:"all 0.2s", borderRadius:2, lineHeight:"1.4", whiteSpace:"nowrap" }}>{item.short}</a>
+            <a key={i} href={`#${item.id}`} className="sans" style={{ padding:"5px 12px", fontSize:11.5, fontWeight: activeSection === item.id ? 600 : 500, color: activeSection === item.id ? "var(--accent)" : "var(--text-muted)", textDecoration:"none", transition:"all 0.2s", borderRadius:2, lineHeight:"1.4", whiteSpace:"nowrap", background: activeSection === item.id ? "rgba(108,99,255,0.08)" : "transparent" }}>{item.short}</a>
           ))}
         </div>
       </section>
 
       {/* Tariff Management Essentials */}
       <section style={{ padding:"64px 48px 0" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="ess-h" data-animate className={`anim ${isV("ess-h")?"vis":""}`} style={{ marginBottom:48 }}>
             <div className="mono" style={{ fontSize:10.5, letterSpacing:"0.12em", color:"var(--accent)", marginBottom:8, padding:"3px 10px", border:"1px solid rgba(108,99,255,0.2)", display:"inline-block" }}>TARIFF MANAGEMENT ESSENTIALS</div>
             <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginTop:14 }}>Core tools for tariff calculation and HTS navigation</h2>
@@ -134,11 +148,11 @@ const essentials = [
 
       {essentials.map((f, i) => renderFeatureCard(f, i))}
 
-      <div className="divider" style={{ maxWidth:1180, marginTop:32 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)", marginTop:32 }} />
 
       {/* Market & Supplier Intelligence */}
       <section style={{ padding:"64px 48px 0" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="int-h" data-animate className={`anim ${isV("int-h")?"vis":""}`} style={{ marginBottom:48 }}>
             <div className="mono" style={{ fontSize:10.5, letterSpacing:"0.12em", color:"var(--orange)", marginBottom:8, padding:"3px 10px", border:"1px solid rgba(251,191,36,0.2)", display:"inline-block" }}>MARKET & SUPPLIER INTELLIGENCE</div>
             <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginTop:14 }}>Analytics, scenarios, and supplier discovery</h2>
@@ -149,11 +163,11 @@ const essentials = [
 
       {intelligence.map((f, i) => renderFeatureCard(f, i + essentials.length))}
 
-      <div className="divider" style={{ maxWidth:1180, marginTop:32 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)", marginTop:32 }} />
 
       {/* Powered by section */}
       <section style={{ padding:"80px 48px" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="pwrd" data-animate className={`anim ${isV("pwrd")?"vis":""}`} style={{ textAlign:"center" }}>
             <div className="section-label" style={{ textAlign:"center" }}>What Powers It All</div>
             <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginBottom:36 }}>Every tool runs on the same engine.</h2>
@@ -174,25 +188,25 @@ const essentials = [
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* CTA */}
       <section style={{ padding:"96px 48px", textAlign:"center" }}>
-        <div style={{ maxWidth:600, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-narrow)", margin:"0 auto" }}>
           <div id="cta" data-animate className={`anim ${isV("cta")?"vis":""}`}>
             <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Ready to see it in action?</h2>
             <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Get a guided walkthrough of the Neo Tariff platform tailored to your team's use case.</p>
-            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+            <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"nowrap" }}>
               <button className="cta-btn sans">Request a Demo</button>
-              <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Explore the API</a>
-              <a href="/pricing" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>See Pricing</a>
+              <a href="/product/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Explore the API</a>
+              <a href="/pricing" className="cta-btn cta-btn-ghost sans" style={{ textDecoration:"none" }}>See Pricing</a>
             </div>
           </div>
         </div>
       </section>
       <NeoFooter />
 
-      
+
     </div>
   );
 };

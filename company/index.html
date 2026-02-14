@@ -21,23 +21,66 @@ const NeoTariffCompany = () => {
   const isV = useScrollAnimation();
 
   const leadership = [
-    { name:"Joy Peters", role:"CEO and Co-Founder", img:"https://framerusercontent.com/images/bpaBZ04MVFwW953hRDPVRjgyep4.png?width=289&height=411", linkedin:"https://linkedin.com" },
-    { name:"Dhaval Garg", role:"COO and Co-Founder", img:"https://framerusercontent.com/images/0d7h7mD12opAJtfxxSdpamWOamk.png?width=339&height=527", linkedin:"https://linkedin.com" },
-    { name:"Garrett Amaru", role:"CTO", img:"https://framerusercontent.com/images/TZ5tZX3P7htFiA2i45Vn9fp3w.png?width=350&height=379", linkedin:"https://linkedin.com" },
+    { name:"Joy Peters", role:"CEO and Co-Founder", img:"https://framerusercontent.com/images/bpaBZ04MVFwW953hRDPVRjgyep4.png?width=289&height=411", linkedin:"https://www.linkedin.com/in/joypeters/", desc:[
+      "30+ years management consulting experience, gaining intimate knowledge of Board/CXOs decision-making on strategic issues",
+      "Served as sales leader/partner for Gen AI startup",
+      "Investor and Advisor with pre-Series A startups",
+    ]},
+    { name:"Dhaval Garg", role:"COO and Co-Founder", img:"https://framerusercontent.com/images/0d7h7mD12opAJtfxxSdpamWOamk.png?width=339&height=527", linkedin:"https://www.linkedin.com/in/dhavalgarg/", desc:[
+      "15+ years of professional services experience across management consulting, financial services and technology",
+      "Proven expertise in bridging business, product, operations and innovative technologies",
+      "Investor and Advisor in Enterprise and SaaS startups",
+    ]},
+    { name:"Garrett Amaru", role:"CTO", img:"https://framerusercontent.com/images/TZ5tZX3P7htFiA2i45Vn9fp3w.png?width=350&height=379", linkedin:"https://www.linkedin.com/in/garrettamaru", desc:[
+      "13 years of product strategy, AI, product development, and management consulting experience",
+      "Co-founder of data analytics company",
+      "Deep experience in AI-enabled agentic architecture to ingest and process large datasets — leveraging LLMs, RAG, and custom orchestration flows",
+    ]},
   ];
 
   const advisors = [
-    { name:"Reginald Smith", role:"Tariff Expert", img:"https://framerusercontent.com/images/MEYlAfqvR1QWHqZrzvPN8OLte8.png?width=288&height=309", linkedin:"https://linkedin.com" },
-    { name:"Mark Roberts", role:"Advisor", img:"https://framerusercontent.com/images/XS9X99FL65eVN2064MlPlJTVLY.png?width=368&height=419", linkedin:"https://linkedin.com" },
-    { name:"Katherine Ross", role:"Advisor", img:"https://framerusercontent.com/images/gYNQEnAXrMtWBLX0LazZfxWV6U.png?width=375&height=541", linkedin:"https://linkedin.com" },
-    { name:"Philippe Lambotte", role:"Advisor", img:"https://framerusercontent.com/images/bbVgAwthnQInnTjCMSwJom0Z8.png?width=398&height=627", linkedin:"https://linkedin.com" },
-    { name:"Andrea Pope", role:"Advisor", img:"https://framerusercontent.com/images/IRJVdiZXaAe4fZQltV7xyM9I.png?width=400&height=400", linkedin:"https://linkedin.com" },
-    { name:"Lanchi Venator", role:"Advisor", img:"https://framerusercontent.com/images/xLw7kR9sdUhUYHIhy0rS1pbz8XQ.png?width=408&height=538", linkedin:"https://linkedin.com" },
+    { name:"Reginald Smith", role:"Tariff Expert", img:"https://framerusercontent.com/images/MEYlAfqvR1QWHqZrzvPN8OLte8.png?width=288&height=309", linkedin:"https://linkedin.com", desc:[
+      "Supply chain and logistics consultant with 20+ years of industry experience in heavy manufacturing and food",
+      "Key leader on US tariffs for a Fortune 500 company during the first Trump administration",
+      "Author of \"The Basic Guide to US Tariffs\"",
+    ]},
+    { name:"Mark Roberts", role:"Advisor", img:"https://framerusercontent.com/images/XS9X99FL65eVN2064MlPlJTVLY.png?width=368&height=419", linkedin:"https://linkedin.com", desc:[
+      "Former CEO of Morton Salt, COO and Executive Board Member of the K+S Group",
+      "Deep experience in corporate leadership, industrial operations, P&L management, and strategy execution",
+      "Operating Advisor to Private Equity and Family Offices",
+    ]},
+    { name:"Katherine Ross", role:"Advisor", img:"https://framerusercontent.com/images/gYNQEnAXrMtWBLX0LazZfxWV6U.png?width=375&height=541", linkedin:"https://linkedin.com", desc:[
+      "Board director and former senior executive with global operating experience in Health Care, Consumer Goods, and Supply Chain in Fortune 50 companies (J&J, PepsiCo)",
+      "Current and past advisory roles include Elementum, Appalachian Trail Conservancy, Biotouch, o9 Solutions, Unity SCM, and GS1 US",
+    ]},
+    { name:"Philippe Lambotte", role:"Advisor", img:"https://framerusercontent.com/images/bbVgAwthnQInnTjCMSwJom0Z8.png?width=398&height=627", linkedin:"https://linkedin.com", desc:[
+      "Senior Supply Chain executive with 35+ years experience in global end-to-end roles in planning, logistics, order to cash/customer care, manufacturing and procurement strategy",
+      "Served in leadership roles at Fortune 500 companies and start-ups: Procter & Gamble, Kraft Foods, J&J, Merck, Mattel, Tonal",
+      "Served in GS1 US and GS1 Global Boards and currently on Iceberg Inc board",
+      "Currently CEO/Founder of Lambotte Business Solutions Consulting",
+    ]},
+    { name:"Andrea Pope", role:"Advisor", img:"https://framerusercontent.com/images/IRJVdiZXaAe4fZQltV7xyM9I.png?width=400&height=400", linkedin:"https://linkedin.com", desc:[
+      "Data Scientist with proven expertise in AI, product management, and analytics",
+      "Served as Head of Product Innovation at early stage SaaS company leveraging AI and ML to connect and coordinate shippers, providers, and partners to deliver the future transportation market",
+    ]},
+    { name:"Lanchi Venator", role:"Advisor", img:"https://framerusercontent.com/images/xLw7kR9sdUhUYHIhy0rS1pbz8XQ.png?width=408&height=538", linkedin:"https://linkedin.com", desc:[
+      "CFO at MiniLuxe",
+      "Finance and Strategy executive with 30+ years' experience in finance, strategic planning, analytics and pricing",
+      "Held senior leadership roles in Fortune 500 companies and SMBs",
+    ]},
   ];
 
   const extended = [
-    { name:"Jon Edwards", role:"Commercial Expert", img:"https://framerusercontent.com/images/iWTiNU7sJ9divLEA4h2MVgbq4I.png?width=374&height=496", linkedin:"https://linkedin.com" },
-    { name:"Jeffery Jones", role:"Energy and Consulting", img:"https://framerusercontent.com/images/W7Sozs4rvLoReInNEMmSd8UPuH8.png?width=281&height=314", linkedin:"https://linkedin.com" },
+    { name:"Jon Edwards", role:"Commercial Expert", img:"https://framerusercontent.com/images/iWTiNU7sJ9divLEA4h2MVgbq4I.png?width=374&height=496", linkedin:"https://linkedin.com", desc:[
+      "20+ years of management consulting experience, working with Fortune 500 and mid-market leaders",
+      "Advises global organizations to define and activate transformational strategies that drive growth",
+      "Expertise in commercial strategy, portfolio strategy, and scenario planning",
+    ]},
+    { name:"Jeffery Jones", role:"Energy and Consulting", img:"https://framerusercontent.com/images/W7Sozs4rvLoReInNEMmSd8UPuH8.png?width=281&height=314", linkedin:"https://linkedin.com", desc:[
+      "Seasoned management consultant with a strong focus on energy, utilities, and defense, advising on inflation, labor, operations, and supply chains",
+      "Former CIA intelligence analyst focused on national security",
+      "Holds engineering degrees from Tulane and Georgia Tech, and an MBA from Oxford",
+    ]},
   ];
 
   const PersonCard = ({ person, size }) => {
@@ -59,9 +102,15 @@ const NeoTariffCompany = () => {
         {/* Info */}
         <div style={{ padding:"18px 20px 22px" }}>
           <div className="sans" style={{ fontSize:isLarge?18:15, fontWeight:700, marginBottom:4 }}>{person.name}</div>
-          <div className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", letterSpacing:"0.01em" }}>{person.role}</div>
+          <div className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", letterSpacing:"0.01em", marginBottom:person.desc?10:0 }}>{person.role}</div>
+          {person.desc && (
+            <div style={{ display:"flex", flexDirection:"column", gap:8, marginTop:2 }}>
+              {person.desc.map((d,di) => (
+                <div key={di} className="sans" style={{ fontSize:11.5, lineHeight:1.55, color:"var(--text-secondary)" }}>{d}</div>
+              ))}
+            </div>
+          )}
         </div>
-      <NeoFooter />
       </div>
     );
   };
@@ -72,22 +121,22 @@ const NeoTariffCompany = () => {
       <NeoNav activePage="company" />
 
       {/* ━━━ Hero ━━━ */}
-      <section style={{ padding:"140px 48px 64px", position:"relative", textAlign:"center" }}>
+      <section style={{ padding:"140px 48px 64px", position:"relative" }}>
         <div style={{ position:"absolute", top:0, left:"20%", width:"60%", height:"100%", background:"radial-gradient(ellipse at 50% 25%, rgba(108,99,255,0.06) 0%, transparent 55%)", pointerEvents:"none" }} />
-        <div style={{ maxWidth:780, margin:"0 auto" }}>
-          <div className="section-label" style={{ textAlign:"center", animation:"fadeUp 0.6s ease 0.1s both" }}>About Enterprise-Neo</div>
-          <h1 style={{ fontSize:48, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>We build the tariff engine<br />that shows its work.</h1>
-          <p className="sans" style={{ fontSize:16, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:600, margin:"0 auto", animation:"fadeUp 0.6s ease 0.3s both" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
+          <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>About Enterprise-Neo</div>
+          <h1 style={{ fontSize:52, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>We build the tariff engine<br />that shows its work.</h1>
+          <p className="sans" style={{ fontSize:17, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:620, marginBottom:28, animation:"fadeUp 0.6s ease 0.3s both" }}>
             Enterprise-Neo builds Neo Tariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled tariff graph and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario.
           </p>
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* ━━━ Our Philosophy ━━━ */}
       <section style={{ padding:"72px 48px" }}>
-        <div style={{ maxWidth:900, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="phil" data-animate className={`anim ${isV("phil")?"vis":""}`}>
             <div className="section-label">Our Philosophy</div>
             <h2 style={{ fontSize:32, fontWeight:600, letterSpacing:"-0.02em", marginBottom:28 }}>What we believe about building tariff intelligence.</h2>
@@ -108,11 +157,11 @@ const NeoTariffCompany = () => {
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* ━━━ Meet the Team ━━━ */}
       <section style={{ padding:"72px 48px" }}>
-        <div style={{ maxWidth:1100, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="team" data-animate className={`anim ${isV("team")?"vis":""}`}>
             <div style={{ textAlign:"center", marginBottom:48 }}>
               <div className="section-label" style={{ textAlign:"center" }}>Our Team</div>
@@ -139,7 +188,7 @@ const NeoTariffCompany = () => {
             {/* Extended Team */}
             <div>
               <div className="mono" style={{ fontSize:10.5, letterSpacing:"0.12em", color:"var(--text-muted)", marginBottom:20, textAlign:"center" }}>[ EXTENDED TEAM ]</div>
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16, maxWidth:740, margin:"0 auto" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }}>
                 {extended.map((p,i) => <PersonCard key={i} person={p} size="medium" />)}
               </div>
             </div>
@@ -147,11 +196,11 @@ const NeoTariffCompany = () => {
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* ━━━ Advisory Services ━━━ */}
       <section style={{ padding:"72px 48px" }}>
-        <div style={{ maxWidth:900, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="adv" data-animate className={`anim ${isV("adv")?"vis":""}`}>
             <div className="section-label">Advisory Services</div>
             <h2 style={{ fontSize:30, fontWeight:600, letterSpacing:"-0.02em", marginBottom:14 }}>Expert-led engagements powered by the engine.</h2>
@@ -175,11 +224,11 @@ const NeoTariffCompany = () => {
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* ━━━ Quote ━━━ */}
       <section style={{ padding:"80px 48px" }}>
-        <div style={{ maxWidth:700, margin:"0 auto", textAlign:"center" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto", textAlign:"center" }}>
           <div id="qt" data-animate className={`anim ${isV("qt")?"vis":""}`}>
             <p style={{ fontSize:21, fontStyle:"italic", lineHeight:1.6, color:"var(--text-secondary)", marginBottom:20 }}>"If you can't explain why a specific rate applies to a specific product from a specific country on a specific date — citing the exact rule, its conditions, and its legal authority — then you don't have an answer. You have a guess."</p>
             <div className="mono" style={{ fontSize:11, color:"var(--text-muted)", letterSpacing:"0.06em" }}>— The principle behind every line of code</div>
@@ -187,24 +236,25 @@ const NeoTariffCompany = () => {
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* ━━━ CTA ━━━ */}
       <section style={{ padding:"88px 48px", textAlign:"center" }}>
-        <div style={{ maxWidth:600, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-narrow)", margin:"0 auto" }}>
           <div id="ccta" data-animate className={`anim ${isV("ccta")?"vis":""}`}>
             <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Let's talk about your tariff challenges.</h2>
             <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Whether you need a platform, an API, or advisory support — we'd like to understand your situation and show you what's possible.</p>
-            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
+            <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"nowrap" }}>
               <button className="cta-btn sans">Request a Demo</button>
-              <a href="https://enterprise-neo.com/register" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Create Free Account</a>
-              <a href="https://enterprise-neo.com" target="_blank" className="cta-btn sans" style={{ textDecoration:"none",background:"transparent",border:"1px solid var(--border)",color:"var(--text-secondary)" }}>enterprise-neo.com ↗</a>
+              <a href={SITE.signupUrl} className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>Create Free Account</a>
+              <a href={SITE.apiDocsUrl} target="_blank" className="cta-btn cta-btn-ghost sans" style={{ textDecoration:"none" }}>API Docs ↗</a>
             </div>
           </div>
         </div>
       </section>
+      <NeoFooter />
 
-      
+
     </div>
   );
 };

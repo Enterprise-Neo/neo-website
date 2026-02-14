@@ -31,8 +31,8 @@ html,body{margin:0;padding:0;background:var(--bg)}
 
   /* Text hierarchy */
   --text-primary:   #E4E2DD;
-  --text-secondary: #9B99A3;
-  --text-muted:     #6B697A;
+  --text-secondary: #B0AEB8;
+  --text-muted:     #807E8F;
 
   /* Borders */
   --border:       #252840;
@@ -46,7 +46,7 @@ html,body{margin:0;padding:0;background:var(--bg)}
 
   /* Layout */
   --max-width:  1180px;
-  --max-narrow: 780px;
+  --max-narrow: 800px;
   --nav-height: 60px;
   --section-pad: 80px 48px;
 }
@@ -104,11 +104,12 @@ html,body{margin:0;padding:0;background:var(--bg)}
 
 /* ── Buttons ── */
 .cta-btn {
-  display:inline-flex; align-items:center; gap:10px;
-  padding:13px 30px; background:var(--accent); color:#fff;
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:13px 30px; min-width:160px; background:var(--accent); color:#fff;
   text-decoration:none; font-family:'DM Sans',sans-serif;
   font-weight:600; font-size:14px; letter-spacing:0.02em;
   border:none; cursor:pointer; transition:all 0.3s; border-radius:2px;
+  white-space:nowrap;
 }
 .cta-btn:hover { background:var(--accent-bright); transform:translateY(-1px); box-shadow:0 4px 24px rgba(108,99,255,0.35) }
 .cta-btn-outline { background:transparent; border:1px solid var(--accent); color:var(--accent) }
@@ -262,6 +263,38 @@ html,body{margin:0;padding:0;background:var(--bg)}
 .neo-lightbox-close:hover { background:rgba(255,255,255,0.22); color:#fff }
 @keyframes lbFadeIn { from{opacity:0} to{opacity:1} }
 @keyframes lbScaleIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+
+/* ── Pricing Tier Cards ── */
+.tier-card {
+  border:1px solid var(--border); background:var(--bg-card);
+  padding:30px 24px 28px; display:flex; flex-direction:column;
+  transition:all 0.3s; position:relative; overflow:hidden; flex:1; min-width:0;
+}
+.tier-card:hover { border-color:rgba(108,99,255,0.25); transform:translateY(-2px) }
+.tier-card.pop {
+  border-color:rgba(74,222,128,0.3);
+  background:linear-gradient(180deg,rgba(74,222,128,0.03) 0%,var(--bg-card) 50%);
+}
+.tier-card.pop::before {
+  content:''; position:absolute; top:0;left:0;right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+}
+.tier-btn {
+  display:flex; align-items:center; justify-content:center;
+  padding:11px 0; width:100%; font-family:'DM Sans',sans-serif;
+  font-weight:600; font-size:13px; border:none; cursor:pointer;
+  transition:all 0.25s; border-radius:4px; letter-spacing:0.01em;
+}
+.tier-btn-fill { background:var(--accent); color:#fff }
+.tier-btn-fill:hover { background:var(--accent-bright); box-shadow:0 4px 20px rgba(108,99,255,0.3) }
+.tier-btn-ghost { background:transparent; border:1px solid var(--accent); color:var(--accent) }
+.tier-btn-ghost:hover { background:var(--accent-subtle) }
+.new-tag {
+  display:inline-block; font-family:'JetBrains Mono',monospace;
+  font-size:8px; letter-spacing:0.08em; color:var(--accent);
+  background:rgba(108,99,255,0.1); border:1px solid rgba(108,99,255,0.2);
+  padding:1px 5px; border-radius:2px; margin-left:6px; vertical-align:middle;
+}
 
 /* ════════════════════════════════════════════
    RESPONSIVE

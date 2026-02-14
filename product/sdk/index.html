@@ -17,7 +17,7 @@ const { NeoNav, NeoFooter, NeoGrain, NeoDivider, useScrollAnimation, ArrowIcon }
 const { useState, useEffect } = React;
 
 const NeoTariffSDK = () => {
-        const [expandedGroup, setExpandedGroup] = useState("rates");
+        const [expandedGroup, setExpandedGroup] = useState(null);
 
   const isV = useScrollAnimation();
 const resources = [
@@ -81,27 +81,28 @@ const resources = [
       {/* Hero */}
       <section style={{ padding:"140px 48px 64px", position:"relative" }}>
         <div style={{ position:"absolute", top:0, left:"30%", width:"40%", height:"100%", background:"radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)", pointerEvents:"none" }} />
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div className="section-label" style={{ animation:"fadeUp 0.6s ease 0.1s both" }}>Developer Reference</div>
           <h1 style={{ fontSize:52, fontWeight:700, lineHeight:1.1, letterSpacing:"-0.03em", marginBottom:18, animation:"fadeUp 0.6s ease 0.2s both" }}>Python SDK</h1>
           <p className="sans" style={{ fontSize:17, lineHeight:1.75, color:"var(--text-secondary)", maxWidth:620, marginBottom:24, animation:"fadeUp 0.6s ease 0.3s both" }}>
             Full API surface in a typed Python package. Sync and async clients, Pydantic response models, automatic retries, and batch methods. 5 resource groups, 15 typed response models.
           </p>
-          <div style={{ padding:"14px 22px", background:"var(--bg-elevated)", border:"1px solid var(--border)", display:"inline-block", marginBottom:28, animation:"fadeUp 0.6s ease 0.35s both" }}>
-            <code className="mono" style={{ fontSize:14, color:"var(--accent)" }}>pip install neo-tariff</code>
-          </div>
-          <div style={{ display:"flex", gap:14, animation:"fadeUp 0.6s ease 0.4s both" }}>
+          <div style={{ display:"flex", gap:14, marginTop:28, animation:"fadeUp 0.6s ease 0.4s both" }}>
             <a href="https://pypi.org/project/neo-tariff/" target="_blank" className="cta-btn sans" style={{ textDecoration:"none" }}>View on PyPI <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H6M12 4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></a>
-            <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>REST API Reference</a>
+          </div>
+          <div className="sans" style={{ display:"flex", gap:28, fontSize:13, marginTop:28, animation:"fadeUp 0.6s ease 0.5s both" }}>
+            {[{val:"5",label:"Resource groups"},{val:String(resources.reduce((s,r)=>s+r.methods.length,0)),label:"Typed methods"},{val:"Sync + Async",label:"Clients"},{val:"Pydantic",label:"Response models"}].map((s,i)=>(
+              <div key={i} style={{ display:"flex",alignItems:"center",gap:8 }}><span className="mono" style={{ color:"var(--accent)",fontWeight:600,fontSize:15 }}>{s.val}</span><span style={{ color:"var(--text-muted)" }}>{s.label}</span></div>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* SDK Features */}
       <section style={{ padding:"64px 48px" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="feat" data-animate className={`anim ${isV("feat")?"vis":""}`}>
             <div className="section-label">SDK Capabilities</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, marginTop:20 }}>
@@ -117,11 +118,11 @@ const resources = [
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* Resource Groups */}
       <section style={{ padding:"64px 48px" }}>
-        <div style={{ maxWidth:1180, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="res-h" data-animate className={`anim ${isV("res-h")?"vis":""}`} style={{ marginBottom:32 }}>
             <div className="section-label">Resource Groups</div>
             <h2 style={{ fontSize:34, fontWeight:600, letterSpacing:"-0.02em", marginBottom:10 }}>5 resource groups. {resources.reduce((s,r)=>s+r.methods.length,0)} methods.</h2>
@@ -134,10 +135,13 @@ const resources = [
                 <div key={group.id} id={`r-${gi}`} data-animate className={`group-card anim ${isV(`r-${gi}`)?"vis":""} ${isExp?"expanded":""}`} style={{ transitionDelay:`${gi*0.03}s` }}>
                   <div onClick={()=>setExpandedGroup(isExp?null:group.id)} style={{ padding:"22px 28px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                     <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-                      <span className="mono" style={{ fontSize:14, fontWeight:600, color:isExp?"var(--accent)":"var(--text-muted)", padding:"4px 10px", background:isExp?"rgba(108,99,255,0.08)":"transparent", border:"1px solid "+(isExp?"rgba(108,99,255,0.2)":"transparent"), transition:"all 0.3s" }}>client.{group.id}</span>
+                      <span className="mono" style={{ fontSize:26, fontWeight:700, color:isExp?"var(--accent)":"var(--border)", letterSpacing:"-0.03em", minWidth:36, transition:"color 0.3s" }}>{String(gi+1).padStart(2,"0")}</span>
                       <div>
-                        <h3 className="sans" style={{ fontSize:17, fontWeight:600, color:isExp?"var(--text-primary)":"var(--text-secondary)", transition:"color 0.3s" }}>{group.title}</h3>
-                        <p className="sans" style={{ fontSize:13, color:"var(--text-muted)", marginTop:3, lineHeight:1.5, maxWidth:500 }}>{group.desc}</p>
+                        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                          <h3 className="sans" style={{ fontSize:17, fontWeight:600, letterSpacing:"-0.01em", color:isExp?"var(--text-primary)":"var(--text-secondary)", transition:"color 0.3s" }}>{group.title}</h3>
+                          <span className="mono" style={{ fontSize:11, color:isExp?"var(--accent)":"var(--text-muted)", padding:"2px 8px", background:isExp?"rgba(108,99,255,0.08)":"transparent", border:"1px solid "+(isExp?"rgba(108,99,255,0.2)":"var(--border)"), transition:"all 0.3s" }}>client.{group.id}</span>
+                        </div>
+                        <p className="sans" style={{ fontSize:13, color:"var(--text-muted)", marginTop:4, lineHeight:1.5, maxWidth:600 }}>{group.desc}</p>
                       </div>
                     </div>
                     <div style={{ display:"flex", alignItems:"center", gap:14 }}>
@@ -146,17 +150,25 @@ const resources = [
                     </div>
                   </div>
                   {isExp && (
-                    <div style={{ padding:"0 28px 22px", paddingLeft:28 }}>
+                    <div style={{ padding:"0 28px 22px", paddingLeft:80 }}>
                       <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-                        {group.methods.map((m, mi) => (
-                          <div key={mi} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 14px", background:"var(--bg-elevated)", borderLeft:"2px solid rgba(108,99,255,0.15)" }}>
-                            <code className="mono" style={{ fontSize:12, color:"var(--accent)", flexShrink:0, marginTop:2 }}>.{m.name}()</code>
-                            <div style={{ flex:1 }}>
-                              <p className="sans" style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.5 }}>{m.desc}</p>
-                              <span className="mono" style={{ fontSize:10, color:"var(--text-muted)", marginTop:4, display:"inline-block" }}>→ {m.maps}</span>
+                        {group.methods.map((m, mi) => {
+                          const mParts = m.maps.split(" ");
+                          const mMethod = mParts[0];
+                          const mPath = mParts.slice(1).join(" ");
+                          return (
+                            <div key={mi} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 14px", background:"var(--bg-elevated)", borderLeft:"2px solid rgba(108,99,255,0.15)" }}>
+                              <span className={`method-badge ${mMethod==="GET"?"method-get":"method-post"}`} style={{ flexShrink:0, marginTop:2 }}>{mMethod}</span>
+                              <div style={{ flex:1 }}>
+                                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                                  <code className="mono" style={{ fontSize:13, fontWeight:600, color:"var(--text-primary)" }}>.{m.name}()</code>
+                                  <code className="mono" style={{ fontSize:10.5, color:"var(--text-muted)" }}>{mPath}</code>
+                                </div>
+                                <p className="sans" style={{ fontSize:12.5, color:"var(--text-muted)", marginTop:4, lineHeight:1.5 }}>{m.desc}</p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -167,11 +179,11 @@ const resources = [
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* Error Handling */}
       <section style={{ padding:"64px 48px" }}>
-        <div style={{ maxWidth:860, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="err" data-animate className={`anim ${isV("err")?"vis":""}`}>
             <div className="section-label">Error Handling</div>
             <h2 style={{ fontSize:28, fontWeight:600, letterSpacing:"-0.02em", marginBottom:24 }}>Typed exception hierarchy</h2>
@@ -187,11 +199,11 @@ const resources = [
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* Quick Start */}
       <section style={{ padding:"64px 48px" }}>
-        <div style={{ maxWidth:860, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)", margin:"0 auto" }}>
           <div id="qs" data-animate className={`anim ${isV("qs")?"vis":""}`}>
             <div className="section-label">Quick Start</div>
             <h2 style={{ fontSize:28, fontWeight:600, letterSpacing:"-0.02em", marginBottom:24 }}>Three lines to your first duty calculation</h2>
@@ -211,18 +223,17 @@ const resources = [
         </div>
       </section>
 
-      <div className="divider" style={{ maxWidth:1180 }} />
+      <div className="divider" style={{ maxWidth:"var(--max-width)" }} />
 
       {/* CTA */}
       <section style={{ padding:"96px 48px", textAlign:"center" }}>
-        <div style={{ maxWidth:600, margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-narrow)", margin:"0 auto" }}>
           <div id="cta" data-animate className={`anim ${isV("cta")?"vis":""}`}>
             <h2 style={{ fontSize:36, fontWeight:600, lineHeight:1.15, letterSpacing:"-0.02em", marginBottom:16 }}>Start building with Neo Tariff</h2>
-            <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Install via pip and make your first duty calculation in minutes.</p>
-            <div style={{ display:"flex", gap:14, justifyContent:"center" }}>
-              <a href="https://pypi.org/project/neo-tariff/" target="_blank" className="cta-btn sans" style={{ textDecoration:"none" }}>PyPI Package ↗</a>
-              <a href="/api" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>REST API Docs</a>
-              <a href="https://tariff-data-dev.enterprise-neo.com/docs" target="_blank" className="cta-btn sans" style={{ textDecoration:"none",background:"transparent",border:"1px solid var(--border)",color:"var(--text-secondary)" }}>Swagger Docs ↗</a>
+            <p className="sans" style={{ fontSize:15, lineHeight:1.7, color:"var(--text-secondary)", marginBottom:32 }}>Create a free account to get your API key, then install the SDK and make your first duty calculation.</p>
+            <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"nowrap" }}>
+              <a href={SITE.signupUrl} className="cta-btn sans" style={{ textDecoration:"none" }}>Get API Key</a>
+              <a href={SITE.pypiUrl} target="_blank" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>PyPI Package ↗</a>
             </div>
           </div>
         </div>

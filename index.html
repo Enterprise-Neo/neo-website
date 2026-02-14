@@ -88,7 +88,7 @@ const Overview = () => {
       <section id="hero" style={{ minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",padding:"140px 48px 80px",position:"relative" }}>
         <div style={{ position:"absolute",top:0,right:0,width:"55%",height:"100%",background:"radial-gradient(ellipse at 65% 35%,rgba(108,99,255,0.07) 0%,transparent 55%)",pointerEvents:"none" }}/>
         <div style={{ position:"absolute",bottom:0,left:0,width:"40%",height:"50%",background:"radial-gradient(ellipse at 20% 80%,rgba(108,99,255,0.04) 0%,transparent 50%)",pointerEvents:"none" }}/>
-        <div style={{ maxWidth:880,position:"relative" }}>
+        <div style={{ maxWidth:"var(--max-width)",position:"relative" }}>
           <div className="section-label" style={{ animation:"fadeIn 1s ease 0.05s both" }}>Tariff Intelligence Engine</div>
           <div style={{ marginBottom:32 }}>
             <div className="hero-line"><span style={{ fontSize:64,fontWeight:700,lineHeight:1.08,letterSpacing:"-0.03em" }}>From lookup to logic.</span></div>
@@ -111,7 +111,7 @@ const Overview = () => {
 
       {/* ══ The Problem ══ */}
       <section id="problem" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:960,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="prob" data-animate className={`anim ${isV("prob")?"vis":""}`}>
             <div className="section-label">The Problem</div>
             <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:14 }}>Tariffs are not "a rate on a code."</h2>
@@ -136,7 +136,7 @@ const Overview = () => {
 
       {/* ══ Who It's For ══ */}
       <section id="personas" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="wh-h" data-animate className={`anim ${isV("wh-h")?"vis":""}`} style={{ marginBottom:40 }}>
             <div className="section-label">Who It's For</div>
             <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:580 }}>Built for organizations that take tariffs seriously.</h2>
@@ -164,7 +164,7 @@ const Overview = () => {
 
       {/* ══ How It Works — 3-col + stats ══ */}
       <section id="how-it-works" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:1100,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="pill-h" data-animate className={`anim ${isV("pill-h")?"vis":""}`} style={{ textAlign:"center",marginBottom:48 }}>
             <div className="section-label" style={{ textAlign:"center" }}>How It Works</div>
             <h2 style={{ fontSize:36,fontWeight:600,letterSpacing:"-0.02em",marginBottom:14 }}>Three pillars. One engine.</h2>
@@ -207,7 +207,7 @@ const Overview = () => {
 
       {/* ══ How You Use It ══ */}
       <section id="how-you-use-it" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="use-h" data-animate className={`anim ${isV("use-h")?"vis":""}`} style={{ marginBottom:48 }}>
             <div className="section-label">How You Use It</div>
             <h2 style={{ fontSize:38,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:700,marginBottom:16 }}>One engine, four ways in.</h2>
@@ -219,7 +219,7 @@ const Overview = () => {
                 <div className="mono" style={{ fontSize:10.5,letterSpacing:"0.1em",color:"var(--accent)",padding:"3px 9px",border:"1px solid rgba(108,99,255,0.25)" }}>WEB APP</div>
                 <span className="sans" style={{ fontSize:18,fontWeight:600 }}>Platform</span>
               </div>
-              <a href="/platform" className="sans" style={{ color:"var(--accent)",fontSize:12.5,fontWeight:500,textDecoration:"none",display:"flex",alignItems:"center",gap:4 }}>Explore all tools <ArrowIcon size={12}/></a>
+              <a href="/product/platform" className="sans" style={{ color:"var(--accent)",fontSize:12.5,fontWeight:500,textDecoration:"none",display:"flex",alignItems:"center",gap:4 }}>Explore all tools <ArrowIcon size={12}/></a>
             </div>
             <div style={{ display:"grid",gridTemplateColumns:"320px 1fr",gap:0,border:"1px solid var(--border)",background:"var(--bg-card)",minHeight:520 }}>
               <div style={{ borderRight:"1px solid var(--border)",display:"flex",flexDirection:"column" }}>
@@ -259,8 +259,8 @@ const Overview = () => {
           </div>
           <div id="use-lanes" data-animate className={`anim ${isV("use-lanes")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:20 }}>
             {[
-              { tag:"REST API",title:"Programmatic Access",desc:"50 endpoints across 16 groups. Send an HTS code, country, and value — get back the complete duty breakdown with every rule that applied and the legal rationale.",items:["Rates & duty calculations","HTS search & autocomplete","Version history & comparison","Context, notes, & programs","Stateless — nothing stored"],link:"/api",linkText:"API Reference" },
-              { tag:"PYTHON SDK",title:"Typed Python Client",desc:"Full API surface in a typed Python package with sync/async support, Pydantic response models, automatic retries, and batch methods.",items:["Rates, Search, Context, Compare","Typed Pydantic response models","Sync + async clients","Batch & multi-country methods"],link:"/sdk",linkText:"SDK Reference",pip:true },
+              { tag:"REST API",title:"Programmatic Access",desc:"50 endpoints across 16 groups. Send an HTS code, country, and value — get back the complete duty breakdown with every rule that applied and the legal rationale.",items:["Rates & duty calculations","HTS search & autocomplete","Version history & comparison","Context, notes, & programs","Stateless — nothing stored"],link:"/product/api",linkText:"API Reference" },
+              { tag:"PYTHON SDK",title:"Typed Python Client",desc:"Full API surface in a typed Python package with sync/async support, Pydantic response models, automatic retries, and batch methods.",items:["Rates, Search, Context, Compare","Typed Pydantic response models","Sync + async clients","Batch & multi-country methods"],link:"/product/sdk",linkText:"SDK Reference",pip:true },
               { tag:"ADVISORY",title:"Consulting Services",desc:"Targeted assessments to map duty drivers, identify savings levers, and operationalize tariff intelligence workflows — powered by the same engine behind the platform.",items:["Tariff exposure analysis","Classification optimization","Sourcing scenario modeling","Due diligence support","Post-summary correction sizing"],link:"/company",linkText:"Contact Us" },
             ].map((lane,i)=>(
               <div key={i} className="lane-card">
@@ -283,7 +283,7 @@ const Overview = () => {
 
       {/* ══ Lookup vs. Logic ══ */}
       <section id="comparison" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="cmp-h" data-animate className={`anim ${isV("cmp-h")?"vis":""}`} style={{ marginBottom:40 }}>
             <div className="section-label">Lookup vs. Logic</div>
             <h2 style={{ fontSize:36,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",maxWidth:680 }}>Most tools help you find codes and text.<br/><span style={{ color:"var(--accent)" }}>Neo Tariff decides what applies — and shows why.</span></h2>
@@ -308,7 +308,7 @@ const Overview = () => {
 
       {/* ══ AI Approach ══ */}
       <section id="ai-approach" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:1180,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="ai-s" data-animate className={`anim ${isV("ai-s")?"vis":""}`} style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:72 }}>
             <div>
               <div className="section-label">Our Approach to AI</div>
@@ -337,7 +337,7 @@ const Overview = () => {
 
       {/* ══ FAQ ══ */}
       <section id="faq" style={{ padding:"var(--section-pad)" }}>
-        <div style={{ maxWidth:780,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="fq-h" data-animate className={`anim ${isV("fq-h")?"vis":""}`} style={{ marginBottom:40,textAlign:"center" }}>
             <div className="section-label" style={{ textAlign:"center" }}>FAQ</div>
             <h2 style={{ fontSize:34,fontWeight:600,letterSpacing:"-0.02em" }}>Common questions</h2>
@@ -359,15 +359,15 @@ const Overview = () => {
 
       {/* ══ CTA ══ */}
       <section id="cta" style={{ padding:"100px 48px",textAlign:"center" }}>
-        <div style={{ maxWidth:680,margin:"0 auto" }}>
+        <div style={{ maxWidth:"var(--max-width)",margin:"0 auto" }}>
           <div id="cta-b" data-animate className={`anim ${isV("cta-b")?"vis":""}`}>
             <div className="section-label" style={{ textAlign:"center" }}>Get Started</div>
             <h2 style={{ fontSize:42,fontWeight:600,lineHeight:1.15,letterSpacing:"-0.02em",marginBottom:18 }}>Turn tariff complexity into<br/><span style={{ color:"var(--accent)" }}>clear, auditable answers.</span></h2>
             <p className="sans" style={{ fontSize:16,lineHeight:1.7,color:"var(--text-secondary)",marginBottom:36 }}>Whether you need an API for your systems, a platform for your teams, or expert analysis for a specific engagement — Neo Tariff delivers tariff intelligence you can defend.</p>
-            <div style={{ display:"flex",gap:14,justifyContent:"center" }}>
+            <div style={{ display:"flex",gap:14,justifyContent:"center",flexWrap:"nowrap" }}>
               <button className="cta-btn sans">Request a Demo <ArrowIcon /></button>
               <a href="/pricing" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>See Pricing</a>
-              <a href="/technology" className="cta-btn cta-btn-outline sans" style={{ textDecoration:"none" }}>How It Works</a>
+              <a href="/technology" className="cta-btn cta-btn-ghost sans" style={{ textDecoration:"none" }}>How It Works</a>
             </div>
           </div>
         </div>
