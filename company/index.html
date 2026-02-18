@@ -166,8 +166,8 @@
                 border: '1px solid var(--border)',
                 background:
                   'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-                borderRadius: 8,
-                transition: 'all 0.35s',
+                borderRadius: 'var(--radius)',
+                transition: 'all 0.35s var(--ease)',
                 transform: hovered ? 'translateY(-4px)' : '',
                 borderColor: hovered ? 'rgba(108,99,255,0.3)' : 'var(--border)',
               }}
@@ -190,7 +190,7 @@
                     objectFit: 'cover',
                     objectPosition: 'center top',
                     filter: hovered ? 'brightness(1.05)' : 'brightness(0.9)',
-                    transition: 'all 0.4s',
+                    transition: 'all 0.4s var(--ease)',
                   }}
                 />
                 <div
@@ -198,7 +198,7 @@
                     position: 'absolute',
                     inset: 0,
                     background:
-                      'linear-gradient(0deg, rgba(12,14,26,0.95) 0%, rgba(12,14,26,0.4) 40%, transparent 70%)',
+                      'linear-gradient(0deg, rgba(var(--bg-rgb),0.95) 0%, rgba(var(--bg-rgb),0.4) 40%, transparent 70%)',
                   }}
                 />
                 {/* LinkedIn icon on hover */}
@@ -212,7 +212,7 @@
                     right: 14,
                     width: 30,
                     height: 30,
-                    borderRadius: 6,
+                    borderRadius: 'var(--radius-btn)',
                     background: 'rgba(108,99,255,0.8)',
                     display: 'flex',
                     alignItems: 'center',
@@ -231,14 +231,18 @@
               <div style={{ padding: '18px 20px 22px' }}>
                 <div
                   className="sans"
-                  style={{ fontSize: isLarge ? 18 : 15, fontWeight: 700, marginBottom: 4 }}
+                  style={{
+                    fontSize: isLarge ? 'var(--fs-md)' : 'var(--fs-base)',
+                    fontWeight: 700,
+                    marginBottom: 4,
+                  }}
                 >
                   {person.name}
                 </div>
                 <div
                   className="sans"
                   style={{
-                    fontSize: 12.5,
+                    fontSize: 'var(--fs-sm)',
                     color: 'var(--text-muted)',
                     letterSpacing: '0.01em',
                     marginBottom: person.desc ? 10 : 0,
@@ -252,7 +256,7 @@
                       <div
                         key={di}
                         className="sans"
-                        style={{ fontSize: 11.5, lineHeight: 1.55, color: 'var(--text-secondary)' }}
+                        style={{ fontSize: 11.5, lineHeight: 1.6, color: 'var(--text-secondary)' }}
                       >
                         {d}
                       </div>
@@ -268,8 +272,8 @@
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
@@ -279,7 +283,13 @@
             {/* ━━━ Hero ━━━ */}
             <NeoHero
               label="About Enterprise-Neo"
-              title={<>We build the tariff engine<br />that shows its work.</>}
+              title={
+                <>
+                  We build the tariff engine
+                  <br />
+                  that shows its work.
+                </>
+              }
               description="Enterprise-Neo builds Neo Tariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled tariff graph and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario."
               glow="center-low"
             />
@@ -325,19 +335,24 @@
                         style={{
                           padding: '26px 24px',
                           border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius)',
                           background: 'var(--bg-card)',
                           borderLeft: '3px solid rgba(108,99,255,0.3)',
                         }}
                       >
                         <h3
                           className="sans"
-                          style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 8 }}
                         >
                           {d.title}
                         </h3>
                         <p
                           className="sans"
-                          style={{ fontSize: 13, lineHeight: 1.7, color: 'var(--text-secondary)' }}
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            lineHeight: 1.6,
+                            color: 'var(--text-secondary)',
+                          }}
                         >
                           {d.desc}
                         </p>
@@ -354,10 +369,8 @@
             <section style={{ padding: '72px 48px' }}>
               <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
                 <div id="team" data-animate className={`anim ${isV('team') ? 'vis' : ''}`}>
-                  <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                    <div className="section-label" style={{ textAlign: 'center' }}>
-                      Our Team
-                    </div>
+                  <div style={{ marginBottom: 48 }}>
+                    <div className="section-label">Our Team</div>
                     <h2
                       style={{
                         fontSize: 36,
@@ -371,11 +384,10 @@
                     <p
                       className="sans"
                       style={{
-                        fontSize: 15,
+                        fontSize: 'var(--fs-base)',
                         color: 'var(--text-secondary)',
                         maxWidth: 540,
-                        margin: '0 auto',
-                        lineHeight: 1.7,
+                        lineHeight: 1.6,
                       }}
                     >
                       A team of engineers, trade experts, and operators building tariff intelligence
@@ -469,7 +481,7 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 14.5,
+                      fontSize: 'var(--fs-base)',
                       lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                       marginBottom: 28,
@@ -511,18 +523,23 @@
                         style={{
                           padding: '22px 20px',
                           border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius)',
                           background: 'var(--bg-card)',
                         }}
                       >
                         <div
                           className="sans"
-                          style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 8 }}
+                          style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 8 }}
                         >
                           {s.title}
                         </div>
                         <div
                           className="sans"
-                          style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.6 }}
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            color: 'var(--text-secondary)',
+                            lineHeight: 1.6,
+                          }}
                         >
                           {s.desc}
                         </div>
@@ -565,8 +582,30 @@
             <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
 
             {/* ━━━ CTA ━━━ */}
-            <section style={{ padding: '88px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '88px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '80%',
+                  height: '100%',
+                  background:
+                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
+              >
                 <div id="ccta" data-animate className={`anim ${isV('ccta') ? 'vis' : ''}`}>
                   <h2
                     style={{
@@ -582,8 +621,8 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
+                      fontSize: 'var(--fs-base)',
+                      lineHeight: 1.6,
                       color: 'var(--text-secondary)',
                       marginBottom: 32,
                     }}

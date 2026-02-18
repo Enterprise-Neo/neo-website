@@ -81,7 +81,7 @@ const ChevronDown = ({ open }) => (
      activePage: "overview"|"technology"|"pricing"|"company"|"platform"|"api"|"sdk"
      transparent: boolean — if true, nav starts transparent and becomes solid on scroll (overview hero)
    ════════════════════════════════════════════ */
-window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
+window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
   const [productOpen, setProductOpen] = useState(false);
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -103,17 +103,18 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
   }, []);
 
   const isProductPage = ['platform', 'api', 'sdk'].includes(activePage);
-  const navStyle = transparent
-    ? {
-        background: scrolled ? 'rgba(12,14,26,0.94)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(14px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(37,40,64,0.6)' : '1px solid transparent',
-      }
-    : {};
+  const navClasses = [
+    'neo-nav',
+    'sans',
+    transparent ? 'neo-nav--transparent' : '',
+    transparent && scrolled ? 'neo-nav--scrolled' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const linkStyle = (page) => ({
     padding: '8px 14px',
-    fontSize: 13,
+    fontSize: 'var(--fs-sm)',
     textDecoration: 'none',
     fontWeight: activePage === page ? 600 : 400,
     color: activePage === page ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -121,7 +122,7 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
   });
 
   return (
-    <nav className="neo-nav sans" style={navStyle}>
+    <nav className={navClasses}>
       <a
         href="/"
         style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}
@@ -141,7 +142,7 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
           <span
             style={{
               color: '#fff',
-              fontSize: 13,
+              fontSize: 'var(--fs-sm)',
               fontWeight: 800,
               fontFamily: "'DM Sans',sans-serif",
             }}
@@ -185,7 +186,7 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
               className="sans"
               style={{
                 padding: '8px 14px',
-                fontSize: 13,
+                fontSize: 'var(--fs-sm)',
                 background: 'none',
                 borderTop: 'none',
                 borderLeft: 'none',
@@ -239,7 +240,7 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
               className="sans"
               style={{
                 padding: '8px 14px',
-                fontSize: 13,
+                fontSize: 'var(--fs-sm)',
                 fontWeight: 400,
                 color: 'var(--text-secondary)',
                 background: 'none',
@@ -272,12 +273,12 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
             className="sans"
             style={{
               padding: '8px 20px',
-              fontSize: 12.5,
+              fontSize: 'var(--fs-sm)',
               fontWeight: 500,
               color: 'var(--text-secondary)',
               textDecoration: 'none',
               border: '1px solid var(--accent)',
-              borderRadius: 2,
+              borderRadius: 'var(--radius-btn)',
               minWidth: 110,
               textAlign: 'center',
               display: 'inline-flex',
@@ -293,8 +294,8 @@ window.NeoNav = ({ activePage = 'overview', transparent = false }) => {
             className="cta-btn sans"
             style={{
               padding: '8px 20px',
-              fontSize: 12.5,
-              borderRadius: 2,
+              fontSize: 'var(--fs-sm)',
+              borderRadius: 'var(--radius-btn)',
               textDecoration: 'none',
               minWidth: 110,
             }}
@@ -348,13 +349,24 @@ window.NeoFooter = () => (
             >
               <span style={{ color: '#fff', fontSize: 11, fontWeight: 800 }}>N</span>
             </div>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Neo</span>
-            <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--accent-bright)' }}>
+            <span
+              style={{ fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--text-primary)' }}
+            >
+              Neo
+            </span>
+            <span
+              style={{ fontSize: 'var(--fs-base)', fontWeight: 400, color: 'var(--accent-bright)' }}
+            >
               Tariff
             </span>
           </a>
           <p
-            style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.65, maxWidth: 260 }}
+            style={{
+              fontSize: 'var(--fs-sm)',
+              color: 'var(--text-secondary)',
+              lineHeight: 1.6,
+              maxWidth: 260,
+            }}
           >
             Tariff intelligence engine by Enterprise-Neo. Precise, explainable duties for any
             scenario.
@@ -373,13 +385,13 @@ window.NeoFooter = () => (
             PRODUCT
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/product/platform" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/product/platform" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Platform
             </a>
-            <a href="/product/api" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/product/api" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               REST API
             </a>
-            <a href="/product/sdk" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/product/sdk" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Python SDK
             </a>
           </div>
@@ -397,10 +409,10 @@ window.NeoFooter = () => (
             LEARN
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/technology" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/technology" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Technology
             </a>
-            <a href="/pricing" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/pricing" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Pricing
             </a>
           </div>
@@ -418,13 +430,13 @@ window.NeoFooter = () => (
             DEVELOPERS
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href={SITE.apiDocsUrl} className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href={SITE.apiDocsUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Swagger Docs ↗
             </a>
-            <a href={SITE.pypiUrl} className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href={SITE.pypiUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               PyPI Package ↗
             </a>
-            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               GitHub ↗
             </a>
           </div>
@@ -442,10 +454,10 @@ window.NeoFooter = () => (
             COMPANY
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/company" className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href="/company" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               About
             </a>
-            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 12.5 }}>
+            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               GitHub ↗
             </a>
           </div>
@@ -517,7 +529,6 @@ window.NeoScreenshot = ({
           overflow: 'hidden',
           position: 'relative',
           cursor: 'zoom-in',
-          borderRadius: 4,
         }}
       >
         <img
@@ -528,7 +539,7 @@ window.NeoScreenshot = ({
             display: 'block',
             transform: `scale(${zoom})`,
             transformOrigin: `${focusX} ${focusY}`,
-            transition: 'transform 0.4s ease',
+            transition: 'transform 0.4s var(--ease)',
           }}
         />
         <div className="neo-screenshot-hint sans">
@@ -554,7 +565,7 @@ window.NeoScreenshot = ({
               onClick={(e) => e.stopPropagation()}
               style={{
                 objectFit: 'contain',
-                borderRadius: 6,
+                borderRadius: 'var(--radius)',
                 boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
               }}
             />
@@ -584,28 +595,24 @@ window.NeoScreenshot = ({
    ════════════════════════════════════════════ */
 const GLOW_PRESETS = {
   center: {
-    left: '20%',
-    width: '60%',
-    background:
-      'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+    left: 0,
+    width: '70%',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
   },
   'center-low': {
-    left: '20%',
-    width: '60%',
-    background:
-      'radial-gradient(ellipse at 50% 25%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+    left: 0,
+    width: '70%',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
   },
   right: {
-    right: 0,
-    width: '55%',
-    background:
-      'radial-gradient(ellipse at 65% 35%, rgba(108,99,255,0.06) 0%, transparent 50%)',
+    left: 0,
+    width: '70%',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
   },
   narrow: {
-    left: '30%',
-    width: '40%',
-    background:
-      'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.06) 0%, transparent 55%)',
+    left: 0,
+    width: '70%',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
   },
 };
 
@@ -627,7 +634,7 @@ window.NeoHero = ({
   description,
   stats,
   ctas,
-  descMaxWidth = 620,
+  descMaxWidth = 680,
   paddingBottom = 64,
   glow = 'center',
 }) => {
@@ -648,17 +655,18 @@ window.NeoHero = ({
         }}
       />
       <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-        <div className="section-label" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
+        <div className="section-label" style={{ animation: 'fadeUp 0.6s var(--ease) 0.1s both' }}>
           {label}
         </div>
         <h1
+          className="display"
           style={{
             fontSize: 52,
-            fontWeight: 700,
-            lineHeight: 1.1,
+            fontWeight: 600,
+            lineHeight: 1.2,
             letterSpacing: '-0.03em',
             marginBottom: 18,
-            animation: 'fadeUp 0.6s ease 0.2s both',
+            animation: 'fadeUp 0.6s var(--ease) 0.2s both',
           }}
         >
           {title}
@@ -666,12 +674,12 @@ window.NeoHero = ({
         <p
           className="sans"
           style={{
-            fontSize: 17,
+            fontSize: 'var(--fs-md)',
             lineHeight: 1.75,
             color: 'var(--text-secondary)',
             maxWidth: descMaxWidth,
             marginBottom: 28,
-            animation: 'fadeUp 0.6s ease 0.3s both',
+            animation: 'fadeUp 0.6s var(--ease) 0.3s both',
           }}
         >
           {description}
@@ -681,7 +689,7 @@ window.NeoHero = ({
             style={{
               display: 'flex',
               gap: 14,
-              animation: 'fadeUp 0.6s ease 0.4s both',
+              animation: 'fadeUp 0.6s var(--ease) 0.4s both',
             }}
           >
             {ctas.map((cta, i) => (
@@ -703,16 +711,16 @@ window.NeoHero = ({
             style={{
               display: 'flex',
               gap: 28,
-              fontSize: 13,
+              fontSize: 'var(--fs-sm)',
               ...(hasCtas ? { marginTop: 28 } : {}),
-              animation: `fadeUp 0.6s ease ${statsDelay}s both`,
+              animation: `fadeUp 0.6s var(--ease) ${statsDelay}s both`,
             }}
           >
             {stats.map((s, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span
                   className="mono"
-                  style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 15 }}
+                  style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'var(--fs-base)' }}
                 >
                   {s.val}
                 </span>

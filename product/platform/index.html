@@ -285,9 +285,9 @@
                       <p
                         className="sans"
                         style={{
-                          fontSize: 12.5,
+                          fontSize: 'var(--fs-sm)',
                           color: 'rgba(255,255,255,0.45)',
-                          lineHeight: 1.55,
+                          lineHeight: 1.6,
                         }}
                       >
                         {feature.screenshotCaption}
@@ -338,11 +338,11 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 14.5,
-                      lineHeight: 1.8,
+                      fontSize: 'var(--fs-base)',
+                      lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                       marginBottom: 24,
-                      maxWidth: 800,
+                      maxWidth: 680,
                     }}
                   >
                     {feature.desc}
@@ -358,7 +358,11 @@
                   >
                     <span
                       className="mono"
-                      style={{ fontSize: 12, color: 'var(--accent)', letterSpacing: '0.03em' }}
+                      style={{
+                        fontSize: 'var(--fs-xs)',
+                        color: 'var(--accent)',
+                        letterSpacing: '0.03em',
+                      }}
                     >
                       {feature.highlight}
                     </span>
@@ -401,9 +405,9 @@
                           </span>
                           <span
                             style={{
-                              fontSize: 13,
+                              fontSize: 'var(--fs-sm)',
                               color: 'var(--text-secondary)',
-                              lineHeight: 1.55,
+                              lineHeight: 1.6,
                             }}
                           >
                             {kf}
@@ -439,8 +443,8 @@
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
@@ -470,7 +474,7 @@
                 position: 'sticky',
                 top: 60,
                 zIndex: 90,
-                background: 'rgba(12,14,26,0.92)',
+                background: 'rgba(var(--bg-rgb),0.92)',
                 backdropFilter: 'blur(12px)',
                 borderBottom: '1px solid var(--border-light)',
               }}
@@ -505,8 +509,8 @@
                       fontWeight: activeSection === item.id ? 600 : 500,
                       color: activeSection === item.id ? 'var(--accent)' : 'var(--text-muted)',
                       textDecoration: 'none',
-                      transition: 'all 0.2s',
-                      borderRadius: 2,
+                      transition: 'all 0.2s var(--ease)',
+                      borderRadius: 'var(--radius-sm)',
                       lineHeight: '1.4',
                       whiteSpace: 'nowrap',
                       background:
@@ -555,11 +559,11 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
+                      fontSize: 'var(--fs-base)',
                       color: 'var(--text-secondary)',
                       marginTop: 10,
                       maxWidth: 580,
-                      lineHeight: 1.7,
+                      lineHeight: 1.6,
                     }}
                   >
                     The foundation of the Neo Tariff platform — deterministic duty calculations,
@@ -609,11 +613,11 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
+                      fontSize: 'var(--fs-base)',
                       color: 'var(--text-secondary)',
                       marginTop: 10,
                       maxWidth: 580,
-                      lineHeight: 1.7,
+                      lineHeight: 1.6,
                     }}
                   >
                     Turn tariff data into strategic intelligence — scenario modeling, portfolio
@@ -630,15 +634,8 @@
             {/* Powered by section */}
             <section style={{ padding: '80px 48px' }}>
               <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div
-                  id="pwrd"
-                  data-animate
-                  className={`anim ${isV('pwrd') ? 'vis' : ''}`}
-                  style={{ textAlign: 'center' }}
-                >
-                  <div className="section-label" style={{ textAlign: 'center' }}>
-                    What Powers It All
-                  </div>
+                <div id="pwrd" data-animate className={`anim ${isV('pwrd') ? 'vis' : ''}`}>
+                  <div className="section-label">What Powers It All</div>
                   <h2
                     style={{
                       fontSize: 34,
@@ -655,7 +652,6 @@
                       gridTemplateColumns: 'repeat(3,1fr)',
                       gap: 20,
                       maxWidth: 900,
-                      margin: '0 auto',
                     }}
                   >
                     {[
@@ -677,6 +673,7 @@
                         style={{
                           padding: '32px 26px',
                           border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius)',
                           background: 'var(--bg-card)',
                           textAlign: 'left',
                         }}
@@ -700,7 +697,11 @@
                         </h3>
                         <p
                           className="sans"
-                          style={{ fontSize: 13, lineHeight: 1.65, color: 'var(--text-secondary)' }}
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            lineHeight: 1.6,
+                            color: 'var(--text-secondary)',
+                          }}
                         >
                           {p.desc}
                         </p>
@@ -714,8 +715,30 @@
             <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
 
             {/* CTA */}
-            <section style={{ padding: '96px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '80%',
+                  height: '100%',
+                  background:
+                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
+              >
                 <div id="cta" data-animate className={`anim ${isV('cta') ? 'vis' : ''}`}>
                   <h2
                     style={{
@@ -731,8 +754,8 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
+                      fontSize: 'var(--fs-base)',
+                      lineHeight: 1.6,
                       color: 'var(--text-secondary)',
                       marginBottom: 32,
                     }}

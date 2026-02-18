@@ -6,7 +6,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
 
 /* ── Reset ── */
 *,
@@ -21,39 +21,80 @@ body {
   margin: 0;
   padding: 0;
   background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection {
+  background: var(--accent);
+  color: #fff;
 }
 
 /* ════════════════════════════════════════════
    DESIGN TOKENS — Change these to restyle everything
    ════════════════════════════════════════════ */
 :root {
-  /* Primary accent */
-  --accent: #6c63ff;
+  /* Primary accent (RGB channels for rgba() usage) */
+  --accent-rgb: 108, 99, 255;
+  --accent: rgb(var(--accent-rgb));
   --accent-bright: #7b73ff;
   --accent-dim: #5a52e0;
-  --accent-glow: rgba(108, 99, 255, 0.15);
-  --accent-subtle: rgba(108, 99, 255, 0.08);
+  --accent-glow: rgba(var(--accent-rgb), 0.15);
+  --accent-subtle: rgba(var(--accent-rgb), 0.08);
 
-  /* Backgrounds */
-  --bg: #0c0e1a;
-  --bg-card: #131627;
-  --bg-card-hover: #181c32;
-  --bg-elevated: #1a1e34;
+  /* Secondary accent (warm — available for highlights, not primary) */
+  --accent-warm-rgb: 233, 111, 73;
+  --accent-warm: rgb(var(--accent-warm-rgb));
+
+  /* Backgrounds (RGB channels for rgba() usage) */
+  --bg-rgb: 0, 3, 25;
+  --bg-card-rgb: 14, 15, 36;
+  --bg-card-hover-rgb: 20, 22, 43;
+  --bg-elevated-rgb: 24, 28, 48;
+  --bg: rgb(var(--bg-rgb));
+  --bg-card: rgb(var(--bg-card-rgb));
+  --bg-card-hover: rgb(var(--bg-card-hover-rgb));
+  --bg-elevated: rgb(var(--bg-elevated-rgb));
 
   /* Text hierarchy */
-  --text-primary: #e4e2dd;
-  --text-secondary: #b0aeb8;
-  --text-muted: #807e8f;
+  --text-primary-rgb: 228, 226, 221;
+  --text-primary: rgb(var(--text-primary-rgb));
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.42);
 
   /* Borders */
-  --border: #252840;
-  --border-light: #1e2038;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-light: rgba(255, 255, 255, 0.07);
 
   /* Semantic colors */
   --green: #4ade80;
   --red: #f87171;
   --orange: #fbbf24;
   --blue: #60a5fa;
+
+  /* Font sizes */
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 17px;
+
+  /* Line heights */
+  --lh-tight: 1.15;
+  --lh-heading: 1.2;
+  --lh-snug: 1.4;
+  --lh-body: 1.6;
+  --lh-relaxed: 1.75;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-btn: 6px;
+  --radius: 8px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+
+  /* Easing */
+  --ease: cubic-bezier(0.44, 0, 0.56, 1);
 
   /* Layout */
   --max-width: 1180px;
@@ -77,6 +118,16 @@ body {
 }
 .serif {
   font-family: 'Source Serif 4', Georgia, serif;
+}
+.display {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+h1,
+h2,
+h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  /* font-weight: 600; */
+  letter-spacing: -0.02em;
 }
 
 /* ════════════════════════════════════════════
@@ -105,8 +156,8 @@ body {
   opacity: 0;
   transform: translateY(28px);
   transition:
-    opacity 0.65s ease,
-    transform 0.65s ease;
+    opacity 0.65s var(--ease),
+    transform 0.65s var(--ease);
 }
 .anim.vis {
   opacity: 1;
@@ -115,10 +166,12 @@ body {
 
 .hero-line {
   overflow: hidden;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
 }
 .hero-line span {
   display: inline-block;
-  animation: fadeUp 0.8s ease forwards;
+  animation: fadeUp 0.8s var(--ease) forwards;
   opacity: 0;
 }
 .hero-line:nth-child(1) span {
@@ -138,7 +191,7 @@ body {
 /* Section label (monospace tag above headings) */
 .section-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
@@ -148,7 +201,14 @@ body {
 /* Divider line */
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--border) 20%,
+    rgba(var(--accent-rgb), 0.25) 50%,
+    var(--border) 80%,
+    transparent 100%
+  );
   margin: 0 auto;
   max-width: var(--max-width);
 }
@@ -179,12 +239,12 @@ body {
   text-decoration: none;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-base);
   letter-spacing: 0.02em;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
-  border-radius: 2px;
+  border-radius: var(--radius-btn);
   white-space: nowrap;
 }
 .cta-btn:hover {
@@ -223,15 +283,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(12, 14, 26, 0.94);
+  background: rgba(var(--bg-rgb), 0.94);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(37, 40, 64, 0.6);
-  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s var(--ease);
+}
+.neo-nav--transparent {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+.neo-nav--transparent.neo-nav--scrolled {
+  background: rgba(var(--bg-rgb), 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom-color: var(--border);
 }
 .nav-link {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   font-weight: 400;
   transition: color 0.2s;
   letter-spacing: 0.01em;
@@ -245,14 +315,14 @@ body {
   position: absolute;
   top: 100%;
   left: 50%;
-  background: rgba(19, 22, 39, 0.98);
+  background: rgba(var(--bg-card-rgb), 0.98);
   border: 1px solid var(--border);
   backdrop-filter: blur(16px);
   padding: 12px 0;
   min-width: 200px;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s var(--ease);
   transform: translateX(-50%) translateY(4px);
   z-index: 200;
 }
@@ -265,7 +335,7 @@ body {
 .dropdown-menu .dd-label {
   display: block;
   padding: 8px 20px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.15s;
@@ -288,12 +358,15 @@ body {
   position: relative;
   padding: 26px 22px;
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease);
 }
 .stat-card:hover {
   border-color: var(--accent-dim);
   background: var(--bg-card-hover);
+  box-shadow: var(--shadow-card-hover);
 }
 .stat-card::before {
   content: '';
@@ -312,13 +385,16 @@ body {
 
 .lane-card {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   padding: 32px 26px;
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--ease);
   height: 100%;
 }
 .lane-card:hover {
   border-color: rgba(108, 99, 255, 0.3);
+  box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
 }
 
@@ -341,8 +417,8 @@ body {
   max-height: 0;
   overflow: hidden;
   transition:
-    max-height 0.4s ease,
-    padding 0.4s ease;
+    max-height 0.4s var(--ease),
+    padding 0.4s var(--ease);
   padding: 0;
 }
 .faq-a.open {
@@ -369,7 +445,7 @@ body {
   padding: 16px 20px;
   cursor: pointer;
   border-left: 2px solid transparent;
-  transition: all 0.25s ease;
+  transition: all 0.25s var(--ease);
   background: transparent;
 }
 .feature-tab:hover {
@@ -382,7 +458,7 @@ body {
 
 /* ── Image Placeholder ── */
 .img-placeholder {
-  border-radius: 4px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -394,7 +470,7 @@ body {
   position: absolute;
   inset: 0;
   border: 1px solid rgba(108, 99, 255, 0.15);
-  border-radius: 4px;
+  border-radius: var(--radius);
   pointer-events: none;
 }
 
@@ -406,7 +482,7 @@ body {
   border: 1.5px solid var(--text-muted);
   background: transparent;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--ease);
   position: relative;
 }
 .side-dot.active {
@@ -424,9 +500,9 @@ body {
   top: 50%;
   transform: translateY(-50%);
   white-space: nowrap;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   padding: 4px 10px;
-  background: rgba(19, 22, 39, 0.95);
+  background: rgba(var(--bg-card-rgb), 0.95);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   pointer-events: none;
@@ -442,13 +518,16 @@ body {
 .stage-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--ease);
   position: relative;
   overflow: hidden;
 }
 .stage-card:hover {
   background: var(--bg-card-hover);
+  box-shadow: var(--shadow-card-hover);
 }
 .stage-card.ip {
   border-left: 3px solid rgba(108, 99, 255, 0.25);
@@ -466,14 +545,17 @@ body {
 
 .arch-layer {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   padding: 20px 24px;
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--ease);
   position: relative;
 }
 .arch-layer:hover {
   border-color: rgba(108, 99, 255, 0.2);
   background: var(--bg-card-hover);
+  box-shadow: var(--shadow-card-hover);
 }
 .arch-layer::before {
   content: '';
@@ -493,13 +575,16 @@ body {
   text-align: center;
   padding: 28px 16px;
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
   transition: all 0.3s;
 }
 .stat-cell:hover {
   border-color: rgba(108, 99, 255, 0.2);
+  box-shadow: var(--shadow-card-hover);
 }
 .stat-cell:hover .stat-val {
   color: var(--accent-bright);
@@ -513,7 +598,7 @@ body {
   height: 2px;
   background: var(--accent);
   transform: scaleX(0);
-  transition: transform 0.4s ease;
+  transition: transform 0.4s var(--ease);
 }
 .stat-cell:hover::before {
   transform: scaleX(1);
@@ -529,13 +614,16 @@ body {
 /* ── API Page ── */
 .group-card {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   transition: all 0.3s;
   cursor: pointer;
   overflow: hidden;
 }
 .group-card:hover {
   border-color: rgba(108, 99, 255, 0.2);
+  box-shadow: var(--shadow-card-hover);
 }
 .group-card.expanded {
   border-color: rgba(108, 99, 255, 0.25);
@@ -546,7 +634,7 @@ body {
   font-weight: 600;
   padding: 2px 7px;
   letter-spacing: 0.05em;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
 }
 .method-get {
   background: rgba(96, 165, 250, 0.1);
@@ -562,12 +650,15 @@ body {
 /* ── SDK Page ── */
 .sdk-group {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   transition: all 0.3s;
   overflow: hidden;
 }
 .sdk-group:hover {
   border-color: rgba(108, 99, 255, 0.2);
+  box-shadow: var(--shadow-card-hover);
 }
 .sdk-group.expanded {
   border-color: rgba(108, 99, 255, 0.25);
@@ -576,7 +667,9 @@ body {
 /* ── Pricing Page ── */
 .pricing-card {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   padding: 32px 24px;
   position: relative;
   overflow: hidden;
@@ -584,6 +677,7 @@ body {
 }
 .pricing-card:hover {
   border-color: rgba(108, 99, 255, 0.2);
+  box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
 }
 .pricing-card.featured {
@@ -594,17 +688,24 @@ body {
 /* ── Platform Page — Feature Card ── */
 .feature-card {
   border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 /* ── Screenshot Component ── */
 .neo-screenshot {
   border: 1px solid var(--border);
-  transition: border-color 0.3s;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 .neo-screenshot:hover {
   border-color: rgba(108, 99, 255, 0.3);
+  box-shadow: var(--shadow-card-hover);
 }
 .neo-screenshot:hover img {
   transform-origin: inherit;
@@ -622,7 +723,7 @@ body {
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(6px);
   padding: 4px 10px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   opacity: 0;
   transition: opacity 0.25s;
   pointer-events: none;
@@ -636,18 +737,18 @@ body {
   position: fixed;
   inset: 0;
   z-index: 999999;
-  background: rgba(6, 8, 18, 0.92);
+  background: rgba(var(--bg-rgb), 0.92);
   backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: zoom-out;
-  animation: lbFadeIn 0.2s ease both;
+  animation: lbFadeIn 0.2s var(--ease) both;
   padding: 40px;
 }
 .neo-lightbox img {
   cursor: default;
-  animation: lbScaleIn 0.25s ease both;
+  animation: lbScaleIn 0.25s var(--ease) both;
   max-width: min(1200px, 90vw);
   max-height: 85vh;
 }
@@ -666,7 +767,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 .neo-lightbox-close:hover {
@@ -730,11 +831,11 @@ body {
   width: 100%;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   border: none;
   cursor: pointer;
   transition: all 0.25s;
-  border-radius: 4px;
+  border-radius: var(--radius-btn);
   letter-spacing: 0.01em;
 }
 .tier-btn-fill {
@@ -762,7 +863,7 @@ body {
   background: rgba(108, 99, 255, 0.1);
   border: 1px solid rgba(108, 99, 255, 0.2);
   padding: 1px 5px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   margin-left: 6px;
   vertical-align: middle;
 }

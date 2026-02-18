@@ -121,8 +121,8 @@
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
@@ -162,7 +162,7 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
+                      fontSize: 'var(--fs-base)',
                       lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                       maxWidth: 580,
@@ -226,7 +226,10 @@
                             >
                               <span style={{ fontSize: 16 }}>{ap.icon}</span>
                               <div>
-                                <div className="sans" style={{ fontSize: 14.5, fontWeight: 600 }}>
+                                <div
+                                  className="sans"
+                                  style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                                >
                                   {ap.title}
                                 </div>
                                 <div
@@ -244,9 +247,9 @@
                             <p
                               className="sans"
                               style={{
-                                fontSize: 12.5,
+                                fontSize: 'var(--fs-sm)',
                                 lineHeight: 1.6,
-                                color: 'var(--text-muted)',
+                                color: 'var(--text-secondary)',
                               }}
                             >
                               {ap.detail}
@@ -302,7 +305,10 @@
                           }}
                         >
                           <div>
-                            <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
+                            <div
+                              className="sans"
+                              style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                            >
                               Unified API Layer
                             </div>
                             <div
@@ -439,7 +445,10 @@
                                 marginBottom: 8,
                               }}
                             >
-                              <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
+                              <div
+                                className="sans"
+                                style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                              >
                                 Versioned Tariff Graph + Deterministic Evaluation Engine
                               </div>
                               <span
@@ -459,8 +468,8 @@
                             <p
                               className="sans"
                               style={{
-                                fontSize: 13,
-                                lineHeight: 1.65,
+                                fontSize: 'var(--fs-sm)',
+                                lineHeight: 1.6,
                                 color: 'var(--text-secondary)',
                                 maxWidth: 700,
                               }}
@@ -494,7 +503,7 @@
                               <div
                                 className="mono"
                                 style={{
-                                  fontSize: 17,
+                                  fontSize: 'var(--fs-md)',
                                   fontWeight: 600,
                                   color: 'var(--accent)',
                                   letterSpacing: '-0.02em',
@@ -505,7 +514,7 @@
                               <div
                                 className="sans"
                                 style={{
-                                  fontSize: 12,
+                                  fontSize: 'var(--fs-xs)',
                                   color: 'var(--text-secondary)',
                                   marginTop: 2,
                                 }}
@@ -571,7 +580,10 @@
                           }}
                         >
                           <div>
-                            <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
+                            <div
+                              className="sans"
+                              style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                            >
                               7-Stage Processing Pipeline
                             </div>
                             <div
@@ -605,7 +617,7 @@
                               href="#pipeline"
                               className="sans"
                               style={{
-                                fontSize: 12,
+                                fontSize: 'var(--fs-xs)',
                                 color: 'var(--accent)',
                                 textDecoration: 'none',
                                 fontWeight: 500,
@@ -643,8 +655,8 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
-                      lineHeight: 1.8,
+                      fontSize: 'var(--fs-base)',
+                      lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                       maxWidth: 520,
                       marginBottom: 48,
@@ -732,7 +744,7 @@
                               <span
                                 className="mono"
                                 style={{
-                                  fontSize: 12,
+                                  fontSize: 'var(--fs-xs)',
                                   color: isIp
                                     ? isActive
                                       ? 'var(--accent)'
@@ -748,7 +760,7 @@
                               <h3
                                 className="sans"
                                 style={{
-                                  fontSize: 15,
+                                  fontSize: 'var(--fs-base)',
                                   fontWeight: 600,
                                   margin: 0,
                                   color: isActive
@@ -813,8 +825,8 @@
                               <p
                                 className="sans"
                                 style={{
-                                  fontSize: 14,
-                                  lineHeight: 1.7,
+                                  fontSize: 'var(--fs-base)',
+                                  lineHeight: 1.6,
                                   color: 'var(--text-secondary)',
                                   margin: '0 0 16px',
                                   maxWidth: 560,
@@ -860,6 +872,7 @@
                       marginTop: 40,
                       padding: '28px 32px',
                       border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
                       background: 'var(--bg-card)',
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr 1fr',
@@ -910,16 +923,16 @@
                         </div>
                         <div
                           className="sans"
-                          style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}
+                          style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 8 }}
                         >
                           {stat.l}
                         </div>
                         <p
                           className="sans"
                           style={{
-                            fontSize: 12.5,
+                            fontSize: 'var(--fs-sm)',
                             lineHeight: 1.6,
-                            color: 'var(--text-muted)',
+                            color: 'var(--text-secondary)',
                             margin: 0,
                           }}
                         >
@@ -938,10 +951,8 @@
             <section style={{ padding: '80px 48px' }}>
               <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
                 <div id="stats" data-animate className={`anim ${isV('stats') ? 'vis' : ''}`}>
-                  <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                    <div className="section-label" style={{ textAlign: 'center' }}>
-                      By the Numbers
-                    </div>
+                  <div style={{ marginBottom: 48 }}>
+                    <div className="section-label">By the Numbers</div>
                     <h2 style={{ fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em' }}>
                       What's behind the API.
                     </h2>
@@ -988,10 +999,10 @@
                         <div
                           className="sans"
                           style={{
-                            fontSize: 12.5,
+                            fontSize: 'var(--fs-sm)',
                             fontWeight: 600,
                             marginBottom: 6,
-                            lineHeight: 1.3,
+                            lineHeight: 1.4,
                           }}
                         >
                           {s.label}
@@ -1052,10 +1063,10 @@
                         <div
                           className="sans"
                           style={{
-                            fontSize: 12.5,
+                            fontSize: 'var(--fs-sm)',
                             fontWeight: 600,
                             marginBottom: 6,
-                            lineHeight: 1.3,
+                            lineHeight: 1.4,
                           }}
                         >
                           {s.label}
@@ -1094,6 +1105,7 @@
                     <div
                       style={{
                         border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius)',
                         background: 'var(--bg-card)',
                         padding: '28px',
                       }}
@@ -1109,7 +1121,10 @@
                             background: 'var(--accent)',
                           }}
                         />
-                        <span className="sans" style={{ fontSize: 14, fontWeight: 600 }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                        >
                           Core Engine
                         </span>
                         <span
@@ -1130,8 +1145,8 @@
                       <p
                         className="sans"
                         style={{
-                          fontSize: 13,
-                          lineHeight: 1.65,
+                          fontSize: 'var(--fs-sm)',
+                          lineHeight: 1.6,
                           color: 'var(--text-secondary)',
                           marginBottom: 16,
                         }}
@@ -1164,7 +1179,7 @@
                             </span>
                             <span
                               className="sans"
-                              style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}
+                              style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
                             >
                               {item}
                             </span>
@@ -1175,6 +1190,7 @@
                     <div
                       style={{
                         border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius)',
                         background: 'var(--bg-card)',
                         padding: '28px',
                       }}
@@ -1190,7 +1206,10 @@
                             background: 'var(--orange)',
                           }}
                         />
-                        <span className="sans" style={{ fontSize: 14, fontWeight: 600 }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                        >
                           Supporting Roles
                         </span>
                         <span
@@ -1211,8 +1230,8 @@
                       <p
                         className="sans"
                         style={{
-                          fontSize: 13,
-                          lineHeight: 1.65,
+                          fontSize: 'var(--fs-sm)',
+                          lineHeight: 1.6,
                           color: 'var(--text-secondary)',
                           marginBottom: 16,
                         }}
@@ -1245,7 +1264,7 @@
                             </span>
                             <span
                               className="sans"
-                              style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}
+                              style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
                             >
                               {item}
                             </span>
@@ -1259,6 +1278,7 @@
                       marginTop: 20,
                       padding: '20px 28px',
                       border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
                       background: 'var(--bg-card)',
                       borderLeft: '3px solid var(--accent)',
                     }}
@@ -1284,8 +1304,30 @@
             <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
 
             {/* ━━━ CTA ━━━ */}
-            <section style={{ padding: '96px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '80%',
+                  height: '100%',
+                  background:
+                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
+              >
                 <div id="cta2" data-animate className={`anim ${isV('cta2') ? 'vis' : ''}`}>
                   <h2
                     style={{
@@ -1301,8 +1343,8 @@
                   <p
                     className="sans"
                     style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
+                      fontSize: 'var(--fs-base)',
+                      lineHeight: 1.6,
                       color: 'var(--text-secondary)',
                       marginBottom: 32,
                     }}
