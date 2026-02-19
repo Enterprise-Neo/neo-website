@@ -17,14 +17,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
-        window;
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
       const { useState, useEffect } = React;
 
       const NeoTariffSDK = () => {
         const [expandedGroup, setExpandedGroup] = useState(null);
 
         const isV = useScrollAnimation();
+
+        const sideNavSections = [
+          { id: 'feat', label: 'Capabilities' },
+          { id: 'res-h', label: 'Resources' },
+          { id: 'err', label: 'Errors' },
+          { id: 'qs', label: 'Quick Start' },
+          { id: 'cta', label: 'Get Started' },
+        ];
         const resources = [
           {
             id: 'rates',
@@ -207,13 +223,14 @@
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
             <NeoGrain />
             <NeoNav activePage="sdk" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* Hero */}
             <NeoHero
@@ -233,11 +250,11 @@
               ]}
             />
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* SDK Features */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="feat" data-animate className={`anim ${isV('feat') ? 'vis' : ''}`}>
                   <div className="section-label">SDK Capabilities</div>
                   <div
@@ -249,26 +266,15 @@
                     }}
                   >
                     {features.map((f, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '24px 22px',
-                          border: '1px solid var(--border)',
-                          background: 'var(--bg-card)',
-                          transition: 'all 0.3s',
-                        }}
-                      >
+                      <div key={i} className="info-card">
                         <div style={{ fontSize: 22, marginBottom: 10 }}>{f.icon}</div>
                         <div
                           className="sans"
-                          style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 6 }}
                         >
                           {f.title}
                         </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.55 }}
-                        >
+                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {f.desc}
                         </div>
                       </div>
@@ -278,11 +284,11 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Resource Groups */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="res-h"
                   data-animate
@@ -290,26 +296,11 @@
                   style={{ marginBottom: 32 }}
                 >
                   <div className="section-label">Resource Groups</div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 10,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     5 resource groups. {resources.reduce((s, r) => s + r.methods.length, 0)}{' '}
                     methods.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.7,
-                      maxWidth: 600,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ maxWidth: 600 }}>
                     Every SDK method maps 1:1 to a REST API endpoint. Typed inputs, Pydantic
                     response models, and automatic error handling.
                   </p>
@@ -353,7 +344,7 @@
                                 <h3
                                   className="sans"
                                   style={{
-                                    fontSize: 17,
+                                    fontSize: 'var(--fs-md)',
                                     fontWeight: 600,
                                     letterSpacing: '-0.01em',
                                     color: isExp ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -368,11 +359,13 @@
                                     fontSize: 11,
                                     color: isExp ? 'var(--accent)' : 'var(--text-muted)',
                                     padding: '2px 8px',
-                                    background: isExp ? 'rgba(108,99,255,0.08)' : 'transparent',
+                                    background: isExp
+                                      ? 'rgba(var(--accent-rgb),0.08)'
+                                      : 'transparent',
                                     border:
                                       '1px solid ' +
-                                      (isExp ? 'rgba(108,99,255,0.2)' : 'var(--border)'),
-                                    transition: 'all 0.3s',
+                                      (isExp ? 'rgba(var(--accent-rgb),0.2)' : 'var(--border)'),
+                                    transition: 'all 0.3s var(--ease)',
                                   }}
                                 >
                                   client.{group.id}
@@ -381,10 +374,10 @@
                               <p
                                 className="sans"
                                 style={{
-                                  fontSize: 13,
-                                  color: 'var(--text-muted)',
+                                  fontSize: 'var(--fs-sm)',
+                                  color: 'var(--text-secondary)',
                                   marginTop: 4,
-                                  lineHeight: 1.5,
+                                  lineHeight: 1.6,
                                   maxWidth: 600,
                                 }}
                               >
@@ -396,7 +389,7 @@
                             <span
                               className="mono"
                               style={{
-                                fontSize: 12,
+                                fontSize: 'var(--fs-xs)',
                                 color: isExp ? 'var(--accent)' : 'var(--text-muted)',
                               }}
                             >
@@ -437,7 +430,7 @@
                                       alignItems: 'flex-start',
                                       padding: '10px 14px',
                                       background: 'var(--bg-elevated)',
-                                      borderLeft: '2px solid rgba(108,99,255,0.15)',
+                                      borderLeft: '2px solid rgba(var(--accent-rgb),0.15)',
                                     }}
                                   >
                                     <span
@@ -453,7 +446,7 @@
                                         <code
                                           className="mono"
                                           style={{
-                                            fontSize: 13,
+                                            fontSize: 'var(--fs-sm)',
                                             fontWeight: 600,
                                             color: 'var(--text-primary)',
                                           }}
@@ -470,10 +463,10 @@
                                       <p
                                         className="sans"
                                         style={{
-                                          fontSize: 12.5,
-                                          color: 'var(--text-muted)',
+                                          fontSize: 'var(--fs-sm)',
+                                          color: 'var(--text-secondary)',
                                           marginTop: 4,
-                                          lineHeight: 1.5,
+                                          lineHeight: 1.6,
                                         }}
                                       >
                                         {m.desc}
@@ -492,21 +485,14 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Error Handling */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="err" data-animate className={`anim ${isV('err') ? 'vis' : ''}`}>
                   <div className="section-label">Error Handling</div>
-                  <h2
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 24,
-                    }}
-                  >
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     Typed exception hierarchy
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -526,14 +512,17 @@
                         <code
                           className="mono"
                           style={{
-                            fontSize: 12.5,
+                            fontSize: 'var(--fs-sm)',
                             color: i < 2 ? 'var(--text-secondary)' : 'var(--orange)',
                             minWidth: 200,
                           }}
                         >
                           {e.name}
                         </code>
-                        <span className="sans" style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
+                        >
                           {e.desc}
                         </span>
                       </div>
@@ -543,31 +532,25 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Quick Start */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="qs" data-animate className={`anim ${isV('qs') ? 'vis' : ''}`}>
                   <div className="section-label">Quick Start</div>
-                  <h2
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 24,
-                    }}
-                  >
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     Three lines to your first duty calculation
                   </h2>
                   <div
                     style={{
                       background: 'var(--bg-card)',
                       border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
                       padding: '24px 28px',
                       fontFamily: "'JetBrains Mono',monospace",
-                      fontSize: 13,
-                      lineHeight: 1.8,
+                      fontSize: 'var(--fs-sm)',
+                      lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                     }}
                   >
@@ -611,7 +594,11 @@
                   </div>
                   <p
                     className="sans"
-                    style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 14 }}
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-secondary)',
+                      marginTop: 14,
+                    }}
                   >
                     Or use{' '}
                     <code className="mono" style={{ color: 'var(--text-secondary)' }}>
@@ -623,46 +610,31 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* CTA */}
-            <section style={{ padding: '96px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="cta" data-animate className={`anim ${isV('cta') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Start building with Neo Tariff
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Create a free account to get your API key, then install the SDK and make your
                     first duty calculation.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
+                  <div className="cta-row">
                     <a
                       href={SITE.signupUrl}
-                      className="cta-btn sans"
+                      className="cta-btn w200 sans"
                       style={{ textDecoration: 'none' }}
                     >
                       Get API Key
@@ -670,7 +642,7 @@
                     <a
                       href={SITE.pypiUrl}
                       target="_blank"
-                      className="cta-btn cta-btn-outline sans"
+                      className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
                       PyPI Package ↗

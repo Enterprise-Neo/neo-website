@@ -17,14 +17,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
-        window;
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
       const { useState, useEffect } = React;
 
       const NeoTariffAPI = () => {
         const [expandedGroup, setExpandedGroup] = useState(null);
 
         const isV = useScrollAnimation();
+
+        const sideNavSections = [
+          { id: 'caps', label: 'Capabilities' },
+          { id: 'grp-h', label: 'Endpoints' },
+          { id: 'err', label: 'Errors' },
+          { id: 'qs', label: 'Quick Start' },
+          { id: 'cta', label: 'Get Started' },
+        ];
         const groups = [
           {
             id: 'duty-calculations',
@@ -395,20 +411,25 @@
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
             <NeoGrain />
             <NeoNav activePage="api" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* Hero */}
             <NeoHero
               label="Developer Reference"
               title="REST API"
               description={
-                <>{totalEndpoints} endpoints across {groups.length} groups. Send an HTS code, country, and value — get back the complete duty breakdown with every rule that applied and the legal rationale. Stateless. Nothing stored.</>
+                <>
+                  {totalEndpoints} endpoints across {groups.length} groups. Send an HTS code,
+                  country, and value — get back the complete duty breakdown with every rule that
+                  applied and the legal rationale. Stateless. Nothing stored.
+                </>
               }
               glow="narrow"
               ctas={[{ href: SITE.apiDocsUrl, label: 'Open Swagger Docs', external: true }]}
@@ -420,11 +441,11 @@
               ]}
             />
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* API Capabilities */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="caps" data-animate className={`anim ${isV('caps') ? 'vis' : ''}`}>
                   <div className="section-label">API Capabilities</div>
                   <div
@@ -467,26 +488,15 @@
                         icon: '🔑',
                       },
                     ].map((f, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '24px 22px',
-                          border: '1px solid var(--border)',
-                          background: 'var(--bg-card)',
-                          transition: 'all 0.3s',
-                        }}
-                      >
+                      <div key={i} className="info-card">
                         <div style={{ fontSize: 22, marginBottom: 10 }}>{f.icon}</div>
                         <div
                           className="sans"
-                          style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 6 }}
                         >
                           {f.title}
                         </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.55 }}
-                        >
+                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {f.desc}
                         </div>
                       </div>
@@ -496,11 +506,11 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Endpoint Groups */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="grp-h"
                   data-animate
@@ -508,25 +518,10 @@
                   style={{ marginBottom: 32 }}
                 >
                   <div className="section-label">Endpoint Groups</div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 10,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     {groups.length} groups. {totalEndpoints} endpoints.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.7,
-                      maxWidth: 600,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ maxWidth: 600 }}>
                     Every endpoint returns a standard JSON envelope with typed response models. Full
                     request/response schemas available in Swagger docs.
                   </p>
@@ -569,7 +564,7 @@
                               <h3
                                 className="sans"
                                 style={{
-                                  fontSize: 17,
+                                  fontSize: 'var(--fs-md)',
                                   fontWeight: 600,
                                   letterSpacing: '-0.01em',
                                   color: isExp ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -581,10 +576,10 @@
                               <p
                                 className="sans"
                                 style={{
-                                  fontSize: 13,
-                                  color: 'var(--text-muted)',
+                                  fontSize: 'var(--fs-sm)',
+                                  color: 'var(--text-secondary)',
                                   marginTop: 4,
-                                  lineHeight: 1.5,
+                                  lineHeight: 1.6,
                                   maxWidth: 600,
                                 }}
                               >
@@ -596,7 +591,7 @@
                             <span
                               className="mono"
                               style={{
-                                fontSize: 12,
+                                fontSize: 'var(--fs-xs)',
                                 color: isExp ? 'var(--accent)' : 'var(--text-muted)',
                               }}
                             >
@@ -633,7 +628,7 @@
                                     alignItems: 'flex-start',
                                     padding: '10px 14px',
                                     background: 'var(--bg-elevated)',
-                                    borderLeft: '2px solid rgba(108,99,255,0.15)',
+                                    borderLeft: '2px solid rgba(var(--accent-rgb),0.15)',
                                   }}
                                 >
                                   <span
@@ -646,7 +641,7 @@
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                       <span
                                         className="sans"
-                                        style={{ fontSize: 13.5, fontWeight: 600 }}
+                                        style={{ fontSize: 'var(--fs-sm)', fontWeight: 600 }}
                                       >
                                         {ep.title}
                                       </span>
@@ -660,10 +655,10 @@
                                     <p
                                       className="sans"
                                       style={{
-                                        fontSize: 12.5,
-                                        color: 'var(--text-muted)',
+                                        fontSize: 'var(--fs-sm)',
+                                        color: 'var(--text-secondary)',
                                         marginTop: 4,
-                                        lineHeight: 1.5,
+                                        lineHeight: 1.6,
                                       }}
                                     >
                                       {ep.desc}
@@ -675,17 +670,8 @@
                             <a
                               href={SITE.apiDocsUrl}
                               target="_blank"
-                              className="sans"
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                                color: 'var(--accent)',
-                                fontSize: 12.5,
-                                fontWeight: 500,
-                                textDecoration: 'none',
-                                marginTop: 14,
-                              }}
+                              className="sans accent-link"
+                              style={{ marginTop: 14 }}
                             >
                               See in Swagger Docs{' '}
                               <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -707,21 +693,14 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Error Handling */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="err" data-animate className={`anim ${isV('err') ? 'vis' : ''}`}>
                   <div className="section-label">Error Handling</div>
-                  <h2
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 24,
-                    }}
-                  >
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     Standard HTTP status codes
                   </h2>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -771,7 +750,7 @@
                         <code
                           className="mono"
                           style={{
-                            fontSize: 12.5,
+                            fontSize: 'var(--fs-sm)',
                             color: e.ok ? 'var(--green)' : 'var(--orange)',
                             minWidth: 50,
                           }}
@@ -781,7 +760,7 @@
                         <span
                           className="sans"
                           style={{
-                            fontSize: 13,
+                            fontSize: 'var(--fs-sm)',
                             fontWeight: 600,
                             color: 'var(--text-secondary)',
                             minWidth: 140,
@@ -789,7 +768,10 @@
                         >
                           {e.label}
                         </span>
-                        <span className="sans" style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
+                        >
                           {e.desc}
                         </span>
                       </div>
@@ -797,7 +779,11 @@
                   </div>
                   <p
                     className="sans"
-                    style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 14 }}
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-secondary)',
+                      marginTop: 14,
+                    }}
                   >
                     All error responses use the same{' '}
                     <code
@@ -810,31 +796,25 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Quick Start */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="qs" data-animate className={`anim ${isV('qs') ? 'vis' : ''}`}>
                   <div className="section-label">Quick Start</div>
-                  <h2
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 24,
-                    }}
-                  >
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     One request to your first duty calculation
                   </h2>
                   <div
                     style={{
                       background: 'var(--bg-card)',
                       border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
                       padding: '24px 28px',
                       fontFamily: "'JetBrains Mono',monospace",
-                      fontSize: 13,
-                      lineHeight: 1.8,
+                      fontSize: 'var(--fs-sm)',
+                      lineHeight: 1.75,
                       color: 'var(--text-secondary)',
                     }}
                   >
@@ -843,9 +823,7 @@
                       <span style={{ color: 'var(--accent)' }}>POST</span> \
                     </div>
                     <div style={{ paddingLeft: 32 }}>
-                      <span style={{ color: 'var(--orange)' }}>
-                        {SITE.apiBaseUrl}/rates/entry
-                      </span>{' '}
+                      <span style={{ color: 'var(--orange)' }}>{SITE.apiBaseUrl}/rates/entry</span>{' '}
                       \
                     </div>
                     <div style={{ paddingLeft: 32 }}>
@@ -891,7 +869,11 @@
                   </div>
                   <p
                     className="sans"
-                    style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 14 }}
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-secondary)',
+                      marginTop: 14,
+                    }}
                   >
                     Pass your API key via the{' '}
                     <code className="mono" style={{ color: 'var(--text-secondary)' }}>
@@ -903,46 +885,31 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* CTA */}
-            <section style={{ padding: '96px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="cta" data-animate className={`anim ${isV('cta') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Ready to integrate?
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Create a free account to get your API key, then explore the full interactive
                     documentation in Swagger.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
+                  <div className="cta-row">
                     <a
                       href={SITE.signupUrl}
-                      className="cta-btn sans"
+                      className="cta-btn w200 sans"
                       style={{ textDecoration: 'none' }}
                     >
                       Get API Key
@@ -950,7 +917,7 @@
                     <a
                       href={SITE.apiDocsUrl}
                       target="_blank"
-                      className="cta-btn cta-btn-outline sans"
+                      className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
                       Swagger Docs ↗

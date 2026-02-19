@@ -17,9 +17,825 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
-        window;
-      const { useState, useEffect } = React;
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
+      const { useState, useEffect, useRef, useCallback } = React;
+
+      /* ━━━ Architecture Diagram — Node Data ━━━ */
+      const archNodes = {
+        web: {
+          title: 'Web Platform',
+          zone: 'access',
+          panelAccent: 'a-purple',
+          badges: null,
+          desc: 'Full-featured UI with duty simulator, bulk calculation tools, HTS code browser, vendor discovery, and trade news — designed for compliance teams and trade analysts who need answers without writing code.',
+          extras: [
+            'Duty Simulator',
+            'Bulk Tools',
+            'HTS Browser',
+            'Vendor Discovery',
+            'Trade News',
+            'Version Comparison',
+          ],
+          edgeKeys: ['web>api'],
+          edgeColors: { 'web>api': 'purple' },
+        },
+        rest: {
+          title: 'REST API',
+          zone: 'access',
+          panelAccent: 'a-green',
+          badges: 'method',
+          desc: 'Programmatic access to every platform capability — duty calculation, HTS search, regulatory context, version comparison, and market intelligence. Standard JSON envelope with typed models across all 50 endpoints in 16 resource groups.',
+          extras: [
+            'Duty Calculations',
+            'HTS Search',
+            'HTS Codes',
+            'Schedule Navigation',
+            'Version Comparison',
+            'Countries',
+            'Trade Programs',
+            'Notes & Documents',
+            'Materials',
+            'Documentation Search',
+            'Import Data',
+            'GIQ News',
+            'GIQ Organizations',
+            'Available Versions',
+          ],
+          edgeKeys: ['rest>api'],
+          edgeColors: { 'rest>api': 'green' },
+        },
+        sdk: {
+          title: 'Python SDK',
+          zone: 'access',
+          panelAccent: 'a-orange',
+          badges: null,
+          desc: 'Typed Python client with synchronous and asynchronous support, Pydantic models for every response, automatic retries with exponential backoff, and the full API surface available through a single import.',
+          extras: [
+            'Sync + Async',
+            'Pydantic Models',
+            'Auto Retries',
+            'Full API Surface',
+            'Type Safety',
+          ],
+          edgeKeys: ['sdk>api'],
+          edgeColors: { 'sdk>api': 'orange' },
+        },
+        api: {
+          title: 'Unified API Layer',
+          zone: 'api',
+          panelAccent: 'a-blue',
+          badges: 'method',
+          desc: 'All access points converge into a single API layer — 50 public endpoints organized across 16 resource groups, with 257 typed models and a standard JSON response envelope. The same query through the web UI, REST call, or SDK method hits the same endpoint.',
+          stats: [
+            { val: '50', label: 'endpoints' },
+            { val: '257', label: 'typed models' },
+            { val: '16', label: 'resource groups' },
+          ],
+          edgeKeys: ['web>api', 'rest>api', 'sdk>api', 'api>engine'],
+          edgeColors: {
+            'web>api': 'purple',
+            'rest>api': 'green',
+            'sdk>api': 'orange',
+            'api>engine': 'blue',
+          },
+        },
+        engine: {
+          title: 'Versioned Tariff Graph + Deterministic Evaluation Engine',
+          zone: 'engine',
+          panelAccent: 'a-purple',
+          badges: 'proprietary',
+          desc: 'Every HTS release is ingested, parsed into a structured tariff graph, and stored as a distinct version. The evaluation engine resolves overlapping rules through deterministic multi-phase filtering — no LLM in the decision path. Full legal citations attached to every answer.',
+          stats: [
+            { val: '34', label: 'HTS versions tracked' },
+            { val: '~18K', label: 'tariff lines per revision' },
+            { val: '4,406+', label: 'structured legal notes' },
+          ],
+          edgeKeys: ['api>engine', 'engine>pipeline'],
+          edgeColors: { 'api>engine': 'blue', 'engine>pipeline': 'purple' },
+        },
+        pipeline: {
+          title: '7-Stage Processing Pipeline',
+          zone: 'pipeline',
+          panelAccent: 'a-purple',
+          badges: 'pipeline-prop',
+          desc: 'Raw HTS data flows through seven sequential processing stages — from initial ingestion of government publications through to structured, queryable output. Five of the seven stages are proprietary.',
+          pipeline: true,
+          edgeKeys: ['engine>pipeline'],
+          edgeColors: { 'engine>pipeline': 'purple' },
+        },
+      };
+
+      const archNodeOrder = ['web', 'rest', 'sdk', 'api', 'engine', 'pipeline'];
+      const ARCH_CYCLE_MS = 5000;
+
+      /* ━━━ Node SVG icons ━━━ */
+      const archIcons = {
+        web: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="2" y="2" width="14" height="11" rx="2" />
+            <path d="M6 16h6M9 13v3" />
+          </svg>
+        ),
+        rest: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M5 6l-3 3 3 3M13 6l3 3-3 3M10 4l-2 10" />
+          </svg>
+        ),
+        sdk: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 13l3-3-3-3M8 13h6" />
+          </svg>
+        ),
+        api: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 2l6 3.5v7L9 16l-6-3.5v-7z" />
+            <path d="M9 8.5V16M3 5.5L9 9l6-3.5" />
+          </svg>
+        ),
+        engine: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="9" cy="9" r="3" />
+            <path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1" />
+          </svg>
+        ),
+        pipeline: (
+          <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M2 9h3l2-4 3 8 2-4h4" />
+          </svg>
+        ),
+      };
+
+      const archNodeLabels = {
+        web: { label: 'Web Platform', sublabel: 'enterprise-neo.com' },
+        rest: { label: 'REST API', sublabel: '50 endpoints · 16 groups' },
+        sdk: { label: 'Python SDK', sublabel: 'pip install neo-tariff' },
+        api: { label: 'Unified API Layer', sublabel: '50 endpoints · 257 models' },
+        engine: {
+          label: 'Tariff Graph + Evaluation Engine',
+          sublabel: 'proprietary · deterministic',
+        },
+        pipeline: { label: '7-Stage Processing Pipeline', sublabel: '5 proprietary stages' },
+      };
+
+      const archEdges = [
+        { from: 'web', to: 'api', color: 'purple' },
+        { from: 'rest', to: 'api', color: 'green' },
+        { from: 'sdk', to: 'api', color: 'orange' },
+        { from: 'api', to: 'engine', color: 'blue' },
+        { from: 'engine', to: 'pipeline', color: 'purple' },
+      ];
+
+      const archZones = {
+        access: { start: 0, end: 0.235 },
+        api: { start: 0.238, end: 0.474 },
+        engine: { start: 0.476, end: 0.712 },
+        pipeline: { start: 0.715, end: 0.95 },
+      };
+
+      /* ━━━ ArchDiagram Component ━━━ */
+      const ArchDiagram = () => {
+        const [activeId, setActiveId] = useState(null);
+        const [cycleIdx, setCycleIdx] = useState(0);
+        const diagramRef = useRef(null);
+        const svgRef = useRef(null);
+        const mergeDotRef = useRef(null);
+        const cycleTimerRef = useRef(null);
+        const resumeTimerRef = useRef(null);
+        const isCompact = useRef(false);
+
+        const getActiveData = () => (activeId ? archNodes[activeId] : null);
+
+        /* Position nodes + draw edges */
+        const layout = useCallback(() => {
+          const diagram = diagramRef.current;
+          if (!diagram) return;
+          const dRect = diagram.getBoundingClientRect();
+          const dW = dRect.width;
+          const dH = dRect.height;
+          isCompact.current = window.matchMedia('(max-width: 820px)').matches;
+
+          /* Position each node */
+          diagram.querySelectorAll('.diagram-node').forEach((nodeEl) => {
+            const id = nodeEl.dataset.id;
+            const data = archNodes[id];
+            const zone = archZones[data.zone];
+            const midY = ((zone.start + zone.end) / 2) * dH;
+            const nodeH = nodeEl.offsetHeight;
+            const nodeW = nodeEl.offsetWidth;
+
+            nodeEl.style.top = midY - nodeH / 2 + 'px';
+
+            if (data.zone === 'access') {
+              const accessNodes = ['web', 'rest', 'sdk'];
+              const idx = accessNodes.indexOf(id);
+              if (isCompact.current) {
+                const spacing = dW / 4;
+                nodeEl.style.left = spacing * (idx + 1) - nodeW / 2 + 'px';
+              } else {
+                const totalNodeW = accessNodes.reduce((sum, nid) => {
+                  const el = diagram.querySelector('[data-id="' + nid + '"]');
+                  return sum + (el ? el.offsetWidth : 220);
+                }, 0);
+                const gap = (dW - totalNodeW) / 4;
+                let x = gap;
+                for (let i = 0; i < idx; i++) {
+                  const el = diagram.querySelector('[data-id="' + accessNodes[i] + '"]');
+                  x += (el ? el.offsetWidth : 220) + gap;
+                }
+                nodeEl.style.left = x + 'px';
+              }
+              nodeEl.style.right = 'auto';
+              nodeEl.style.transform = '';
+            } else {
+              nodeEl.style.left = '50%';
+              nodeEl.style.right = 'auto';
+              nodeEl.style.transform = 'translateX(-50%)';
+            }
+          });
+
+          drawEdges();
+        }, []);
+
+        /* Draw SVG edges */
+        const drawEdges = () => {
+          const diagram = diagramRef.current;
+          const svg = svgRef.current;
+          if (!diagram || !svg) return;
+          const dRect = diagram.getBoundingClientRect();
+          const svgW = dRect.width;
+          const svgH = dRect.height;
+          svg.setAttribute('viewBox', '0 0 ' + svgW + ' ' + svgH);
+
+          const getAnchor = (id, side) => {
+            const el = diagram.querySelector('[data-id="' + id + '"]');
+            if (!el) return { x: 0, y: 0 };
+            const nr = el.getBoundingClientRect();
+            const cx = nr.left - dRect.left + nr.width / 2;
+            const top = nr.top - dRect.top;
+            const bot = nr.top - dRect.top + nr.height;
+            if (side === 'bottom') return { x: cx, y: bot };
+            if (side === 'top') return { x: cx, y: top };
+            return { x: cx, y: (top + bot) / 2 };
+          };
+
+          svg.querySelectorAll('.diagram-edge, .diagram-edge-flow').forEach((path) => {
+            const fId = path.getAttribute('data-from');
+            const tId = path.getAttribute('data-to');
+            const from = getAnchor(fId, 'bottom');
+            const to = getAnchor(tId, 'top');
+            if (['web', 'rest', 'sdk'].includes(fId) && tId === 'api') {
+              const cp1y = from.y + (to.y - from.y) * 0.4;
+              const cp2y = from.y + (to.y - from.y) * 0.6;
+              path.setAttribute(
+                'd',
+                'M ' +
+                  from.x +
+                  ' ' +
+                  from.y +
+                  ' C ' +
+                  from.x +
+                  ' ' +
+                  cp1y +
+                  ', ' +
+                  to.x +
+                  ' ' +
+                  cp2y +
+                  ', ' +
+                  to.x +
+                  ' ' +
+                  to.y
+              );
+            } else {
+              path.setAttribute('d', 'M ' + from.x + ' ' + from.y + ' L ' + to.x + ' ' + to.y);
+            }
+          });
+
+          /* Merge dot position */
+          const apiTop = getAnchor('api', 'top');
+          const dot = mergeDotRef.current;
+          if (dot) {
+            dot.style.left = apiTop.x + 'px';
+            dot.style.top = apiTop.y - 4 + 'px';
+            dot.style.transform = 'translate(-50%, -50%)';
+          }
+        };
+
+        /* Activate a node */
+        const activate = useCallback((id) => {
+          setActiveId(id);
+          const idx = archNodeOrder.indexOf(id);
+          setCycleIdx(idx);
+
+          const diagram = diagramRef.current;
+          if (!diagram) return;
+          diagram.classList.add('has-active');
+
+          diagram.querySelectorAll('.diagram-node').forEach((n) => {
+            const isAct = n.dataset.id === id;
+            n.classList.toggle('active', isAct);
+            const isCentered = !['web', 'rest', 'sdk'].includes(n.dataset.id);
+            if (isCentered) {
+              n.style.transform = isAct
+                ? 'translateX(-50%) translateY(-2px) scale(1.02)'
+                : 'translateX(-50%)';
+            } else {
+              n.style.transform = isAct ? 'translateY(-2px) scale(1.02)' : '';
+            }
+          });
+
+          /* Light edges */
+          const data = archNodes[id];
+          diagram.querySelectorAll('.diagram-edge, .diagram-edge-flow').forEach((path) => {
+            const fId = path.getAttribute('data-from');
+            const tId = path.getAttribute('data-to');
+            const key = fId + '>' + tId;
+            const isLit = data.edgeKeys.includes(key);
+            const color = data.edgeColors[key] || 'purple';
+            path.classList.remove('lit', 'lit-green', 'lit-orange', 'lit-blue');
+            if (isLit) {
+              const cls =
+                color === 'green'
+                  ? 'lit-green'
+                  : color === 'orange'
+                    ? 'lit-orange'
+                    : color === 'blue'
+                      ? 'lit-blue'
+                      : 'lit';
+              path.classList.add(cls);
+            }
+          });
+
+          const mergeActive = data.edgeKeys.some((e) =>
+            ['web>api', 'rest>api', 'sdk>api'].includes(e)
+          );
+          if (mergeDotRef.current) mergeDotRef.current.classList.toggle('lit', mergeActive);
+        }, []);
+
+        /* Auto-cycle */
+        const startCycle = useCallback(() => {
+          clearTimeout(cycleTimerRef.current);
+          clearTimeout(resumeTimerRef.current);
+          let idx = 0;
+          const tick = () => {
+            activate(archNodeOrder[idx]);
+            idx = (idx + 1) % archNodeOrder.length;
+            cycleTimerRef.current = setTimeout(tick, ARCH_CYCLE_MS);
+          };
+          tick();
+        }, [activate]);
+
+        const handleSelect = useCallback(
+          (idx) => {
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+            activate(archNodeOrder[idx]);
+            resumeTimerRef.current = setTimeout(() => {
+              startCycle();
+            }, 14000);
+          },
+          [activate, startCycle]
+        );
+
+        /* Init */
+        useEffect(() => {
+          /* Defer to after browser paint so getBoundingClientRect is accurate */
+          const initRaf = requestAnimationFrame(() => {
+            layout();
+            startCycle();
+          });
+
+          /* Re-layout after web fonts load (node widths may change) */
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(layout);
+          }
+
+          let resizeRaf;
+          const onResize = () => {
+            cancelAnimationFrame(resizeRaf);
+            resizeRaf = requestAnimationFrame(layout);
+          };
+          window.addEventListener('resize', onResize);
+          return () => {
+            cancelAnimationFrame(initRaf);
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+            window.removeEventListener('resize', onResize);
+          };
+        }, [layout, startCycle]);
+
+        const data = getActiveData();
+
+        return (
+          <div>
+            <div className="diagram-frame">
+              <div className="diagram-inner">
+                {/* Zone gutter */}
+                <div className="zone-gutter">
+                  {['access', 'api', 'engine', 'pipeline'].map((z, i) => (
+                    <React.Fragment key={z}>
+                      {i > 0 && <div className="zone-divider" />}
+                      <div className="zone-slot" data-zone={z}>
+                        <span className="zone-label">
+                          {z === 'access'
+                            ? 'Access'
+                            : z === 'api'
+                              ? 'API Surface'
+                              : z === 'engine'
+                                ? 'Core Engine'
+                                : 'Pipeline'}
+                        </span>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+
+                {/* Diagram area */}
+                <div className="diagram-area" ref={diagramRef}>
+                  <svg className="diagram-edges" ref={svgRef}>
+                    {archEdges.map((e) => (
+                      <React.Fragment key={e.from + '>' + e.to}>
+                        <path
+                          className="diagram-edge"
+                          data-from={e.from}
+                          data-to={e.to}
+                          data-color={e.color}
+                        />
+                        <path
+                          className="diagram-edge-flow"
+                          data-from={e.from}
+                          data-to={e.to}
+                          data-color={e.color}
+                        />
+                      </React.Fragment>
+                    ))}
+                  </svg>
+
+                  <div className="diagram-merge-dot" ref={mergeDotRef} />
+
+                  {archNodeOrder.map((id) => (
+                    <div
+                      key={id}
+                      className="diagram-node"
+                      data-id={id}
+                      onClick={() => handleSelect(archNodeOrder.indexOf(id))}
+                    >
+                      <div className="dn-icon">{archIcons[id]}</div>
+                      <div className="dn-text-wrap">
+                        <div className="dn-label">{archNodeLabels[id].label}</div>
+                        <div className="dn-sublabel">{archNodeLabels[id].sublabel}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Detail panel */}
+            {data && (
+              <div className={'diagram-detail ' + data.panelAccent}>
+                <div className="diagram-detail-content" key={activeId}>
+                  <div className="dd-top">
+                    <div className="dd-top-left">
+                      <div
+                        className="dd-icon"
+                        style={{
+                          background:
+                            activeId === 'rest'
+                              ? 'rgba(74,222,128,0.08)'
+                              : activeId === 'sdk'
+                                ? 'rgba(245,158,11,0.08)'
+                                : activeId === 'api'
+                                  ? 'rgba(96,165,250,0.08)'
+                                  : 'rgba(var(--accent-rgb),0.1)',
+                          border:
+                            '1px solid ' +
+                            (activeId === 'rest'
+                              ? 'rgba(74,222,128,0.18)'
+                              : activeId === 'sdk'
+                                ? 'rgba(245,158,11,0.18)'
+                                : activeId === 'api'
+                                  ? 'rgba(96,165,250,0.18)'
+                                  : 'rgba(var(--accent-rgb),0.2)'),
+                          color:
+                            activeId === 'rest'
+                              ? 'var(--green)'
+                              : activeId === 'sdk'
+                                ? 'var(--orange)'
+                                : activeId === 'api'
+                                  ? 'var(--blue)'
+                                  : 'var(--accent)',
+                        }}
+                      >
+                        {archIcons[activeId]}
+                      </div>
+                      <div className="dd-title">{data.title}</div>
+                    </div>
+                    <div className="dd-badges">
+                      {data.badges === 'method' && (
+                        <>
+                          <span className="dd-method-badge get">37 GET</span>
+                          <span className="dd-method-badge post">13 POST</span>
+                        </>
+                      )}
+                      {data.badges === 'proprietary' && (
+                        <span className="dd-prop-badge">PROPRIETARY</span>
+                      )}
+                      {data.badges === 'pipeline-prop' && (
+                        <span className="dd-prop-badge">5 PROPRIETARY STAGES</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="dd-desc">{data.desc}</div>
+                  {data.pipeline && (
+                    <div className="pipeline-vis">
+                      {[
+                        'Ingestion',
+                        'Parsing',
+                        'Resolution',
+                        'Construction',
+                        'Versioning',
+                        'Evaluation',
+                        'Output',
+                      ].map((s, i) => (
+                        <React.Fragment key={s}>
+                          {i > 0 && <div className="pv-arr">→</div>}
+                          <div className={'pv-stage' + (i >= 2 && i <= 5 ? ' prop' : '')}>{s}</div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  )}
+                  {data.stats && (
+                    <div className="dd-extras">
+                      {data.stats.map((s, i) => (
+                        <span key={i} className="dd-stat">
+                          <strong>{s.val}</strong> {s.label}
+                        </span>
+                      ))}
+                      {activeId === 'api' && <span className="dd-tag">Standard JSON envelope</span>}
+                    </div>
+                  )}
+                  {data.extras && (
+                    <div className="dd-extras">
+                      {data.extras.map((t, i) => (
+                        <span key={i} className="dd-tag">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Cycle dots */}
+            <div className="diagram-cycle-dots">
+              {archNodeOrder.map((_, i) => (
+                <div
+                  key={i}
+                  className={'diagram-cycle-dot' + (i === cycleIdx ? ' active' : '')}
+                  onClick={() => handleSelect(i)}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      /* ━━━ Pipeline Timeline Component ━━━ */
+      const PIPELINE_CYCLE_MS = 5500;
+
+      const PipelineTimeline = ({ stages }) => {
+        const [activeIdx, setActiveIdx] = useState(0);
+        const timelineRef = useRef(null);
+        const railFillRef = useRef(null);
+        const cycleTimerRef = useRef(null);
+        const resumeTimerRef = useRef(null);
+
+        const positionRail = useCallback(() => {
+          const tl = timelineRef.current;
+          const fill = railFillRef.current;
+          if (!tl || !fill) return;
+
+          const items = tl.querySelectorAll('.tl-item');
+          if (!items.length) return;
+
+          const tlRect = tl.getBoundingClientRect();
+          const firstDot = items[0].querySelector('.tl-dot');
+          const activeDot = items[activeIdx].querySelector('.tl-dot');
+          if (!firstDot || !activeDot) return;
+
+          const startY =
+            firstDot.getBoundingClientRect().top - tlRect.top + firstDot.offsetHeight / 2;
+
+          if (activeIdx === 0) {
+            fill.style.top = startY + 'px';
+            fill.style.height = '0px';
+          } else {
+            const endY =
+              activeDot.getBoundingClientRect().top - tlRect.top + activeDot.offsetHeight / 2;
+            fill.style.top = startY + 'px';
+            fill.style.height = endY - startY + 'px';
+          }
+        }, [activeIdx]);
+
+        const startCycle = useCallback(() => {
+          clearTimeout(cycleTimerRef.current);
+          clearTimeout(resumeTimerRef.current);
+          let idx = 0;
+          const tick = () => {
+            setActiveIdx(idx);
+            idx = (idx + 1) % stages.length;
+            cycleTimerRef.current = setTimeout(tick, PIPELINE_CYCLE_MS);
+          };
+          tick();
+        }, [stages.length]);
+
+        const handleSelect = useCallback(
+          (idx) => {
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+            setActiveIdx(idx);
+            resumeTimerRef.current = setTimeout(() => {
+              startCycle();
+            }, 14000);
+          },
+          [startCycle]
+        );
+
+        /* Init cycle */
+        useEffect(() => {
+          const initRaf = requestAnimationFrame(() => {
+            startCycle();
+          });
+          return () => {
+            cancelAnimationFrame(initRaf);
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+          };
+        }, [startCycle]);
+
+        /* Position rail on activeIdx change and after fonts */
+        useEffect(() => {
+          const raf = requestAnimationFrame(positionRail);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(positionRail);
+          }
+          const onResize = () => requestAnimationFrame(positionRail);
+          window.addEventListener('resize', onResize);
+          return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener('resize', onResize);
+          };
+        }, [positionRail]);
+
+        const s = stages[activeIdx];
+        const tagCls = s.ip || s.id === 'output' ? 'ip' : '';
+
+        return (
+          <div>
+            <div className="pipeline-split">
+              {/* LEFT: Timeline */}
+              <div className="pipeline-timeline has-active" ref={timelineRef}>
+                <div className="timeline-rail" />
+                <div className="timeline-rail-fill" ref={railFillRef} />
+
+                {stages.map((stage, i) => (
+                  <div
+                    key={stage.id}
+                    className={
+                      'tl-item' +
+                      (stage.ip ? ' ip' : '') +
+                      (i === activeIdx ? ' active' : '') +
+                      (i < activeIdx ? ' passed' : '')
+                    }
+                    onClick={() => handleSelect(i)}
+                  >
+                    <div className="tl-dot">
+                      <span className="num">{stage.num}</span>
+                    </div>
+                    <div className="tl-text">
+                      <div className="tl-title">{stage.label}</div>
+                      <div className="tl-sub">{stage.subtitle}</div>
+                    </div>
+                    {stage.ip && <span className="tl-ip-badge">IP</span>}
+                  </div>
+                ))}
+              </div>
+
+              {/* RIGHT: Detail Panel */}
+              <div className={'pipeline-detail' + (s.ip ? ' ip-active' : '')}>
+                <div className="dp-body">
+                  <div className="detail-content" key={activeIdx}>
+                    <div className="dp-header">
+                      <div>
+                        <div className="dp-num-title">
+                          <span className="dp-num">{s.num}</span>
+                          <span className="dp-title">{s.label}</span>
+                        </div>
+                        <div className="dp-subtitle">{s.subtitle}</div>
+                      </div>
+                      <div className="dp-badges-inline">
+                        {s.ip && <span className="dd-prop-badge">PROPRIETARY IP</span>}
+                      </div>
+                    </div>
+                    <div className="dp-desc sans">{s.desc}</div>
+                  </div>
+                </div>
+                <div className="dp-footer">
+                  <div className="dp-footer-label">Key capabilities</div>
+                  <div className="dp-tags" key={activeIdx + '-tags'}>
+                    {s.tags.map((t, j) => (
+                      <span key={j} className={'dp-tag' + (tagCls ? ' ' + tagCls : '')}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats bar */}
+            <div className="pipeline-stats-bar">
+              {[
+                {
+                  v: '100%',
+                  l: 'Deterministic',
+                  d: 'Every duty calculation uses deterministic regex, pattern matching, and tree traversal. No LLM in the decision path.',
+                },
+                {
+                  v: '5',
+                  l: 'Proprietary Stages',
+                  d: 'Five of seven pipeline stages contain core IP — novel algorithms for hierarchy recovery, resolution, and evaluation.',
+                },
+                {
+                  v: 'Full',
+                  l: 'Traceability',
+                  d: 'Every answer traces back to specific rules, source notes, PDF page numbers, and government revision identifiers.',
+                },
+              ].map((stat, i) => (
+                <div key={i} className="pipeline-stat-card">
+                  <div className="pipeline-stat-top">
+                    <span className="pipeline-stat-val">{stat.v}</span>
+                    <span className="pipeline-stat-label sans">{stat.l}</span>
+                  </div>
+                  <div className="pipeline-stat-desc sans">{stat.d}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
 
       const stages = [
         {
@@ -113,21 +929,28 @@
       ];
 
       const NeoTariffTechnology = () => {
-        const [activeStage, setActiveStage] = useState(null);
-        const [hoveredLayer, setHoveredLayer] = useState(null);
-
         const isV = useScrollAnimation();
+
+        const sideNavSections = [
+          { id: 'arch', label: 'Architecture' },
+          { id: 'pipe', label: 'Pipeline' },
+          { id: 'stats', label: 'By the Numbers' },
+          { id: 'aipos', label: 'AI & Engine' },
+          { id: 'cta2', label: 'Get Started' },
+        ];
+
         return (
           <div
             style={{
               fontFamily: '"Source Serif 4",Georgia,serif',
-              background: '#0C0E1A',
-              color: '#E4E2DD',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
               minHeight: '100vh',
             }}
           >
             <NeoGrain />
             <NeoNav activePage="technology" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* ━━━ Hero ━━━ */}
             <NeoHero
@@ -142,823 +965,70 @@
               ]}
             />
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
-            {/* ━━━ Architecture Overview ━━━ */}
+            {/* ━━━ Interactive Architecture Diagram ━━━ */}
             <section style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="arch" data-animate className={`anim ${isV('arch') ? 'vis' : ''}`}>
                   <div className="section-label">System Architecture</div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 10,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     Three access points. One engine.
                   </h2>
                   <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.75,
-                      color: 'var(--text-secondary)',
-                      maxWidth: 580,
-                      marginBottom: 48,
-                    }}
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, maxWidth: 580, marginBottom: 48 }}
                   >
                     Whether you use the web platform, REST API, or Python SDK — every request passes
                     through the same versioned tariff graph and deterministic evaluation engine.
                   </p>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                    {/* Layer 1: Access Points */}
-                    <div style={{ marginBottom: 4 }}>
-                      <div
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          letterSpacing: '0.1em',
-                          color: 'var(--text-muted)',
-                          marginBottom: 8,
-                          paddingLeft: 4,
-                        }}
-                      >
-                        ACCESS LAYER
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                        {[
-                          {
-                            icon: '◻',
-                            title: 'Web Platform',
-                            sub: 'enterprise-neo.com',
-                            detail:
-                              'Full-featured UI with simulator, bulk tools, HTS browser, vendor discovery, and news',
-                            color: 'var(--accent)',
-                          },
-                          {
-                            icon: '{ }',
-                            title: 'REST API',
-                            sub: '50 endpoints · 16 groups',
-                            detail:
-                              'Programmatic access to every capability — duty calculation, search, context, compare, and market intelligence',
-                            color: 'var(--green)',
-                          },
-                          {
-                            icon: '🐍',
-                            title: 'Python SDK',
-                            sub: 'pip install neo-tariff',
-                            detail:
-                              'Typed client with sync/async support, Pydantic models, automatic retries, and the full API surface',
-                            color: 'var(--orange)',
-                          },
-                        ].map((ap, i) => (
-                          <div key={i} className="arch-layer">
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 10,
-                                marginBottom: 10,
-                              }}
-                            >
-                              <span style={{ fontSize: 16 }}>{ap.icon}</span>
-                              <div>
-                                <div className="sans" style={{ fontSize: 14.5, fontWeight: 600 }}>
-                                  {ap.title}
-                                </div>
-                                <div
-                                  className="mono"
-                                  style={{
-                                    fontSize: 10.5,
-                                    color: ap.color,
-                                    letterSpacing: '0.03em',
-                                  }}
-                                >
-                                  {ap.sub}
-                                </div>
-                              </div>
-                            </div>
-                            <p
-                              className="sans"
-                              style={{
-                                fontSize: 12.5,
-                                lineHeight: 1.6,
-                                color: 'var(--text-muted)',
-                              }}
-                            >
-                              {ap.detail}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flow-arrow" style={{ padding: '8px 0' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: 2,
-                        }}
-                      >
-                        <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
-                        <svg width="14" height="10" viewBox="0 0 14 10">
-                          <path
-                            d="M1 1L7 8L13 1"
-                            stroke="var(--text-muted)"
-                            strokeWidth="1.2"
-                            fill="none"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Layer 2: API Surface */}
-                    <div style={{ marginBottom: 4 }}>
-                      <div
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          letterSpacing: '0.1em',
-                          color: 'var(--text-muted)',
-                          marginBottom: 8,
-                          paddingLeft: 4,
-                        }}
-                      >
-                        API SURFACE
-                      </div>
-                      <div className="arch-layer" style={{ padding: '20px 28px' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: 14,
-                          }}
-                        >
-                          <div>
-                            <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
-                              Unified API Layer
-                            </div>
-                            <div
-                              className="mono"
-                              style={{
-                                fontSize: 10.5,
-                                color: 'var(--text-muted)',
-                                letterSpacing: '0.03em',
-                                marginTop: 2,
-                              }}
-                            >
-                              50 public endpoints · 257 typed models · Standard JSON envelope
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: 6 }}>
-                            <span
-                              className="mono"
-                              style={{
-                                fontSize: 10,
-                                padding: '3px 8px',
-                                background: 'rgba(96,165,250,0.1)',
-                                border: '1px solid rgba(96,165,250,0.2)',
-                                color: 'var(--blue)',
-                              }}
-                            >
-                              37 GET
-                            </span>
-                            <span
-                              className="mono"
-                              style={{
-                                fontSize: 10,
-                                padding: '3px 8px',
-                                background: 'rgba(74,222,128,0.1)',
-                                border: '1px solid rgba(74,222,128,0.2)',
-                                color: 'var(--green)',
-                              }}
-                            >
-                              13 POST
-                            </span>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                          {[
-                            'Duty Calculations',
-                            'HTS Search',
-                            'HTS Codes',
-                            'Schedule Navigation',
-                            'Version Comparison',
-                            'Countries',
-                            'Trade Programs',
-                            'Notes & Documents',
-                            'Materials',
-                            'Documentation Search',
-                            'Import Data',
-                            'GIQ News',
-                            'GIQ Organizations',
-                            'Available Versions',
-                          ].map((tag, i) => (
-                            <span
-                              key={i}
-                              className="mono"
-                              style={{
-                                fontSize: 10,
-                                padding: '3px 9px',
-                                border: '1px solid var(--border)',
-                                color: 'var(--text-muted)',
-                                letterSpacing: '0.02em',
-                              }}
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flow-arrow" style={{ padding: '8px 0' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: 2,
-                        }}
-                      >
-                        <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
-                        <svg width="14" height="10" viewBox="0 0 14 10">
-                          <path
-                            d="M1 1L7 8L13 1"
-                            stroke="var(--text-muted)"
-                            strokeWidth="1.2"
-                            fill="none"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Layer 3: Engine */}
-                    <div style={{ marginBottom: 4 }}>
-                      <div
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          letterSpacing: '0.1em',
-                          color: 'var(--text-muted)',
-                          marginBottom: 8,
-                          paddingLeft: 4,
-                        }}
-                      >
-                        CORE ENGINE
-                      </div>
-                      <div
-                        className="arch-layer"
-                        style={{
-                          borderColor: 'rgba(108,99,255,0.2)',
-                          background:
-                            'linear-gradient(135deg, rgba(108,99,255,0.04) 0%, var(--bg-card) 50%)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-start',
-                          }}
-                        >
-                          <div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 10,
-                                marginBottom: 8,
-                              }}
-                            >
-                              <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
-                                Versioned Tariff Graph + Deterministic Evaluation Engine
-                              </div>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 9,
-                                  padding: '2px 7px',
-                                  background: 'rgba(108,99,255,0.08)',
-                                  border: '1px solid rgba(108,99,255,0.15)',
-                                  color: 'var(--accent)',
-                                  letterSpacing: '0.08em',
-                                }}
-                              >
-                                PROPRIETARY
-                              </span>
-                            </div>
-                            <p
-                              className="sans"
-                              style={{
-                                fontSize: 13,
-                                lineHeight: 1.65,
-                                color: 'var(--text-secondary)',
-                                maxWidth: 700,
-                              }}
-                            >
-                              Every HTS release is ingested, parsed into a structured tariff graph,
-                              and stored as a distinct version. The evaluation engine resolves
-                              overlapping rules through deterministic multi-phase filtering — no LLM
-                              in the decision path. Full legal citations attached to every answer.
-                            </p>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', gap: 20, marginTop: 16 }}>
-                          {[
-                            {
-                              val: '34',
-                              label: 'HTS versions tracked',
-                              sub: '32 in 2025 · 2 in 2026',
-                            },
-                            { val: '~18K', label: 'tariff lines per revision' },
-                            { val: '4,406+', label: 'structured legal notes' },
-                          ].map((s, i) => (
-                            <div
-                              key={i}
-                              style={{
-                                padding: '12px 16px',
-                                background: 'rgba(108,99,255,0.04)',
-                                borderLeft: '2px solid rgba(108,99,255,0.2)',
-                                flex: 1,
-                              }}
-                            >
-                              <div
-                                className="mono"
-                                style={{
-                                  fontSize: 17,
-                                  fontWeight: 600,
-                                  color: 'var(--accent)',
-                                  letterSpacing: '-0.02em',
-                                }}
-                              >
-                                {s.val}
-                              </div>
-                              <div
-                                className="sans"
-                                style={{
-                                  fontSize: 12,
-                                  color: 'var(--text-secondary)',
-                                  marginTop: 2,
-                                }}
-                              >
-                                {s.label}
-                              </div>
-                              {s.sub && (
-                                <div
-                                  className="mono"
-                                  style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}
-                                >
-                                  {s.sub}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flow-arrow" style={{ padding: '8px 0' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: 2,
-                        }}
-                      >
-                        <div style={{ width: 1, height: 16, background: 'var(--border)' }} />
-                        <svg width="14" height="10" viewBox="0 0 14 10">
-                          <path
-                            d="M1 1L7 8L13 1"
-                            stroke="var(--text-muted)"
-                            strokeWidth="1.2"
-                            fill="none"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Layer 4: Data Pipeline */}
-                    <div>
-                      <div
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          letterSpacing: '0.1em',
-                          color: 'var(--text-muted)',
-                          marginBottom: 8,
-                          paddingLeft: 4,
-                        }}
-                      >
-                        DATA PIPELINE
-                      </div>
-                      <div className="arch-layer" style={{ padding: '16px 28px' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <div>
-                            <div className="sans" style={{ fontSize: 15, fontWeight: 600 }}>
-                              7-Stage Processing Pipeline
-                            </div>
-                            <div
-                              className="mono"
-                              style={{
-                                fontSize: 10.5,
-                                color: 'var(--text-muted)',
-                                letterSpacing: '0.03em',
-                                marginTop: 2,
-                              }}
-                            >
-                              Ingestion → Parsing → Resolution → Construction → Versioning →
-                              Evaluation → Output
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                            <span
-                              className="mono"
-                              style={{
-                                fontSize: 9,
-                                padding: '2px 7px',
-                                background: 'rgba(108,99,255,0.08)',
-                                border: '1px solid rgba(108,99,255,0.15)',
-                                color: 'var(--accent)',
-                                letterSpacing: '0.08em',
-                              }}
-                            >
-                              5 PROPRIETARY STAGES
-                            </span>
-                            <a
-                              href="#pipeline"
-                              className="sans"
-                              style={{
-                                fontSize: 12,
-                                color: 'var(--accent)',
-                                textDecoration: 'none',
-                                fontWeight: 500,
-                              }}
-                            >
-                              See details ↓
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ArchDiagram />
                 </div>
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ Pipeline Deep Dive ━━━ */}
             <section id="pipeline" style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="pipe" data-animate className={`anim ${isV('pipe') ? 'vis' : ''}`}>
                   <div className="section-label">The Pipeline</div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ lineHeight: 1.15, marginBottom: 16 }}>
                     From government PDF to duty determination.
                   </h2>
                   <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.8,
-                      color: 'var(--text-secondary)',
-                      maxWidth: 520,
-                      marginBottom: 48,
-                    }}
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, maxWidth: 520, marginBottom: 48 }}
                   >
                     Seven stages, each solving a distinct technical problem. Five contain
                     proprietary algorithms built specifically for the tariff domain. No
                     off-the-shelf NLP. No LLM in the decision path.
                   </p>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <div
-                        style={{
-                          width: 3,
-                          height: 14,
-                          background: 'rgba(108,99,255,0.25)',
-                          borderRadius: 1,
-                        }}
-                      />
-                      <span
-                        className="mono"
-                        style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.06em' }}
-                      >
-                        Proprietary IP
-                      </span>
-                    </div>
-                    <div
-                      style={{ width: 1, height: 12, background: 'var(--border)', margin: '0 8px' }}
-                    />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <div
-                        style={{
-                          width: 3,
-                          height: 14,
-                          background: 'var(--bg-elevated)',
-                          borderRadius: 1,
-                        }}
-                      />
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          color: 'var(--text-muted)',
-                          letterSpacing: '0.06em',
-                        }}
-                      >
-                        Standard infrastructure
-                      </span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {stages.map((stage) => {
-                      const isActive = activeStage === stage.id;
-                      const isIp = stage.ip;
-                      return (
-                        <div
-                          key={stage.id}
-                          className={`stage-card ${isIp ? 'ip' : 'std'} ${isActive ? 'active' : ''}`}
-                          onClick={() => setActiveStage(isActive ? null : stage.id)}
-                          style={{ padding: isActive ? '22px 28px 20px' : '14px 28px' }}
-                        >
-                          {isIp && isActive && (
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                height: 1,
-                                background:
-                                  'linear-gradient(90deg, var(--accent), transparent 70%)',
-                              }}
-                            />
-                          )}
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 12,
-                                  color: isIp
-                                    ? isActive
-                                      ? 'var(--accent)'
-                                      : 'rgba(108,99,255,0.4)'
-                                    : 'var(--text-muted)',
-                                  letterSpacing: '0.04em',
-                                  fontWeight: 500,
-                                  minWidth: 22,
-                                }}
-                              >
-                                {stage.num}
-                              </span>
-                              <h3
-                                className="sans"
-                                style={{
-                                  fontSize: 15,
-                                  fontWeight: 600,
-                                  margin: 0,
-                                  color: isActive
-                                    ? 'var(--text-primary)'
-                                    : isIp
-                                      ? 'var(--text-secondary)'
-                                      : 'var(--text-muted)',
-                                  letterSpacing: '-0.01em',
-                                  transition: 'color 0.25s',
-                                }}
-                              >
-                                {stage.label}
-                              </h3>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 10,
-                                  color: 'var(--text-muted)',
-                                  letterSpacing: '0.03em',
-                                }}
-                              >
-                                {stage.subtitle}
-                              </span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              {isIp && (
-                                <span
-                                  className="mono"
-                                  style={{
-                                    fontSize: 9,
-                                    letterSpacing: '0.1em',
-                                    color: 'var(--accent)',
-                                    background: 'rgba(108,99,255,0.08)',
-                                    border: '1px solid rgba(108,99,255,0.15)',
-                                    padding: '2px 7px',
-                                  }}
-                                >
-                                  Proprietary IP
-                                </span>
-                              )}
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 14 14"
-                                style={{
-                                  transform: isActive ? 'rotate(180deg)' : 'rotate(0)',
-                                  transition: 'transform 0.3s',
-                                }}
-                              >
-                                <path
-                                  d="M3 5.5L7 9.5L11 5.5"
-                                  stroke="var(--text-muted)"
-                                  strokeWidth="1.2"
-                                  fill="none"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                          {isActive && (
-                            <div style={{ marginTop: 16, paddingLeft: 36 }}>
-                              <p
-                                className="sans"
-                                style={{
-                                  fontSize: 14,
-                                  lineHeight: 1.7,
-                                  color: 'var(--text-secondary)',
-                                  margin: '0 0 16px',
-                                  maxWidth: 560,
-                                }}
-                              >
-                                {stage.desc}
-                              </p>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                                {stage.tags.map((t, j) => (
-                                  <span
-                                    key={j}
-                                    className="mono"
-                                    style={{
-                                      fontSize: 10.5,
-                                      padding: '4px 10px',
-                                      letterSpacing: '0.02em',
-                                      color: isIp
-                                        ? 'var(--accent)'
-                                        : stage.id === 'output'
-                                          ? 'var(--green)'
-                                          : 'var(--text-muted)',
-                                      background: isIp
-                                        ? 'rgba(108,99,255,0.06)'
-                                        : stage.id === 'output'
-                                          ? 'rgba(74,222,128,0.06)'
-                                          : 'rgba(255,255,255,0.02)',
-                                      border: `1px solid ${isIp ? 'rgba(108,99,255,0.12)' : stage.id === 'output' ? 'rgba(74,222,128,0.12)' : 'var(--border)'}`,
-                                    }}
-                                  >
-                                    {t}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 40,
-                      padding: '28px 32px',
-                      border: '1px solid var(--border)',
-                      background: 'var(--bg-card)',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr 1fr',
-                      gap: 32,
-                      position: 'relative',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 2,
-                        background:
-                          'linear-gradient(90deg, transparent, rgba(108,99,255,0.4), transparent)',
-                      }}
-                    />
-                    {[
-                      {
-                        v: '100%',
-                        l: 'Deterministic',
-                        s: 'Every duty calculation uses deterministic regex, pattern matching, and tree traversal. No LLM in the decision path.',
-                      },
-                      {
-                        v: '5 / 7',
-                        l: 'Proprietary Stages',
-                        s: 'Five of seven pipeline stages contain core IP — novel algorithms for hierarchy recovery, resolution, and evaluation.',
-                      },
-                      {
-                        v: 'Full',
-                        l: 'Traceability',
-                        s: 'Every answer traces back to specific rules, source notes, PDF page numbers, and government revision identifiers.',
-                      },
-                    ].map((stat, i) => (
-                      <div key={i}>
-                        <div
-                          style={{
-                            fontSize: 26,
-                            fontWeight: 600,
-                            color: 'var(--accent)',
-                            letterSpacing: '-0.02em',
-                            marginBottom: 6,
-                          }}
-                        >
-                          {stat.v}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}
-                        >
-                          {stat.l}
-                        </div>
-                        <p
-                          className="sans"
-                          style={{
-                            fontSize: 12.5,
-                            lineHeight: 1.6,
-                            color: 'var(--text-muted)',
-                            margin: 0,
-                          }}
-                        >
-                          {stat.s}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  <PipelineTimeline stages={stages} />
                 </div>
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ By the Numbers ━━━ */}
             <section style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="stats" data-animate className={`anim ${isV('stats') ? 'vis' : ''}`}>
-                  <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                    <div className="section-label" style={{ textAlign: 'center' }}>
-                      By the Numbers
-                    </div>
-                    <h2 style={{ fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em' }}>
-                      What's behind the API.
-                    </h2>
+                  <div style={{ marginBottom: 48 }}>
+                    <div className="section-label">By the Numbers</div>
+                    <h2 className="section-heading">What's behind the API.</h2>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 10 }}>
+                  <div className="stat-grid">
                     {[
-                      { val: '50', label: 'API Endpoints', sub: '37 GET · 13 POST', accent: true },
+                      { val: '50', label: 'API Endpoints', sub: '37 GET · 13 POST' },
                       {
                         val: '257',
                         label: 'Typed Data Models',
-                        sub: 'Pydantic-compatible response schemas',
-                      },
-                      {
-                        val: '34',
-                        label: 'HTS Versions Tracked',
-                        sub: '32 in 2025 · 2 in 2026 so far',
-                        accent: true,
+                        sub: 'Pydantic-compatible schemas',
                       },
                       {
                         val: '~18K',
@@ -970,102 +1040,16 @@
                         label: 'Structured Legal Notes',
                         sub: 'U.S. Notes, chapter notes, general notes',
                       },
-                    ].map((s, i) => (
-                      <div key={i} className="stat-cell">
-                        <div
-                          className="stat-val mono"
-                          style={{
-                            fontSize: 28,
-                            fontWeight: 700,
-                            color: s.accent ? 'var(--accent)' : 'var(--text-primary)',
-                            letterSpacing: '-0.03em',
-                            marginBottom: 6,
-                            transition: 'color 0.3s',
-                          }}
-                        >
-                          {s.val}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 12.5,
-                            fontWeight: 600,
-                            marginBottom: 6,
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {s.label}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}
-                        >
-                          {s.sub}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(4,1fr)',
-                      gap: 10,
-                      marginTop: 10,
-                    }}
-                  >
-                    {[
-                      {
-                        val: '5',
-                        label: 'SDK Resource Groups',
-                        sub: 'rates · search · context · compare · versions',
-                      },
-                      {
-                        val: '15',
-                        label: 'Typed Response Models',
-                        sub: 'Every method returns typed Pydantic objects',
-                      },
-                      {
-                        val: '7',
-                        label: 'Pipeline Stages',
-                        sub: '5 proprietary · 2 infrastructure',
-                      },
                       {
                         val: '<1 hr',
                         label: 'Revision Turnaround',
                         sub: 'New USITC releases ingested and live',
                       },
                     ].map((s, i) => (
-                      <div key={i} className="stat-cell">
-                        <div
-                          className="stat-val mono"
-                          style={{
-                            fontSize: 28,
-                            fontWeight: 700,
-                            color: 'var(--text-primary)',
-                            letterSpacing: '-0.03em',
-                            marginBottom: 6,
-                            transition: 'color 0.3s',
-                          }}
-                        >
-                          {s.val}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 12.5,
-                            fontWeight: 600,
-                            marginBottom: 6,
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {s.label}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.4 }}
-                        >
-                          {s.sub}
-                        </div>
+                      <div key={i} className="stat-card">
+                        <div className="stat-val">{s.val}</div>
+                        <div className="stat-label">{s.label}</div>
+                        <div className="stat-sub">{s.sub}</div>
                       </div>
                     ))}
                   </div>
@@ -1073,31 +1057,18 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ AI Positioning ━━━ */}
             <section style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="aipos" data-animate className={`anim ${isV('aipos') ? 'vis' : ''}`}>
                   <div className="section-label">AI Positioning</div>
-                  <h2
-                    style={{
-                      fontSize: 30,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 32 }}>
                     What AI does — and doesn't — do.
                   </h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                    <div
-                      style={{
-                        border: '1px solid var(--border)',
-                        background: 'var(--bg-card)',
-                        padding: '28px',
-                      }}
-                    >
+                    <div className="info-card" style={{ padding: '28px' }}>
                       <div
                         style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}
                       >
@@ -1109,7 +1080,10 @@
                             background: 'var(--accent)',
                           }}
                         />
-                        <span className="sans" style={{ fontSize: 14, fontWeight: 600 }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                        >
                           Core Engine
                         </span>
                         <span
@@ -1117,8 +1091,8 @@
                           style={{
                             fontSize: 9,
                             color: 'var(--accent)',
-                            background: 'rgba(108,99,255,0.08)',
-                            border: '1px solid rgba(108,99,255,0.15)',
+                            background: 'rgba(var(--accent-rgb),0.08)',
+                            border: '1px solid rgba(var(--accent-rgb),0.15)',
                             padding: '2px 7px',
                             letterSpacing: '0.06em',
                             marginLeft: 'auto',
@@ -1128,13 +1102,8 @@
                         </span>
                       </div>
                       <p
-                        className="sans"
-                        style={{
-                          fontSize: 13,
-                          lineHeight: 1.65,
-                          color: 'var(--text-secondary)',
-                          marginBottom: 16,
-                        }}
+                        className="sans section-desc"
+                        style={{ fontSize: 'var(--fs-sm)', marginBottom: 16 }}
                       >
                         The duty calculation path is fully deterministic. Rules-based computation
                         handles supersession, priority, exclusion, material splitting, and transit
@@ -1155,8 +1124,8 @@
                               alignItems: 'center',
                               gap: 8,
                               padding: '6px 10px',
-                              background: 'rgba(108,99,255,0.03)',
-                              borderLeft: '2px solid rgba(108,99,255,0.15)',
+                              background: 'rgba(var(--accent-rgb),0.03)',
+                              borderLeft: '2px solid rgba(var(--accent-rgb),0.15)',
                             }}
                           >
                             <span className="mono" style={{ fontSize: 10, color: 'var(--accent)' }}>
@@ -1164,7 +1133,7 @@
                             </span>
                             <span
                               className="sans"
-                              style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}
+                              style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
                             >
                               {item}
                             </span>
@@ -1172,13 +1141,7 @@
                         ))}
                       </div>
                     </div>
-                    <div
-                      style={{
-                        border: '1px solid var(--border)',
-                        background: 'var(--bg-card)',
-                        padding: '28px',
-                      }}
-                    >
+                    <div className="info-card" style={{ padding: '28px' }}>
                       <div
                         style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}
                       >
@@ -1190,7 +1153,10 @@
                             background: 'var(--orange)',
                           }}
                         />
-                        <span className="sans" style={{ fontSize: 14, fontWeight: 600 }}>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600 }}
+                        >
                           Supporting Roles
                         </span>
                         <span
@@ -1209,13 +1175,8 @@
                         </span>
                       </div>
                       <p
-                        className="sans"
-                        style={{
-                          fontSize: 13,
-                          lineHeight: 1.65,
-                          color: 'var(--text-secondary)',
-                          marginBottom: 16,
-                        }}
+                        className="sans section-desc"
+                        style={{ fontSize: 'var(--fs-sm)', marginBottom: 16 }}
                       >
                         AI enhances discovery and search quality. It never makes duty
                         determinations. Results are always validated against the deterministic
@@ -1245,7 +1206,7 @@
                             </span>
                             <span
                               className="sans"
-                              style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}
+                              style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
                             >
                               {item}
                             </span>
@@ -1255,23 +1216,14 @@
                     </div>
                   </div>
                   <div
+                    className="info-card"
                     style={{
                       marginTop: 20,
                       padding: '20px 28px',
-                      border: '1px solid var(--border)',
-                      background: 'var(--bg-card)',
                       borderLeft: '3px solid var(--accent)',
                     }}
                   >
-                    <p
-                      style={{
-                        fontSize: 16,
-                        fontStyle: 'italic',
-                        lineHeight: 1.6,
-                        color: 'var(--text-secondary)',
-                        margin: 0,
-                      }}
-                    >
+                    <p className="blockquote" style={{ fontSize: 16, margin: 0 }}>
                       "If you can't explain why a specific rate applies to a specific product from a
                       specific country on a specific date — citing the exact rule, its conditions,
                       and its legal authority — then you don't have an answer. You have a guess."
@@ -1281,53 +1233,38 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ CTA ━━━ */}
-            <section style={{ padding: '96px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto' }}>
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="cta2" data-animate className={`anim ${isV('cta2') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     See the engine in action.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Walk through a live duty calculation from HTS code to fully traced result.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
-                    <button className="cta-btn sans">Request a Demo</button>
+                  <div className="cta-row">
+                    <button className="cta-btn w200 sans">Request a Demo</button>
                     <a
                       href="/product/platform"
-                      className="cta-btn cta-btn-outline sans"
+                      className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
                       Explore Platform
                     </a>
                     <a
                       href="/product/api"
-                      className="cta-btn cta-btn-ghost sans"
+                      className="cta-btn w200 cta-btn-ghost sans"
                       style={{ textDecoration: 'none' }}
                     >
                       API Reference

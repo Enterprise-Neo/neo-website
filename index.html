@@ -23,6 +23,7 @@
         NeoGrain,
         NeoDivider,
         NeoScreenshot,
+        NeoSideNav,
         useScrollAnimation,
         ArrowIcon,
       } = window;
@@ -31,40 +32,19 @@
       const Overview = () => {
         const [activeFaq, setActiveFaq] = useState(null);
         const [activeFeature, setActiveFeature] = useState(0);
-        const [activeSection, setActiveSection] = useState('hero');
-        const [hoveredDot, setHoveredDot] = useState(null);
         const isV = useScrollAnimation(0.12);
 
         const sections = [
           { id: 'hero', label: 'Top' },
-          { id: 'problem', label: 'The Problem' },
-          { id: 'personas', label: "Who It's For" },
-          { id: 'how-it-works', label: 'How It Works' },
-          { id: 'how-you-use-it', label: 'How You Use It' },
-          { id: 'comparison', label: 'Lookup vs. Logic' },
-          { id: 'ai-approach', label: 'AI Approach' },
-          { id: 'faq', label: 'FAQ' },
-          { id: 'cta', label: 'Get Started' },
+          { id: 'prob', label: 'The Problem' },
+          { id: 'wh-h', label: "Who It's For" },
+          { id: 'pill-h', label: 'How It Works' },
+          { id: 'use-h', label: 'How You Use It' },
+          { id: 'cmp-h', label: 'Lookup vs. Logic' },
+          { id: 'ai-s', label: 'AI Approach' },
+          { id: 'fq-h', label: 'FAQ' },
+          { id: 'cta-b', label: 'Get Started' },
         ];
-
-        useEffect(() => {
-          const o = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((e) => {
-                if (e.isIntersecting && e.intersectionRatio >= 0.25) setActiveSection(e.target.id);
-              });
-            },
-            { threshold: 0.25, rootMargin: '-80px 0px -35% 0px' }
-          );
-          sections.forEach((s) => {
-            const el = document.getElementById(s.id);
-            if (el) o.observe(el);
-          });
-          return () => o.disconnect();
-        }, []);
-
-        const scrollTo = (id) =>
-          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         const features = [
           {
@@ -141,7 +121,6 @@
         const stats = [
           { value: '30,067', label: 'HTS Entries', sub: 'per revision' },
           { value: '41,462', label: 'Rate Components', sub: 'parsed & structured' },
-          { value: '276', label: 'Reciprocal Rules', sub: 'actively managed' },
           { value: '249', label: 'Countries', sub: 'with program eligibility' },
           { value: '30', label: 'Trade Programs', sub: 'GSP, USMCA, & more' },
           { value: '<1hr', label: 'Update Speed', sub: 'after official publication' },
@@ -220,35 +199,7 @@
             <NeoGrain />
             <NeoNav activePage="overview" transparent={true} />
 
-            {/* Side Nav */}
-            <div
-              className="side-nav-container"
-              style={{
-                position: 'fixed',
-                right: 20,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                zIndex: 150,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 18,
-                alignItems: 'center',
-              }}
-            >
-              {sections.map((s) => (
-                <div
-                  key={s.id}
-                  className={`side-dot ${activeSection === s.id ? 'active' : ''}`}
-                  onClick={() => scrollTo(s.id)}
-                  onMouseEnter={() => setHoveredDot(s.id)}
-                  onMouseLeave={() => setHoveredDot(null)}
-                >
-                  <div className={`side-dot-label sans ${hoveredDot === s.id ? 'show' : ''}`}>
-                    {s.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <NeoSideNav sections={sections} />
 
             {/* ══ Hero ══ */}
             <section
@@ -266,41 +217,32 @@
                 style={{
                   position: 'absolute',
                   top: 0,
-                  right: 0,
-                  width: '55%',
+                  left: 0,
+                  width: '70%',
                   height: '100%',
                   background:
-                    'radial-gradient(ellipse at 65% 35%,rgba(108,99,255,0.07) 0%,transparent 55%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  width: '40%',
-                  height: '50%',
-                  background:
-                    'radial-gradient(ellipse at 20% 80%,rgba(108,99,255,0.04) 0%,transparent 50%)',
+                    'radial-gradient(ellipse at 25% 20%,rgba(var(--accent-rgb),0.18) 0%,transparent 60%)',
                   pointerEvents: 'none',
                 }}
               />
               <div style={{ maxWidth: 'var(--max-width)', position: 'relative' }}>
-                <div className="section-label" style={{ animation: 'fadeIn 1s ease 0.05s both' }}>
+                <div
+                  className="section-label"
+                  style={{ animation: 'fadeIn 1s var(--ease) 0.05s both' }}
+                >
                   Tariff Intelligence Engine
                 </div>
-                <div style={{ marginBottom: 32 }}>
+                <div className="display" style={{ marginBottom: 32 }}>
                   <div className="hero-line">
                     <span
                       style={{
                         fontSize: 64,
-                        fontWeight: 700,
-                        lineHeight: 1.08,
+                        fontWeight: 600,
+                        lineHeight: 1.2,
                         letterSpacing: '-0.03em',
                       }}
                     >
-                      From code to logic.
+                      From lookup to logic.
                     </span>
                   </div>
                   <div className="hero-line">
@@ -308,7 +250,7 @@
                       style={{
                         fontSize: 64,
                         fontWeight: 300,
-                        lineHeight: 1.08,
+                        lineHeight: 1.2,
                         letterSpacing: '-0.03em',
                         color: 'var(--text-secondary)',
                       }}
@@ -321,7 +263,7 @@
                       style={{
                         fontSize: 64,
                         fontWeight: 300,
-                        lineHeight: 1.08,
+                        lineHeight: 1.2,
                         letterSpacing: '-0.03em',
                         color: 'var(--text-secondary)',
                       }}
@@ -333,12 +275,12 @@
                 <p
                   className="sans"
                   style={{
-                    fontSize: 17,
+                    fontSize: 'var(--fs-md)',
                     lineHeight: 1.75,
                     color: 'var(--text-secondary)',
                     maxWidth: 600,
                     marginBottom: 44,
-                    animation: 'fadeIn 1s ease 0.65s both',
+                    animation: 'fadeIn 1s var(--ease) 0.65s both',
                   }}
                 >
                   Neo Tariff transforms the full U.S. HTS into a structured, version-controlled
@@ -346,13 +288,19 @@
                   auditable duty answers. Not a lookup tool. Not an AI guess. A rules engine that
                   shows its work.
                 </p>
-                <div style={{ display: 'flex', gap: 14, animation: 'fadeIn 1s ease 0.85s both' }}>
-                  <button className="cta-btn sans">
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 14,
+                    animation: 'fadeIn 1s var(--ease) 0.85s both',
+                  }}
+                >
+                  <button className="cta-btn w200 sans">
                     Request a Demo <ArrowIcon />
                   </button>
                   <a
                     href="/pricing"
-                    className="cta-btn cta-btn-outline sans"
+                    className="cta-btn w200 cta-btn-outline sans"
                     style={{ textDecoration: 'none' }}
                   >
                     See Pricing
@@ -369,7 +317,7 @@
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 6,
-                  animation: 'fadeIn 1s ease 1.3s both',
+                  animation: 'fadeIn 1s var(--ease) 1.3s both',
                 }}
               >
                 <span
@@ -390,29 +338,15 @@
 
             {/* ══ The Problem ══ */}
             <section id="problem" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="prob" data-animate className={`anim ${isV('prob') ? 'vis' : ''}`}>
                   <div className="section-label">The Problem</div>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 14,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
                     Tariffs are not "a rate on a code."
                   </h2>
                   <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.8,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 28,
-                      maxWidth: 680,
-                    }}
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, marginBottom: 28, maxWidth: 680 }}
                   >
                     They're a moving target of overlapping rules, Chapter 99 additions,
                     country-specific conditions, supersession logic, and constant revisions. Current
@@ -438,24 +372,14 @@
                         d: "Most tools give you a number. They don't show you which rules applied, which conditions were met, or which legal authority governs the result.",
                       },
                     ].map((c, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '24px 22px',
-                          border: '1px solid var(--border)',
-                          background: 'var(--bg-card)',
-                        }}
-                      >
+                      <div key={i} className="info-card">
                         <div
                           className="sans"
-                          style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 8 }}
                         >
                           {c.t}
                         </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}
-                        >
+                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {c.d}
                         </div>
                       </div>
@@ -468,7 +392,7 @@
 
             {/* ══ Who It's For ══ */}
             <section id="personas" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="wh-h"
                   data-animate
@@ -476,15 +400,7 @@
                   style={{ marginBottom: 40 }}
                 >
                   <div className="section-label">Who It's For</div>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      maxWidth: 580,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ maxWidth: 580 }}>
                     Built for organizations that take tariffs seriously.
                   </h2>
                 </div>
@@ -526,28 +442,20 @@
                       icon: '🎯',
                     },
                   ].map((a, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        border: '1px solid var(--border)',
-                        background: 'var(--bg-card)',
-                        padding: '28px 22px',
-                        transition: 'all 0.3s',
-                      }}
-                    >
+                    <div key={i} className="info-card" style={{ padding: '28px 22px' }}>
                       <div style={{ fontSize: 24, marginBottom: 14 }}>{a.icon}</div>
                       <div
                         className="sans"
-                        style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 14 }}
+                        style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 14 }}
                       >
                         {a.role}
                       </div>
                       <div
                         className="sans"
                         style={{
-                          fontSize: 12,
-                          color: 'var(--text-muted)',
-                          lineHeight: 1.55,
+                          fontSize: 'var(--fs-xs)',
+                          color: 'var(--text-secondary)',
+                          lineHeight: 1.6,
                           marginBottom: 14,
                           fontStyle: 'italic',
                         }}
@@ -557,7 +465,11 @@
                       <div style={{ height: 1, background: 'var(--border)', marginBottom: 14 }} />
                       <div
                         className="sans"
-                        style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.55 }}
+                        style={{
+                          fontSize: 'var(--fs-xs)',
+                          color: 'var(--text-secondary)',
+                          lineHeight: 1.6,
+                        }}
                       >
                         {a.sol}
                       </div>
@@ -570,36 +482,18 @@
 
             {/* ══ How It Works — 3-col + stats ══ */}
             <section id="how-it-works" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="pill-h"
                   data-animate
                   className={`anim ${isV('pill-h') ? 'vis' : ''}`}
-                  style={{ textAlign: 'center', marginBottom: 48 }}
+                  style={{ marginBottom: 48 }}
                 >
-                  <div className="section-label" style={{ textAlign: 'center' }}>
-                    How It Works
-                  </div>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 14,
-                    }}
-                  >
+                  <div className="section-label">How It Works</div>
+                  <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
                     Three pillars. One engine.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      maxWidth: 580,
-                      margin: '0 auto',
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ maxWidth: 580 }}>
                     Ingest the law, model it as a graph, compute against it deterministically, and
                     let you explore scenarios on top.
                   </p>
@@ -643,10 +537,11 @@
                       style={{
                         padding: '36px 28px',
                         border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius)',
                         background: 'var(--bg-card)',
                         position: 'relative',
                         overflow: 'hidden',
-                        transition: 'all 0.3s',
+                        transition: 'all 0.3s var(--ease)',
                       }}
                     >
                       <div
@@ -672,17 +567,17 @@
                       </div>
                       <h3
                         className="sans"
-                        style={{ fontSize: 17, fontWeight: 600, marginBottom: 8 }}
+                        style={{ fontSize: 'var(--fs-md)', fontWeight: 600, marginBottom: 8 }}
                       >
                         {p.title}
                       </h3>
                       <p
                         className="sans"
                         style={{
-                          fontSize: 13,
+                          fontSize: 'var(--fs-sm)',
                           fontWeight: 500,
                           color: 'var(--text-primary)',
-                          lineHeight: 1.45,
+                          lineHeight: 1.4,
                           marginBottom: 12,
                         }}
                       >
@@ -690,7 +585,11 @@
                       </p>
                       <p
                         className="sans"
-                        style={{ fontSize: 12.5, lineHeight: 1.7, color: 'var(--text-muted)' }}
+                        style={{
+                          fontSize: 'var(--fs-sm)',
+                          lineHeight: 1.6,
+                          color: 'var(--text-secondary)',
+                        }}
                       >
                         {p.desc}
                       </p>
@@ -706,7 +605,11 @@
                   <div className="section-label">By the Numbers</div>
                   <p
                     className="sans"
-                    style={{ fontSize: 13.5, color: 'var(--text-secondary)', maxWidth: 480 }}
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-secondary)',
+                      maxWidth: 480,
+                    }}
                   >
                     Coverage as of 2025 Revision 23 — sourced from HTSUS, USTR, and CBP official
                     publications.
@@ -715,53 +618,18 @@
                 <div
                   id="st-g"
                   data-animate
-                  className={`anim ${isV('st-g') ? 'vis' : ''}`}
-                  style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 0 }}
+                  className={`stat-grid anim ${isV('st-g') ? 'vis' : ''}`}
                 >
                   {stats.map((s, i) => (
-                    <div
-                      key={i}
-                      className="stat-card"
-                      style={{ borderRight: i < 5 ? 'none' : undefined }}
-                    >
-                      <div
-                        className="mono"
-                        style={{
-                          fontSize: 30,
-                          fontWeight: 500,
-                          color: 'var(--accent)',
-                          letterSpacing: '-0.02em',
-                          marginBottom: 6,
-                        }}
-                      >
-                        {s.value}
-                      </div>
-                      <div
-                        className="sans"
-                        style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 3 }}
-                      >
-                        {s.label}
-                      </div>
-                      <div className="sans" style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
-                        {s.sub}
-                      </div>
+                    <div key={i} className="stat-card">
+                      <div className="stat-val">{s.value}</div>
+                      <div className="stat-label">{s.label}</div>
+                      <div className="stat-sub">{s.sub}</div>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop: 28, textAlign: 'center' }}>
-                  <a
-                    href="/technology"
-                    className="sans"
-                    style={{
-                      color: 'var(--accent)',
-                      fontSize: 13.5,
-                      fontWeight: 500,
-                      textDecoration: 'none',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}
-                  >
+                  <a href="/technology" className="sans accent-link">
                     Explore the full technology deep dive <ArrowIcon size={14} />
                   </a>
                 </div>
@@ -771,7 +639,7 @@
 
             {/* ══ How You Use It ══ */}
             <section id="how-you-use-it" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="use-h"
                   data-animate
@@ -780,26 +648,12 @@
                 >
                   <div className="section-label">How You Use It</div>
                   <h2
-                    style={{
-                      fontSize: 38,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      maxWidth: 700,
-                      marginBottom: 16,
-                    }}
+                    className="section-heading-lg"
+                    style={{ fontSize: 38, maxWidth: 700, marginBottom: 16 }}
                   >
                     One engine, four ways in.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 15,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      maxWidth: 600,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ maxWidth: 600 }}>
                     Every tool, API endpoint, and SDK method is powered by the same versioned tariff
                     graph and deterministic calculation engine.
                   </p>
@@ -826,28 +680,16 @@
                           letterSpacing: '0.1em',
                           color: 'var(--accent)',
                           padding: '3px 9px',
-                          border: '1px solid rgba(108,99,255,0.25)',
+                          border: '1px solid rgba(var(--accent-rgb),0.25)',
                         }}
                       >
                         WEB APP
                       </div>
-                      <span className="sans" style={{ fontSize: 18, fontWeight: 600 }}>
+                      <span className="sans" style={{ fontSize: 'var(--fs-md)', fontWeight: 600 }}>
                         Platform
                       </span>
                     </div>
-                    <a
-                      href="/product/platform"
-                      className="sans"
-                      style={{
-                        color: 'var(--accent)',
-                        fontSize: 12.5,
-                        fontWeight: 500,
-                        textDecoration: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 4,
-                      }}
-                    >
+                    <a href="/product/platform" className="sans accent-link">
                       Explore all tools <ArrowIcon size={12} />
                     </a>
                   </div>
@@ -857,8 +699,10 @@
                       gridTemplateColumns: '320px 1fr',
                       gap: 0,
                       border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
                       background: 'var(--bg-card)',
                       minHeight: 520,
+                      overflow: 'hidden',
                     }}
                   >
                     <div
@@ -890,7 +734,7 @@
                           <div
                             className="sans"
                             style={{
-                              fontSize: 14,
+                              fontSize: 'var(--fs-base)',
                               fontWeight: 600,
                               color:
                                 activeFeature === i
@@ -903,7 +747,11 @@
                           </div>
                           <div
                             className="sans"
-                            style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}
+                            style={{
+                              fontSize: 'var(--fs-xs)',
+                              color: 'var(--text-muted)',
+                              lineHeight: 1.4,
+                            }}
                           >
                             {f.subtitle}
                           </div>
@@ -943,8 +791,8 @@
                                 width: 48,
                                 height: 48,
                                 borderRadius: 10,
-                                background: 'rgba(108,99,255,0.15)',
-                                border: '1px solid rgba(108,99,255,0.25)',
+                                background: 'rgba(var(--accent-rgb),0.15)',
+                                border: '1px solid rgba(var(--accent-rgb),0.25)',
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -974,9 +822,9 @@
                             <p
                               className="sans"
                               style={{
-                                fontSize: 12.5,
+                                fontSize: 'var(--fs-sm)',
                                 color: 'rgba(255,255,255,0.5)',
-                                lineHeight: 1.5,
+                                lineHeight: 1.6,
                                 maxWidth: 480,
                                 margin: '0 auto',
                               }}
@@ -989,14 +837,14 @@
                               position: 'absolute',
                               inset: 0,
                               background:
-                                'radial-gradient(ellipse at 50% 50%,rgba(108,99,255,0.08) 0%,transparent 70%)',
+                                'radial-gradient(ellipse at 50% 50%,rgba(var(--accent-rgb),0.08) 0%,transparent 70%)',
                             }}
                           />
                         </div>
                       )}
                       <div>
                         <h3
-                          className="serif"
+                          className="fc-title"
                           style={{ fontSize: 24, fontWeight: 600, marginBottom: 10 }}
                         >
                           {features[activeFeature].title}
@@ -1004,7 +852,7 @@
                         <p
                           className="sans"
                           style={{
-                            fontSize: 14,
+                            fontSize: 'var(--fs-base)',
                             lineHeight: 1.75,
                             color: 'var(--text-secondary)',
                             marginBottom: 16,
@@ -1021,7 +869,7 @@
                                 fontSize: 10.5,
                                 padding: '4px 10px',
                                 border: '1px solid var(--border)',
-                                color: 'var(--text-muted)',
+                                color: 'var(--text-secondary)',
                                 letterSpacing: '0.03em',
                               }}
                             >
@@ -1092,29 +940,19 @@
                           color: 'var(--accent)',
                           marginBottom: 18,
                           padding: '3px 9px',
-                          border: '1px solid rgba(108,99,255,0.25)',
+                          border: '1px solid rgba(var(--accent-rgb),0.25)',
                           display: 'inline-block',
                         }}
                       >
                         {lane.tag}
                       </div>
                       <h3
-                        className="serif"
+                        className="fc-title"
                         style={{ fontSize: 20, fontWeight: 600, marginBottom: 10 }}
                       >
                         {lane.title}
                       </h3>
-                      <p
-                        className="sans"
-                        style={{
-                          fontSize: 13.5,
-                          lineHeight: 1.7,
-                          color: 'var(--text-secondary)',
-                          marginBottom: 20,
-                        }}
-                      >
-                        {lane.desc}
-                      </p>
+                      <p className="fc-desc sans">{lane.desc}</p>
                       {lane.pip && (
                         <div
                           style={{
@@ -1124,45 +962,27 @@
                             marginBottom: 16,
                           }}
                         >
-                          <code className="mono" style={{ fontSize: 12, color: 'var(--accent)' }}>
+                          <code
+                            className="mono"
+                            style={{ fontSize: 'var(--fs-xs)', color: 'var(--accent)' }}
+                          >
                             pip install neo-tariff
                           </code>
                         </div>
                       )}
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 6,
-                          marginBottom: 24,
-                        }}
-                      >
+                      <div className="fc-features">
                         {lane.items.map((f, j) => (
                           <div
                             key={j}
-                            className="sans"
-                            style={{ display: 'flex', gap: 8, alignItems: 'center' }}
+                            className="fc-feat-item sans"
+                            // style={{ display: 'flex', gap: 8, alignItems: 'center' }}
                           >
-                            <span style={{ color: 'var(--accent)', fontSize: 11 }}>→</span>
-                            <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>
-                              {f}
-                            </span>
+                            <span className="fc-feat-arrow">→</span>
+                            <span className="fc-feat-text sans">{f}</span>
                           </div>
                         ))}
                       </div>
-                      <a
-                        href={lane.link}
-                        className="sans"
-                        style={{
-                          color: 'var(--accent)',
-                          fontSize: 12.5,
-                          fontWeight: 500,
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
+                      <a href={lane.link} className="sans accent-link">
                         {lane.linkText} <ArrowIcon size={12} />
                       </a>
                     </div>
@@ -1174,7 +994,7 @@
 
             {/* ══ Lookup vs. Logic ══ */}
             <section id="comparison" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="cmp-h"
                   data-animate
@@ -1182,15 +1002,7 @@
                   style={{ marginBottom: 40 }}
                 >
                   <div className="section-label">Lookup vs. Logic</div>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      maxWidth: 680,
-                    }}
-                  >
+                  <h2 className="section-heading-lg">
                     Most tools help you find codes and text.
                     <br />
                     <span style={{ color: 'var(--accent)' }}>
@@ -1244,12 +1056,22 @@
                   </div>
                   {comparisonRows.map((r, i) => (
                     <div key={i} className="comparison-row sans">
-                      <div style={{ fontSize: 13.5, fontWeight: 600 }}>{r.cap}</div>
-                      <div style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                      <div style={{ fontSize: 'var(--fs-sm)', fontWeight: 600 }}>{r.cap}</div>
+                      <div
+                        style={{
+                          fontSize: 'var(--fs-sm)',
+                          color: 'var(--text-secondary)',
+                          lineHeight: 1.6,
+                        }}
+                      >
                         {r.market}
                       </div>
                       <div
-                        style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6 }}
+                        style={{
+                          fontSize: 'var(--fs-sm)',
+                          color: 'var(--text-secondary)',
+                          lineHeight: 1.6,
+                        }}
                       >
                         {r.neo}
                       </div>
@@ -1262,76 +1084,36 @@
 
             {/* ══ AI Approach ══ */}
             <section id="ai-approach" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div
-                  id="ai-s"
-                  data-animate
-                  className={`anim ${isV('ai-s') ? 'vis' : ''}`}
-                  style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72 }}
-                >
-                  <div>
+              <div className="section-inner">
+                <div id="ai-s" data-animate className={`anim ${isV('ai-s') ? 'vis' : ''}`}>
+                  {/* Header */}
+                  <div style={{ marginBottom: 32 }}>
                     <div className="section-label">Our Approach to AI</div>
-                    <h2
-                      style={{
-                        fontSize: 34,
-                        fontWeight: 600,
-                        lineHeight: 1.2,
-                        letterSpacing: '-0.02em',
-                        marginBottom: 22,
-                      }}
-                    >
+                    <h2 className="section-heading" style={{ lineHeight: 1.2, marginBottom: 14 }}>
                       We don't ask AI to interpret tariff law.
                     </h2>
-                    <p
-                      className="sans"
-                      style={{
-                        fontSize: 15,
-                        lineHeight: 1.8,
-                        color: 'var(--text-secondary)',
-                        marginBottom: 22,
-                      }}
-                    >
+                    <p className="sans section-desc" style={{ lineHeight: 1.75, maxWidth: 680 }}>
                       The tariff engine is not an LLM. It's a deterministic rules engine backed by a
                       tested tariff graph. We use AI in supporting roles — helping humans get into
                       the tariff graph faster. The actual duty decisions are deterministic,
                       test-backed, and traceable.
                     </p>
-                    <div
-                      style={{
-                        padding: '22px 26px',
-                        background: 'var(--bg-card)',
-                        border: '1px solid var(--border)',
-                        borderLeft: '3px solid var(--accent)',
-                      }}
-                    >
-                      <p
-                        className="serif"
-                        style={{
-                          fontSize: 16,
-                          lineHeight: 1.65,
-                          fontStyle: 'italic',
-                          color: 'var(--text-primary)',
-                        }}
-                      >
-                        "We use AI to help humans get into and understand the tariff graph faster.
-                        The actual duty decisions are deterministic, test-backed, and traceable."
-                      </p>
-                    </div>
                   </div>
+
+                  {/* Two cards */}
                   <div
-                    style={{ display: 'flex', flexDirection: 'column', gap: 18, paddingTop: 36 }}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: 18,
+                      marginBottom: 18,
+                    }}
                   >
-                    <div
-                      style={{
-                        padding: '28px 24px',
-                        border: '1px solid var(--border)',
-                        background: 'var(--bg-card)',
-                      }}
-                    >
+                    <div className="info-card" style={{ padding: '28px 24px' }}>
                       <div
                         className="sans"
                         style={{
-                          fontSize: 12,
+                          fontSize: 'var(--fs-xs)',
                           fontWeight: 600,
                           color: 'var(--green)',
                           marginBottom: 10,
@@ -1342,30 +1124,21 @@
                       </div>
                       <div
                         className="sans"
-                        style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}
+                        style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 8 }}
                       >
                         Deterministic & Test-Backed
                       </div>
-                      <p
-                        className="sans"
-                        style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}
-                      >
+                      <p className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                         PDF parsing, cross-reference scanning, rule construction, evaluation — all
                         deterministic regex, pattern matching, and tree traversal. No LLM in the
                         decision path. Regression-tested against real-world scenarios.
                       </p>
                     </div>
-                    <div
-                      style={{
-                        padding: '28px 24px',
-                        border: '1px solid var(--border)',
-                        background: 'var(--bg-card)',
-                      }}
-                    >
+                    <div className="info-card" style={{ padding: '28px 24px' }}>
                       <div
                         className="sans"
                         style={{
-                          fontSize: 12,
+                          fontSize: 'var(--fs-xs)',
                           fontWeight: 600,
                           color: 'var(--accent)',
                           marginBottom: 10,
@@ -1376,19 +1149,33 @@
                       </div>
                       <div
                         className="sans"
-                        style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}
+                        style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 8 }}
                       >
                         AI as Assistant, Not Decision-Maker
                       </div>
-                      <p
-                        className="sans"
-                        style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}
-                      >
+                      <p className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                         AI maps product descriptions to candidate HTS codes (with reasoning).
                         Summarizes complex outputs. Provides confidence assessments. Never
                         influences the deterministic pipeline.
                       </p>
                     </div>
+                  </div>
+
+                  {/* Quote */}
+                  <div
+                    className="info-card"
+                    style={{
+                      padding: '22px 26px',
+                      borderLeft: '3px solid var(--accent)',
+                    }}
+                  >
+                    <p
+                      className="blockquote serif"
+                      style={{ fontSize: 16, color: 'var(--text-primary)' }}
+                    >
+                      "We use AI to help humans get into and understand the tariff graph faster. The
+                      actual duty decisions are deterministic, test-backed, and traceable."
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1397,19 +1184,15 @@
 
             {/* ══ FAQ ══ */}
             <section id="faq" style={{ padding: 'var(--section-pad)' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="fq-h"
                   data-animate
                   className={`anim ${isV('fq-h') ? 'vis' : ''}`}
-                  style={{ marginBottom: 40, textAlign: 'center' }}
+                  style={{ marginBottom: 40 }}
                 >
-                  <div className="section-label" style={{ textAlign: 'center' }}>
-                    FAQ
-                  </div>
-                  <h2 style={{ fontSize: 34, fontWeight: 600, letterSpacing: '-0.02em' }}>
-                    Common questions
-                  </h2>
+                  <div className="section-label">FAQ</div>
+                  <h2 className="section-heading">Common questions</h2>
                 </div>
                 <div id="fq-l" data-animate className={`anim ${isV('fq-l') ? 'vis' : ''}`}>
                   {faqs.map((f, i) => (
@@ -1418,7 +1201,7 @@
                         className="faq-q sans"
                         onClick={() => setActiveFaq(activeFaq === i ? null : i)}
                       >
-                        <span style={{ fontSize: 15.5, fontWeight: 500 }}>{f.q}</span>
+                        <span style={{ fontSize: 'var(--fs-base)', fontWeight: 500 }}>{f.q}</span>
                         <span
                           style={{
                             color: 'var(--accent)',
@@ -1432,15 +1215,7 @@
                         </span>
                       </div>
                       <div className={`faq-a sans ${activeFaq === i ? 'open' : ''}`}>
-                        <p
-                          style={{
-                            fontSize: 14.5,
-                            lineHeight: 1.7,
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
-                          {f.a}
-                        </p>
+                        <p className="section-desc">{f.a}</p>
                       </div>
                     </div>
                   ))}
@@ -1450,59 +1225,45 @@
             <NeoDivider />
 
             {/* ══ CTA ══ */}
-            <section id="cta" style={{ padding: '100px 48px', textAlign: 'center' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+            <section
+              id="cta"
+              style={{
+                padding: '100px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="cta-glow" />
+              <div className="section-inner" style={{ position: 'relative' }}>
                 <div id="cta-b" data-animate className={`anim ${isV('cta-b') ? 'vis' : ''}`}>
                   <div className="section-label" style={{ textAlign: 'center' }}>
                     Get Started
                   </div>
-                  <h2
-                    style={{
-                      fontSize: 42,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 18,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ fontSize: 42, marginBottom: 18 }}>
                     Turn tariff complexity into
                     <br />
                     <span style={{ color: 'var(--accent)' }}>clear, auditable answers.</span>
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 16,
-                      lineHeight: 1.7,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 36,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ fontSize: 16, marginBottom: 36 }}>
                     Whether you need an API for your systems, a platform for your teams, or expert
                     analysis for a specific engagement — Neo Tariff delivers tariff intelligence you
                     can defend.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
-                    <button className="cta-btn sans">
+                  <div className="cta-row">
+                    <button className="cta-btn w200 sans">
                       Request a Demo <ArrowIcon />
                     </button>
                     <a
                       href="/pricing"
-                      className="cta-btn cta-btn-outline sans"
+                      className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
                       See Pricing
                     </a>
                     <a
                       href="/technology"
-                      className="cta-btn cta-btn-ghost sans"
+                      className="cta-btn w200 cta-btn-ghost sans"
                       style={{ textDecoration: 'none' }}
                     >
                       How It Works
