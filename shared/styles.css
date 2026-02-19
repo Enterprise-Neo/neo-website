@@ -33,11 +33,20 @@ body {
    DESIGN TOKENS — Change these to restyle everything
    ════════════════════════════════════════════ */
 :root {
-  /* Primary accent (RGB channels for rgba() usage) */
-  --accent-rgb: 108, 99, 255;
+  /* Primary Accent Color Version 1 - Purple */
+  /* --accent-rgb: 108, 99, 255;
+  --accent-bright-rgb: 123, 115, 255;
+  --accent-dim-rgb: 90, 82, 224; */
+
+  /* Primary Accent Color Version 2 - Orange */
+  --accent-rgb: 233, 111, 73;
+  --accent-bright-rgb: 249, 158, 110;
+  --accent-dim-rgb: 210, 100, 60;
+
+  /* Accent Colors - Computed from RGB channels */
   --accent: rgb(var(--accent-rgb));
-  --accent-bright: #7b73ff;
-  --accent-dim: #5a52e0;
+  --accent-bright: rgb(var(--accent-bright-rgb));
+  --accent-dim: rgb(var(--accent-dim-rgb));
   --accent-glow: rgba(var(--accent-rgb), 0.15);
   --accent-subtle: rgba(var(--accent-rgb), 0.08);
 
