@@ -17,12 +17,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
-        window;
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
       const { useState, useEffect } = React;
 
       const NeoTariffCompany = () => {
         const isV = useScrollAnimation();
+
+        const sideNavSections = [
+          { id: 'phil', label: 'Our Philosophy' },
+          { id: 'team', label: 'Our Team' },
+          { id: 'adv', label: 'Advisory' },
+          { id: 'qt', label: 'Quote' },
+          { id: 'ccta', label: 'Get Started' },
+        ];
 
         const leadership = [
           {
@@ -169,7 +185,7 @@
                 borderRadius: 'var(--radius)',
                 transition: 'all 0.35s var(--ease)',
                 transform: hovered ? 'translateY(-4px)' : '',
-                borderColor: hovered ? 'rgba(108,99,255,0.3)' : 'var(--border)',
+                borderColor: hovered ? 'rgba(var(--accent-rgb),0.3)' : 'var(--border)',
               }}
             >
               {/* Image area */}
@@ -213,7 +229,7 @@
                     width: 30,
                     height: 30,
                     borderRadius: 'var(--radius-btn)',
-                    background: 'rgba(108,99,255,0.8)',
+                    background: 'rgba(var(--accent-rgb),0.8)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -279,6 +295,7 @@
           >
             <NeoGrain />
             <NeoNav activePage="company" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* ━━━ Hero ━━━ */}
             <NeoHero
@@ -294,21 +311,14 @@
               glow="center-low"
             />
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ Our Philosophy ━━━ */}
             <section style={{ padding: '72px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="phil" data-animate className={`anim ${isV('phil') ? 'vis' : ''}`}>
                   <div className="section-label">Our Philosophy</div>
-                  <h2
-                    style={{
-                      fontSize: 32,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 28,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ fontSize: 32, marginBottom: 28 }}>
                     What we believe about building tariff intelligence.
                   </h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -332,12 +342,10 @@
                     ].map((d, i) => (
                       <div
                         key={i}
+                        className="info-card"
                         style={{
                           padding: '26px 24px',
-                          border: '1px solid var(--border)',
-                          borderRadius: 'var(--radius)',
-                          background: 'var(--bg-card)',
-                          borderLeft: '3px solid rgba(108,99,255,0.3)',
+                          borderLeft: '3px solid rgba(var(--accent-rgb),0.3)',
                         }}
                       >
                         <h3
@@ -346,14 +354,7 @@
                         >
                           {d.title}
                         </h3>
-                        <p
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            lineHeight: 1.6,
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
+                        <p className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {d.desc}
                         </p>
                       </div>
@@ -363,33 +364,18 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ Meet the Team ━━━ */}
             <section style={{ padding: '72px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="team" data-animate className={`anim ${isV('team') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 48 }}>
                     <div className="section-label">Our Team</div>
-                    <h2
-                      style={{
-                        fontSize: 36,
-                        fontWeight: 600,
-                        letterSpacing: '-0.02em',
-                        marginBottom: 12,
-                      }}
-                    >
+                    <h2 className="section-heading-lg" style={{ marginBottom: 12 }}>
                       Meet the experts behind Neo Tariff.
                     </h2>
-                    <p
-                      className="sans"
-                      style={{
-                        fontSize: 'var(--fs-base)',
-                        color: 'var(--text-secondary)',
-                        maxWidth: 540,
-                        lineHeight: 1.6,
-                      }}
-                    >
+                    <p className="sans section-desc" style={{ maxWidth: 540 }}>
                       A team of engineers, trade experts, and operators building tariff intelligence
                       that enterprises can trust.
                     </p>
@@ -461,32 +447,19 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ Advisory Services ━━━ */}
             <section style={{ padding: '72px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="adv" data-animate className={`anim ${isV('adv') ? 'vis' : ''}`}>
                   <div className="section-label">Advisory Services</div>
-                  <h2
-                    style={{
-                      fontSize: 30,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 14,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
                     Expert-led engagements powered by the engine.
                   </h2>
                   <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      lineHeight: 1.75,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 28,
-                      maxWidth: 580,
-                    }}
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, marginBottom: 28, maxWidth: 580 }}
                   >
                     For organizations that need more than self-serve access. Targeted engagements
                     scoped to your specific challenges.
@@ -518,29 +491,14 @@
                         desc: 'Help your engineering team connect the Neo Tariff API to your existing systems — ERP, TMS, procurement, or analytics.',
                       },
                     ].map((s, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '22px 20px',
-                          border: '1px solid var(--border)',
-                          borderRadius: 'var(--radius)',
-                          background: 'var(--bg-card)',
-                        }}
-                      >
+                      <div key={i} className="info-card" style={{ padding: '22px 20px' }}>
                         <div
                           className="sans"
                           style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 8 }}
                         >
                           {s.title}
                         </div>
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.6,
-                          }}
-                        >
+                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {s.desc}
                         </div>
                       </div>
@@ -550,36 +508,23 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ Quote ━━━ */}
             <section style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', textAlign: 'center' }}>
+              <div className="section-inner" style={{ textAlign: 'center' }}>
                 <div id="qt" data-animate className={`anim ${isV('qt') ? 'vis' : ''}`}>
-                  <p
-                    style={{
-                      fontSize: 21,
-                      fontStyle: 'italic',
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 20,
-                    }}
-                  >
+                  <p className="blockquote" style={{ marginBottom: 20 }}>
                     "If you can't explain why a specific rate applies to a specific product from a
                     specific country on a specific date — citing the exact rule, its conditions, and
                     its legal authority — then you don't have an answer. You have a guess."
                   </p>
-                  <div
-                    className="mono"
-                    style={{ fontSize: 11, color: 'var(--text-muted)', letterSpacing: '0.06em' }}
-                  >
-                    — The principle behind every line of code
-                  </div>
+                  <div className="blockquote-attr">— The principle behind every line of code</div>
                 </div>
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ CTA ━━━ */}
             <section
@@ -590,54 +535,17 @@
                 overflow: 'hidden',
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '80%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div
-                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
-              >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="ccta" data-animate className={`anim ${isV('ccta') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Let's talk about your tariff challenges.
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Whether you need a platform, an API, or advisory support — we'd like to
                     understand your situation and show you what's possible.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
+                  <div className="cta-row">
                     <button className="cta-btn w200 sans">Request a Demo</button>
                     <a
                       href={SITE.signupUrl}

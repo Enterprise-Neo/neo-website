@@ -24,6 +24,7 @@
         NeoDivider,
         NeoHero,
         NeoScreenshot,
+        NeoSideNav,
         useScrollAnimation,
         ArrowIcon,
       } = window;
@@ -31,6 +32,18 @@
 
       const NeoTariffPlatform = () => {
         const [activeSection, setActiveSection] = useState(null);
+
+        const sideNavSections = [
+          { id: 'tariff-simulator', label: 'Tariff Simulator' },
+          { id: 'bulk-simulator', label: 'Bulk Simulator' },
+          { id: 'hts-browser-schedule', label: 'HTS Browser' },
+          { id: 'hts-browser-notes', label: 'HTS Notes' },
+          { id: 'scenario-dashboard', label: 'Scenarios' },
+          { id: 'alternate-vendor', label: 'Vendor Discovery' },
+          { id: 'news-insights', label: 'News & Insights' },
+          { id: 'pwrd', label: 'What Powers It' },
+          { id: 'cta', label: 'Get Started' },
+        ];
 
         const isV = useScrollAnimation();
 
@@ -225,12 +238,12 @@
         const renderFeatureCard = (feature, idx) => {
           const isFlip = idx % 2 !== 0;
           return (
-            <section key={idx} id={feature.id} style={{ padding: '48px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+            <section key={idx} style={{ padding: '48px 48px' }}>
+              <div className="section-inner">
                 <div
-                  id={`f-${idx}`}
+                  id={feature.id}
                   data-animate
-                  className={`feature-card anim ${isFlip ? 'fc-flip' : ''} ${isV(`f-${idx}`) ? 'vis' : ''}`}
+                  className={`feature-card anim ${isFlip ? 'fc-flip' : ''} ${isV(feature.id) ? 'vis' : ''}`}
                 >
                   {feature.img ? (
                     <div className="fc-image" style={{ background: feature.gradient }}>
@@ -296,10 +309,12 @@
               background: 'var(--bg)',
               color: 'var(--text-primary)',
               minHeight: '100vh',
+              '--scroll-offset': '120px',
             }}
           >
             <NeoGrain />
             <NeoNav activePage="platform" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* Hero */}
             <NeoHero
@@ -315,7 +330,7 @@
               ]}
             />
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* Jump nav */}
             <section
@@ -330,9 +345,8 @@
               }}
             >
               <div
+                className="section-inner"
                 style={{
-                  maxWidth: 'var(--max-width)',
-                  margin: '0 auto',
                   display: 'flex',
                   gap: 4,
                   flexWrap: 'nowrap',
@@ -364,7 +378,7 @@
                       lineHeight: '1.4',
                       whiteSpace: 'nowrap',
                       background:
-                        activeSection === item.id ? 'rgba(108,99,255,0.08)' : 'transparent',
+                        activeSection === item.id ? 'rgba(var(--accent-rgb),0.08)' : 'transparent',
                     }}
                   >
                     {item.short}
@@ -375,7 +389,7 @@
 
             {/* Tariff Management Essentials */}
             <section style={{ padding: '64px 48px 0' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="ess-h"
                   data-animate
@@ -390,32 +404,16 @@
                       color: 'var(--accent)',
                       marginBottom: 8,
                       padding: '3px 10px',
-                      border: '1px solid rgba(108,99,255,0.2)',
+                      border: '1px solid rgba(var(--accent-rgb),0.2)',
                       display: 'inline-block',
                     }}
                   >
                     TARIFF MANAGEMENT ESSENTIALS
                   </div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginTop: 14,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginTop: 14 }}>
                     Core tools for tariff calculation and HTS navigation
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      color: 'var(--text-secondary)',
-                      marginTop: 10,
-                      maxWidth: 580,
-                      lineHeight: 1.6,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginTop: 10, maxWidth: 580 }}>
                     The foundation of the Neo Tariff platform — deterministic duty calculations,
                     bulk portfolio analysis, and structured HTS documentation browsing.
                   </p>
@@ -425,11 +423,11 @@
 
             {essentials.map((f, i) => renderFeatureCard(f, i))}
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)', marginTop: 32 }} />
+            <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Market & Supplier Intelligence */}
             <section style={{ padding: '64px 48px 0' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div
                   id="int-h"
                   data-animate
@@ -450,26 +448,10 @@
                   >
                     MARKET & SUPPLIER INTELLIGENCE
                   </div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginTop: 14,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginTop: 14 }}>
                     Analytics, scenarios, and supplier discovery
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      color: 'var(--text-secondary)',
-                      marginTop: 10,
-                      maxWidth: 580,
-                      lineHeight: 1.6,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginTop: 10, maxWidth: 580 }}>
                     Turn tariff data into strategic intelligence — scenario modeling, portfolio
                     analytics, alternative sourcing, and market awareness.
                   </p>
@@ -479,21 +461,14 @@
 
             {intelligence.map((f, i) => renderFeatureCard(f, i + essentials.length))}
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)', marginTop: 32 }} />
+            <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Powered by section */}
             <section style={{ padding: '80px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="pwrd" data-animate className={`anim ${isV('pwrd') ? 'vis' : ''}`}>
                   <div className="section-label">What Powers It All</div>
-                  <h2
-                    style={{
-                      fontSize: 34,
-                      fontWeight: 600,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 36,
-                    }}
-                  >
+                  <h2 className="section-heading" style={{ marginBottom: 36 }}>
                     Every tool runs on the same engine.
                   </h2>
                   <div
@@ -520,13 +495,8 @@
                     ].map((p, i) => (
                       <div
                         key={i}
-                        style={{
-                          padding: '32px 26px',
-                          border: '1px solid var(--border)',
-                          borderRadius: 'var(--radius)',
-                          background: 'var(--bg-card)',
-                          textAlign: 'left',
-                        }}
+                        className="info-card"
+                        style={{ padding: '32px 26px', textAlign: 'left' }}
                       >
                         <div
                           className="mono"
@@ -545,14 +515,7 @@
                         >
                           {p.title}
                         </h3>
-                        <p
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            lineHeight: 1.6,
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
+                        <p className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {p.desc}
                         </p>
                       </div>
@@ -562,7 +525,7 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* CTA */}
             <section
@@ -573,54 +536,17 @@
                 overflow: 'hidden',
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '80%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div
-                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
-              >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="cta" data-animate className={`anim ${isV('cta') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Ready to see it in action?
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Get a guided walkthrough of the Neo Tariff platform tailored to your team's use
                     case.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
+                  <div className="cta-row">
                     <button className="cta-btn w200 sans">Request a Demo</button>
                     <a
                       href="/product/api"

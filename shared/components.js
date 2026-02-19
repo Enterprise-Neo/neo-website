@@ -735,6 +735,68 @@ window.NeoHero = ({
 };
 
 /* ════════════════════════════════════════════
+   SIDE NAV (Scroll-Spy Dots)
+   ════════════════════════════════════════════ */
+window.NeoSideNav = ({ sections }) => {
+  const [activeSection, setActiveSection] = useState(sections[0]?.id || '');
+  const [hoveredDot, setHoveredDot] = useState(null);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        let current = sections[0]?.id || '';
+        for (const s of sections) {
+          const el = document.getElementById(s.id);
+          if (el && el.getBoundingClientRect().top <= 100) current = s.id;
+        }
+        setActiveSection(current);
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollTo = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  return (
+    <div
+      className="side-nav-container"
+      style={{
+        position: 'fixed',
+        right: 20,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 150,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 18,
+        alignItems: 'center',
+      }}
+    >
+      {sections.map((s) => (
+        <div
+          key={s.id}
+          className={`side-dot ${activeSection === s.id ? 'active' : ''}`}
+          onClick={() => scrollTo(s.id)}
+          onMouseEnter={() => setHoveredDot(s.id)}
+          onMouseLeave={() => setHoveredDot(null)}
+        >
+          <div className={`side-dot-label sans ${hoveredDot === s.id ? 'show' : ''}`}>
+            {s.label}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* ════════════════════════════════════════════
    UTILITY COMPONENTS
    ════════════════════════════════════════════ */
 window.NeoGrain = () => <div className="grain" />;

@@ -17,103 +17,184 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
     <script type="text/babel" src="/shared/components.js"></script>
     <script type="text/babel">
-      const { NeoNav, NeoFooter, NeoGrain, NeoDivider, NeoHero, useScrollAnimation, ArrowIcon } =
-        window;
-      const { useState, useEffect } = React;
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
+      const { useState } = React;
 
       const NeoTariffPricing = () => {
         const [activeFaq, setActiveFaq] = useState(null);
-
         const isV = useScrollAnimation();
 
-        const tiers = [
+        const sideNavSections = [
+          { id: 'trial', label: 'Free Trial' },
+          { id: 'ctable', label: 'Plans' },
+          { id: 'pfaq', label: 'FAQ' },
+          { id: 'pcta', label: 'Get Started' },
+        ];
+
+        /* ═══════════════════════════════════════
+           DATA — edit these objects to update the page
+           ═══════════════════════════════════════ */
+
+        /* ── Trial strip config ── */
+        const trial = {
+          title: 'Free trial',
+          subtitle: 'try the full platform before you commit',
+          description: 'No credit card required. All features unlocked.',
+          credits: '1,000',
+          days: '7',
+          cta: 'Start Free Trial',
+          href: null,
+        };
+
+        /* ── Plan columns (order matters — matches table column order) ── */
+        const plans = [
           {
             name: 'Pay-As-You-Go',
-            icon: '⚪',
-            iconBg: 'rgba(108,99,255,0.12)',
-            annualCredits: null,
-            monthlyCredits: null,
             price: '$0',
-            pricePer: '/ month',
-            perCredit: '$0.35',
-            highlight: false,
+            perCredit: '$0.35 / credit',
+            barWidth: '100%',
+            barColor: '#6B697A',
             cta: 'Get Started',
-            ctaOutline: false,
-            lastFeature: 'No monthly commitment',
+            ctaStyle: 'fill',
           },
           {
             name: 'Small',
-            icon: '🟣',
-            iconBg: 'rgba(139,92,246,0.15)',
-            annualCredits: '42,000',
-            monthlyCredits: '3,500 credits / month',
             price: '$1,000',
-            pricePer: '/ month',
-            perCredit: '$0.30',
-            highlight: false,
+            perCredit: '$0.30 / credit',
+            barWidth: '86%',
+            barColor: '#8B5CF6',
             cta: 'Get Started',
-            ctaOutline: false,
-            lastFeature: 'Volume discounts',
+            ctaStyle: 'fill',
           },
           {
             name: 'Medium',
-            icon: '🟢',
-            iconBg: 'rgba(74,222,128,0.12)',
-            annualCredits: '174,000',
-            monthlyCredits: '14,500 credits / month',
             price: '$2,500',
-            pricePer: '/ month',
-            perCredit: '$0.18',
-            highlight: true,
+            perCredit: '$0.18 / credit',
+            barWidth: '51%',
+            barColor: 'var(--accent)',
             cta: 'Get Started',
-            ctaOutline: false,
-            lastFeature: 'Volume discounts',
+            ctaStyle: 'fill',
           },
           {
             name: 'Large',
-            icon: '🔵',
-            iconBg: 'rgba(96,165,250,0.12)',
-            annualCredits: '504,000',
-            monthlyCredits: '42,000 credits / month',
             price: '$5,000',
-            pricePer: '/ month',
-            perCredit: '$0.12',
-            highlight: false,
+            perCredit: '$0.12 / credit',
+            barWidth: '34%',
+            barColor: 'var(--blue)',
             cta: 'Get Started',
-            ctaOutline: false,
-            lastFeature: 'Volume discounts',
+            ctaStyle: 'fill',
           },
           {
             name: 'Enterprise',
-            icon: '🟠',
-            iconBg: 'rgba(251,191,36,0.12)',
-            annualCredits: null,
-            monthlyCredits: null,
             price: 'Custom',
-            pricePer: '',
-            perCredit: null,
-            highlight: false,
+            perCredit: 'Volume pricing',
+            barWidth: '15%',
+            barColor: 'var(--orange)',
             cta: 'Contact Us',
-            ctaOutline: true,
-            isCustom: true,
-            lastFeature: 'Priority support',
+            ctaStyle: 'ghost',
           },
         ];
 
-        const sharedFeatures = [
-          { text: 'Web-App, API, & SDK Access', isNew: false },
-          { text: 'Deterministic engine', isNew: false },
-          { text: 'Bulk rate processing', isNew: false },
-          { text: 'HTS browser', isNew: true },
-          { text: 'Scenario comparison tools', isNew: false },
-          { text: 'Global supplier matching', isNew: false },
-          { text: 'HTS schedule history', isNew: false },
-          { text: 'Updates within hours', isNew: false },
-          { text: 'Rate traceability', isNew: false },
-          { text: 'Full 232/301 coverage', isNew: false },
-          { text: 'Detailed API docs', isNew: true },
+        /* ── Table sections & rows ──
+           Each section has a label and rows.
+           Each row has a feature name and values[] matching plans[] order.
+           Value types:
+             '✓'        → rendered as .c-check
+             string     → rendered as .c-val
+             '—'        → rendered as .c-muted dash
+             { text, muted }  → text with muted note
+        */
+        const tableSections = [
+          {
+            label: 'VOLUME',
+            rows: [
+              {
+                feature: 'Annual credits',
+                values: ['Usage-based', '42,000', '174,000', '504,000', 'Custom'],
+                muted: [true, false, false, false, true],
+              },
+              {
+                feature: 'Monthly credits',
+                values: ['—', '3,500', '14,500', '42,000', 'Custom'],
+                muted: [true, false, false, false, true],
+              },
+              {
+                feature: 'Overage rate',
+                values: [
+                  '$0.35 / credit',
+                  '$0.30 / credit',
+                  '$0.18 / credit',
+                  '$0.12 / credit',
+                  'Negotiated',
+                ],
+                muted: [true, true, true, true, true],
+              },
+            ],
+          },
+          {
+            label: 'PLATFORM ACCESS',
+            rows: [
+              { feature: 'Web App', values: ['✓', '✓', '✓', '✓', '✓'] },
+              {
+                feature: 'REST API',
+                featureSub: '50 endpoints',
+                values: ['✓', '✓', '✓', '✓', '✓'],
+              },
+              { feature: 'Python SDK', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'TARIFF ENGINE',
+            rows: [
+              { feature: 'Deterministic engine', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Bulk processing', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: '232 / 301 / IEEPA', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Rate traceability', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'HTS history', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'HTS browser', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Live updates', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'INTELLIGENCE',
+            rows: [
+              { feature: 'Scenario comparison', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Supplier matching', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'SUPPORT',
+            rows: [
+              { feature: 'Docs & knowledge base', values: ['✓', '✓', '✓', '✓', '✓'] },
+              {
+                feature: 'Priority support',
+                values: ['—', '✓', '✓', '✓', '✓'],
+                muted: [true, false, false, false, false],
+              },
+              {
+                feature: 'Dedicated onboarding',
+                values: ['—', '—', '—', '—', '✓'],
+                muted: [true, true, true, true, false],
+              },
+              {
+                feature: 'Custom SLAs',
+                values: ['—', '—', '—', '—', '✓'],
+                muted: [true, true, true, true, false],
+              },
+            ],
+          },
         ];
 
+        /* ── FAQ ── */
         const faqs = [
           {
             q: 'What is a credit?',
@@ -169,6 +250,36 @@
           },
         ];
 
+        /* ═══════════════════════════════════════
+           HELPERS
+           ═══════════════════════════════════════ */
+
+        const renderCellValue = (val, isMuted, key) => {
+          if (val === '✓') {
+            return (
+              <td key={key}>
+                <span className="c-check">✓</span>
+              </td>
+            );
+          }
+          if (val === '—' || isMuted) {
+            return (
+              <td key={key} className="c-muted">
+                {val}
+              </td>
+            );
+          }
+          return (
+            <td key={key}>
+              <span className="c-val">{val}</span>
+            </td>
+          );
+        };
+
+        /* ═══════════════════════════════════════
+           RENDER
+           ═══════════════════════════════════════ */
+
         return (
           <div
             style={{
@@ -180,6 +291,7 @@
           >
             <NeoGrain />
             <NeoNav activePage="pricing" />
+            <NeoSideNav sections={sideNavSections} />
 
             {/* ━━━ Hero ━━━ */}
             <NeoHero
@@ -190,405 +302,140 @@
               paddingBottom={24}
             />
 
-            {/* ━━━ Scale Savings (chart) ━━━ */}
-            <section style={{ padding: '0 48px 24px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div id="save" data-animate className={`anim ${isV('save') ? 'vis' : ''}`}>
-                  <div
-                    className="mono"
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      letterSpacing: '0.1em',
-                      color: 'var(--text-muted)',
-                      marginBottom: 20,
-                    }}
-                  >
-                    COST PER CREDIT
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 0,
-                      alignItems: 'flex-end',
-                      justifyContent: 'center',
-                      height: 170,
-                      padding: 0,
-                    }}
-                  >
-                    {[
-                      { label: 'Pay-As-You-Go', rate: '$0.35', h: 110, color: '#6B697A' },
-                      { label: 'Small', rate: '$0.30', h: 94, color: '#8B5CF6' },
-                      { label: 'Medium', rate: '$0.18', h: 56, color: 'var(--green)' },
-                      { label: 'Large', rate: '$0.12', h: 38, color: 'var(--blue)' },
-                      {
-                        label: 'Enterprise',
-                        rate: 'Custom',
-                        h: 16,
-                        color: '#FBBF24',
-                        dashed: true,
-                      },
-                    ].map((b, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          flex: 1,
-                          gap: 8,
-                        }}
-                      >
-                        <span
-                          className="mono"
-                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, color: b.color }}
-                        >
-                          {b.rate}
-                        </span>
-                        <div
-                          style={{
-                            width: '55%',
-                            maxWidth: 80,
-                            height: b.h,
-                            background: b.dashed
-                              ? 'transparent'
-                              : `linear-gradient(180deg, ${b.color} 0%, rgba(108,99,255,0.08) 100%)`,
-                            borderRadius: '4px 4px 0 0',
-                            opacity: 0.8,
-                            ...(b.dashed
-                              ? {
-                                  border: `1.5px dashed ${b.color}`,
-                                  borderBottom: 'none',
-                                }
-                              : {}),
-                          }}
+            {/* ━━━ Free Trial Strip ━━━ */}
+            <section style={{ padding: '0 48px 20px' }}>
+              <div
+                id="trial"
+                data-animate
+                className={`trial-strip section-inner anim ${isV('trial') ? 'vis' : ''}`}
+              >
+                <div className="trial-strip-inner">
+                  <div className="trial-strip-left">
+                    <div className="trial-strip-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                          stroke="var(--green)"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         />
-                        <span
-                          className="sans"
-                          style={{
-                            fontSize: 11.5,
-                            color: 'var(--text-muted)',
-                            marginTop: 4,
-                            textAlign: 'center',
-                          }}
-                        >
-                          {b.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* ━━━ Tier Cards ━━━ */}
-            <section style={{ padding: '8px 48px 72px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div
-                  id="tiers"
-                  data-animate
-                  className={`anim ${isV('tiers') ? 'vis' : ''}`}
-                  style={{ display: 'flex', gap: 14, alignItems: 'stretch' }}
-                >
-                  {tiers.map((t, i) => (
-                    <div key={i} className={`tier-card ${t.highlight ? 'pop' : ''}`}>
-                      {/* Fixed-height top section for uniform alignment */}
-                      <div style={{ minHeight: 190, display: 'flex', flexDirection: 'column' }}>
-                        {/* Header */}
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            marginBottom: 20,
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: 'var(--fs-base)',
-                              lineHeight: 1,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                            }}
-                          >
-                            {t.icon}
-                          </span>
-                          <span
-                            className="sans"
-                            style={{ fontSize: 'var(--fs-base)', fontWeight: 700, lineHeight: 1 }}
-                          >
-                            {t.name}
-                          </span>
-                        </div>
-
-                        {/* Price */}
-                        <div style={{ marginBottom: 2 }}>
-                          <span
-                            style={{
-                              fontSize: t.isCustom ? 22 : 30,
-                              fontWeight: 700,
-                              letterSpacing: '-0.02em',
-                            }}
-                          >
-                            {t.price}
-                          </span>
-                          {t.pricePer && (
-                            <span
-                              className="sans"
-                              style={{
-                                fontSize: 'var(--fs-sm)',
-                                color: 'var(--text-muted)',
-                                marginLeft: 4,
-                              }}
-                            >
-                              {t.pricePer}
-                            </span>
-                          )}
-                        </div>
-                        {t.perCredit ? (
-                          <div
-                            className="mono"
-                            style={{
-                              fontSize: 'var(--fs-xs)',
-                              color: 'var(--accent)',
-                              marginBottom: 14,
-                              letterSpacing: '0.01em',
-                            }}
-                          >
-                            {t.perCredit}{' '}
-                            <span style={{ color: 'var(--text-muted)' }}>per credit</span>
-                          </div>
-                        ) : t.isCustom ? (
-                          <div
-                            className="sans"
-                            style={{
-                              fontSize: 'var(--fs-sm)',
-                              color: 'var(--text-muted)',
-                              marginBottom: 14,
-                            }}
-                          >
-                            Custom credit limits and payment terms
-                          </div>
-                        ) : (
-                          <div style={{ marginBottom: 14 }} />
-                        )}
-
-                        {/* Credits / Volume */}
-                        {t.annualCredits ? (
-                          <div>
-                            <div>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 22,
-                                  fontWeight: 700,
-                                  color: 'var(--text-primary)',
-                                  letterSpacing: '-0.02em',
-                                }}
-                              >
-                                {t.annualCredits}
-                              </span>
-                              <span
-                                className="sans"
-                                style={{
-                                  fontSize: 11.5,
-                                  color: 'var(--text-muted)',
-                                  marginLeft: 5,
-                                }}
-                              >
-                                annual credits
-                              </span>
-                            </div>
-                            <div
-                              className="sans"
-                              style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}
-                            >
-                              {t.monthlyCredits}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-
-                      {/* CTA */}
-                      <button
-                        className={`tier-btn ${t.ctaOutline ? 'tier-btn-ghost' : 'tier-btn-fill'}`}
-                      >
-                        {t.cta}
-                      </button>
-
-                      {/* Features */}
-                      <div
-                        style={{
-                          marginTop: 22,
-                          borderTop: '1px solid var(--border-light)',
-                          paddingTop: 16,
-                          flex: 1,
-                        }}
-                      >
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 700,
-                            letterSpacing: '0.1em',
-                            color: 'var(--text-muted)',
-                            marginBottom: 12,
-                          }}
-                        >
-                          FEATURES INCLUDED:
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                          {sharedFeatures.map((f, j) => (
-                            <div
-                              key={j}
-                              className="sans"
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 7,
-                                fontSize: 'var(--fs-xs)',
-                                color: 'var(--text-secondary)',
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              <svg
-                                width="13"
-                                height="13"
-                                viewBox="0 0 16 16"
-                                style={{ flexShrink: 0 }}
-                              >
-                                <path
-                                  d="M3.5 8.5l3 3 6-6"
-                                  stroke="var(--accent)"
-                                  strokeWidth="1.6"
-                                  fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                              <span>
-                                {f.text}
-                                {f.isNew && <span className="new-tag">New</span>}
-                              </span>
-                            </div>
-                          ))}
-                          {/* Tier-specific last feature */}
-                          <div
-                            className="sans"
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 7,
-                              fontSize: 'var(--fs-xs)',
-                              color: 'var(--text-secondary)',
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            <svg
-                              width="13"
-                              height="13"
-                              viewBox="0 0 16 16"
-                              style={{ flexShrink: 0 }}
-                            >
-                              <path
-                                d="M3.5 8.5l3 3 6-6"
-                                stroke="var(--accent)"
-                                strokeWidth="1.6"
-                                fill="none"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                            <span>{t.lastFeature}</span>
-                          </div>
-                        </div>
-                      </div>
+                      </svg>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
-
-            {/* ━━━ What Every Plan Includes ━━━ */}
-            <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-                <div id="inc" data-animate className={`anim ${isV('inc') ? 'vis' : ''}`}>
-                  <div style={{ marginBottom: 36 }}>
-                    <div className="section-label">What You Get</div>
-                    <h2 style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em' }}>
-                      Same engine. Same accuracy. Every plan.
-                    </h2>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
-                    {[
-                      {
-                        title: 'Deterministic Duty Engine',
-                        desc: 'Every calculation is rules-based, regression-tested, and fully traceable. No LLM in the decision path. Legal citations attached to every answer.',
-                      },
-                      {
-                        title: 'Full HTS + Chapter 99',
-                        desc: '~18,000 tariff lines per revision. 276 reciprocal rules. Section 301, 232, IEEPA duties with supersession, exclusion, and priority logic.',
-                      },
-                      {
-                        title: 'REST API + Python SDK',
-                        desc: '50 endpoints across 16 groups. Typed Python client with sync/async. Embed tariff intelligence into any system.',
-                      },
-                      {
-                        title: 'Portfolio & Scenario Analysis',
-                        desc: 'Upload CSV data, run bulk calculations, compare as-reported vs. latest schedule, and model the impact of tariff or sourcing changes.',
-                      },
-                      {
-                        title: 'Updates Within Hours',
-                        desc: 'New HTS revisions reflected within ~1 hour of USITC publication. 34 versions tracked since early 2025 and counting.',
-                      },
-                      {
-                        title: 'Global Supplier Matching',
-                        desc: 'Discover alternate vendors by business profile or product capability. Fit scoring, country filtering, and industry classification.',
-                      },
-                    ].map((item, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '24px 22px',
-                          border: '1px solid var(--border)',
-                          borderRadius: 'var(--radius)',
-                          background: 'var(--bg-card)',
-                        }}
-                      >
-                        <div
-                          className="sans"
-                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 8 }}
-                        >
-                          {item.title}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          {item.desc}
-                        </div>
+                    <div>
+                      <div className="trial-strip-title sans">
+                        <strong>{trial.title}</strong> — {trial.subtitle}
                       </div>
-                    ))}
+                      <div className="trial-strip-sub sans">{trial.description}</div>
+                    </div>
+                  </div>
+                  <div className="trial-strip-right">
+                    <div className="trial-strip-stat">
+                      <div className="trial-strip-stat-val">{trial.credits}</div>
+                      <div className="trial-strip-stat-label sans">Credits</div>
+                    </div>
+                    <div className="trial-strip-divider" />
+                    <div className="trial-strip-stat">
+                      <div className="trial-strip-stat-val">{trial.days}</div>
+                      <div className="trial-strip-stat-label sans">Days</div>
+                    </div>
+                    <div className="trial-strip-divider" />
+                    {trial.href ? (
+                      <a href={trial.href} className="trial-cta">
+                        {trial.cta}
+                        <ArrowIcon size={14} />
+                      </a>
+                    ) : (
+                      <button className="trial-cta">
+                        {trial.cta}
+                        <ArrowIcon size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            {/* ━━━ Comparison Table ━━━ */}
+            <section style={{ padding: '0 48px 72px' }}>
+              <div
+                id="ctable"
+                data-animate
+                className={`section-inner anim ${isV('ctable') ? 'vis' : ''}`}
+              >
+                <table className="c-table">
+                  <thead>
+                    <tr>
+                      <th />
+                      {plans.map((p, i) => (
+                        <th key={i}>
+                          <div className="c-th-name">
+                            <span className="c-th-dot" style={{ background: p.barColor }} />
+                            {p.name}
+                          </div>
+                          <div className="c-th-price mono">{p.price}</div>
+                          <div className="c-th-sub sans">{p.perCredit}</div>
+                          <div className="c-th-bar">
+                            <div
+                              className="c-th-bar-fill"
+                              style={{ width: p.barWidth, background: p.barColor }}
+                            />
+                          </div>
+                          <div className="c-th-cta">
+                            <button
+                              className={`cta-btn cta-btn-condensed ${p.ctaStyle === 'ghost' ? 'cta-btn-outline' : ''}`}
+                            >
+                              {p.cta}
+                            </button>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableSections.map((section, si) => (
+                      <React.Fragment key={si}>
+                        <tr className="c-section-row">
+                          <td colSpan={plans.length + 1}>{section.label}</td>
+                        </tr>
+                        {section.rows.map((row, ri) => (
+                          <tr key={ri}>
+                            <td className="sans">
+                              {row.feature}
+                              {row.featureSub && (
+                                <span
+                                  className="mono"
+                                  style={{
+                                    fontSize: 9,
+                                    color: 'var(--text-muted)',
+                                    marginLeft: 6,
+                                  }}
+                                >
+                                  {row.featureSub}
+                                </span>
+                              )}
+                            </td>
+                            {row.values.map((val, ci) =>
+                              renderCellValue(val, row.muted && row.muted[ci], ci)
+                            )}
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <div className="divider" />
 
             {/* ━━━ FAQ ━━━ */}
             <section style={{ padding: '64px 48px' }}>
-              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+              <div className="section-inner">
                 <div id="pfaq" data-animate className={`anim ${isV('pfaq') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 36 }}>
                     <div className="section-label">FAQ</div>
-                    <h2 style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em' }}>
+                    <h2 className="section-heading" style={{ fontSize: 30 }}>
                       Frequently asked questions
                     </h2>
                   </div>
@@ -624,13 +471,7 @@
                         </svg>
                       </div>
                       <div className={`faq-a sans ${activeFaq === i ? 'open' : ''}`}>
-                        <p
-                          style={{
-                            fontSize: 'var(--fs-base)',
-                            lineHeight: 1.75,
-                            color: 'var(--text-secondary)',
-                          }}
-                        >
+                        <p className="section-desc" style={{ lineHeight: 1.75 }}>
                           {f.a}
                         </p>
                       </div>
@@ -640,7 +481,7 @@
               </div>
             </section>
 
-            <div className="divider" style={{ maxWidth: 'var(--max-width)' }} />
+            <div className="divider" />
 
             {/* ━━━ CTA ━━━ */}
             <section
@@ -651,54 +492,17 @@
                 overflow: 'hidden',
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '80%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 50% 30%, rgba(108,99,255,0.10) 0%, transparent 65%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div
-                style={{ maxWidth: 'var(--max-narrow)', margin: '0 auto', position: 'relative' }}
-              >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="pcta" data-animate className={`anim ${isV('pcta') ? 'vis' : ''}`}>
-                  <h2
-                    style={{
-                      fontSize: 36,
-                      fontWeight: 600,
-                      lineHeight: 1.15,
-                      letterSpacing: '-0.02em',
-                      marginBottom: 16,
-                    }}
-                  >
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Ready to get started?
                   </h2>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 32,
-                    }}
-                  >
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Start with Pay-As-You-Go at no monthly cost, or talk to our team about the right
                     plan for your volume.
                   </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 14,
-                      justifyContent: 'center',
-                      flexWrap: 'nowrap',
-                    }}
-                  >
+                  <div className="cta-row">
                     <a
                       href={SITE.signupUrl}
                       className="cta-btn w200 sans"
