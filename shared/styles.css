@@ -869,6 +869,487 @@ h3 {
 }
 
 /* ════════════════════════════════════════════
+   INTERACTIVE ARCHITECTURE DIAGRAM
+   ════════════════════════════════════════════ */
+
+/* ── Diagram frame ── */
+.diagram-frame {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.diagram-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+.diagram-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(var(--accent-rgb), 0.02), transparent);
+  pointer-events: none;
+}
+
+.diagram-inner {
+  display: flex;
+  position: relative;
+  z-index: 1;
+  padding: 0 40px 0 0;
+}
+
+/* ── Zone gutter (left labels) ── */
+.zone-gutter {
+  width: 90px;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  margin-right: 20px;
+}
+.zone-slot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 8px;
+  height: 80px;
+}
+.zone-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.75;
+  user-select: none;
+}
+.zone-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  opacity: 0.4;
+}
+
+/* ── Diagram area ── */
+.diagram-area {
+  flex: 1;
+  position: relative;
+  height: 340px;
+  user-select: none;
+  min-width: 0;
+}
+
+/* ── SVG edges ── */
+.diagram-area svg.diagram-edges {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.diagram-edge {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+  fill: none;
+  transition: stroke 0.5s var(--ease);
+}
+.diagram-edge-flow {
+  stroke: var(--accent);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 3 5;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.diagram-edge.lit {
+  stroke: rgba(var(--accent-rgb), 0.18);
+}
+.diagram-edge-flow.lit {
+  opacity: 0.45;
+  animation: diagramFlowDash 1.6s linear infinite;
+}
+.diagram-edge.lit-green {
+  stroke: rgba(74, 222, 128, 0.15);
+}
+.diagram-edge-flow.lit-green {
+  opacity: 0.4;
+  stroke: var(--green);
+  animation: diagramFlowDash 1.6s linear infinite;
+}
+.diagram-edge.lit-orange {
+  stroke: rgba(245, 158, 11, 0.15);
+}
+.diagram-edge-flow.lit-orange {
+  opacity: 0.4;
+  stroke: var(--orange);
+  animation: diagramFlowDash 1.6s linear infinite;
+}
+.diagram-edge.lit-blue {
+  stroke: rgba(96, 165, 250, 0.15);
+}
+.diagram-edge-flow.lit-blue {
+  opacity: 0.4;
+  stroke: var(--blue);
+  animation: diagramFlowDash 1.6s linear infinite;
+}
+@keyframes diagramFlowDash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+/* ── Merge dot ── */
+.diagram-merge-dot {
+  position: absolute;
+  z-index: 1;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.2;
+  transition: all 0.5s var(--ease);
+  pointer-events: none;
+}
+.diagram-merge-dot.lit {
+  opacity: 0.65;
+  transform: translate(-50%, -50%) scale(1.4);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.35);
+}
+
+/* ── Nodes ── */
+.diagram-node {
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px 9px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  white-space: nowrap;
+  min-width: 220px;
+}
+.diagram-node:hover {
+  border-color: rgba(255, 255, 255, 0.13);
+}
+.diagram-node .dn-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.diagram-node .dn-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.diagram-node.active .dn-icon {
+  transform: scale(1.1);
+}
+.diagram-node .dn-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.diagram-node .dn-sublabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  margin-top: 1px;
+  opacity: 0.55;
+  transition: opacity 0.4s;
+  line-height: 1.2;
+}
+.diagram-node.active .dn-sublabel {
+  opacity: 1;
+}
+
+/* Node color themes */
+.diagram-node[data-id='web'] .dn-icon {
+  background: rgba(var(--accent-rgb), 0.1);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  color: var(--accent);
+}
+.diagram-node[data-id='web'] .dn-sublabel {
+  color: var(--accent);
+}
+.diagram-node[data-id='web'].active {
+  border-color: rgba(var(--accent-rgb), 0.35);
+  box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.08);
+}
+.diagram-node[data-id='rest'] .dn-icon {
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.18);
+  color: var(--green);
+}
+.diagram-node[data-id='rest'] .dn-sublabel {
+  color: var(--green);
+}
+.diagram-node[data-id='rest'].active {
+  border-color: rgba(74, 222, 128, 0.3);
+  box-shadow: 0 4px 20px rgba(74, 222, 128, 0.06);
+}
+.diagram-node[data-id='sdk'] .dn-icon {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.18);
+  color: var(--orange);
+}
+.diagram-node[data-id='sdk'] .dn-sublabel {
+  color: var(--orange);
+}
+.diagram-node[data-id='sdk'].active {
+  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.06);
+}
+.diagram-node[data-id='api'] .dn-icon {
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  color: var(--blue);
+}
+.diagram-node[data-id='api'] .dn-sublabel {
+  color: var(--blue);
+}
+.diagram-node[data-id='api'].active {
+  border-color: rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 20px rgba(96, 165, 250, 0.06);
+}
+.diagram-node[data-id='engine'] .dn-icon {
+  background: rgba(var(--accent-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-rgb), 0.25);
+  color: var(--accent);
+}
+.diagram-node[data-id='engine'] .dn-sublabel {
+  color: var(--accent);
+}
+.diagram-node[data-id='engine'].active {
+  border-color: rgba(var(--accent-rgb), 0.4);
+  box-shadow: 0 4px 24px rgba(var(--accent-rgb), 0.1);
+}
+.diagram-node[data-id='pipeline'] .dn-icon {
+  background: rgba(var(--accent-rgb), 0.06);
+  border: 1px solid rgba(var(--accent-rgb), 0.14);
+  color: var(--accent);
+}
+.diagram-node[data-id='pipeline'] .dn-sublabel {
+  color: var(--text-muted);
+}
+.diagram-node[data-id='pipeline'].active {
+  border-color: rgba(var(--accent-rgb), 0.3);
+  box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.06);
+}
+
+/* Dim inactive nodes */
+.diagram-area.has-active .diagram-node:not(.active) {
+  opacity: 0.5;
+  filter: saturate(0.6);
+}
+.diagram-area.has-active .diagram-node:not(.active):hover {
+  opacity: 0.75;
+  filter: saturate(0.85);
+}
+
+/* ── Detail panel ── */
+.diagram-detail {
+  margin-top: 16px;
+  padding: 22px 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-height: 110px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease);
+}
+.diagram-detail.a-purple {
+  border-color: rgba(var(--accent-rgb), 0.18);
+}
+.diagram-detail.a-green {
+  border-color: rgba(74, 222, 128, 0.14);
+}
+.diagram-detail.a-orange {
+  border-color: rgba(245, 158, 11, 0.14);
+}
+.diagram-detail.a-blue {
+  border-color: rgba(96, 165, 250, 0.14);
+}
+.diagram-detail-content {
+  animation: fadeIn 0.3s var(--ease);
+}
+.dd-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 16px;
+}
+.dd-top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.dd-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dd-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.dd-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.dd-badges {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.dd-desc {
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 720px;
+}
+.dd-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 14px;
+}
+.dd-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+.dd-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 9px;
+  background: rgba(var(--accent-rgb), 0.05);
+  border: 1px solid rgba(var(--accent-rgb), 0.12);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+.dd-stat strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+.dd-prop-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 2px 7px;
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
+  border-radius: 3px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.dd-method-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.dd-method-badge.get {
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.15);
+  color: var(--blue);
+}
+.dd-method-badge.post {
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.15);
+  color: var(--green);
+}
+
+/* ── Pipeline visualization ── */
+.pipeline-vis {
+  display: flex;
+  align-items: center;
+  margin-top: 14px;
+}
+.pv-stage {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+}
+.pv-stage.prop {
+  border-color: rgba(var(--accent-rgb), 0.2);
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.04);
+}
+.pv-arr {
+  width: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex-shrink: 0;
+  opacity: 0.35;
+}
+
+/* ── Cycle dots ── */
+.diagram-cycle-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+}
+.diagram-cycle-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.4s var(--ease);
+}
+.diagram-cycle-dot:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.2);
+}
+.diagram-cycle-dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.3);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* ════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════ */
 @media (max-width: 900px) {
@@ -880,5 +1361,83 @@ h3 {
   }
   .neo-nav {
     padding: 0 20px;
+  }
+}
+
+/* ── Diagram responsive: compact mode ── */
+@media (max-width: 820px) {
+  .diagram-inner {
+    padding: 0 24px 0 0;
+  }
+  .zone-gutter {
+    display: none;
+  }
+  .diagram-area {
+    height: 280px;
+  }
+  .diagram-node {
+    min-width: 0;
+    padding: 8px;
+    gap: 0;
+  }
+  .diagram-node .dn-text-wrap {
+    display: none;
+  }
+  .diagram-node .dn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius);
+  }
+  .diagram-node .dn-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .pv-stage {
+    padding: 6px 2px;
+    font-size: 9px;
+  }
+  .pv-arr {
+    width: 12px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 560px) {
+  .diagram-frame {
+    border-radius: 10px;
+  }
+  .diagram-inner {
+    padding: 0 16px 0 0;
+  }
+  .diagram-area {
+    height: 240px;
+  }
+  .diagram-node .dn-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .diagram-node .dn-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  .diagram-node {
+    padding: 6px;
+  }
+  .diagram-detail {
+    padding: 16px 20px;
+  }
+  .dd-title {
+    font-size: var(--fs-sm);
+  }
+  .dd-desc {
+    font-size: 12px;
+  }
+  .pv-stage {
+    padding: 5px 1px;
+    font-size: 8px;
+  }
+  .pv-arr {
+    width: 8px;
+    font-size: 8px;
   }
 }
