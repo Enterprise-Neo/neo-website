@@ -30,7 +30,6 @@
       const { useState, useEffect } = React;
 
       const NeoTariffPlatform = () => {
-        const [expandedFeature, setExpandedFeature] = useState(0);
         const [activeSection, setActiveSection] = useState(null);
 
         const isV = useScrollAnimation();
@@ -223,46 +222,24 @@
 
         const allFeatures = [...essentials, ...intelligence];
 
-        const renderFeatureCard = (feature, idx) => (
-          <section key={idx} id={feature.id} style={{ padding: '48px 48px' }}>
-            <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-              <div
-                id={`f-${idx}`}
-                data-animate
-                className={`feature-card anim ${isV(`f-${idx}`) ? 'vis' : ''}`}
-              >
-                {feature.img ? (
-                  <NeoScreenshot
-                    src={feature.img}
-                    alt={feature.title}
-                    height={320}
-                    zoom={feature.zoom || 1.3}
-                    focusX={feature.focusX}
-                    focusY={feature.focusY}
-                    gradient={feature.gradient}
-                  />
-                ) : (
-                  <div
-                    className="img-placeholder"
-                    style={{ height: 320, background: feature.gradient, position: 'relative' }}
-                  >
-                    <div
-                      style={{ textAlign: 'center', padding: '0 60px', zIndex: 1, maxWidth: 700 }}
-                    >
-                      <div
-                        style={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: 12,
-                          background: 'rgba(108,99,255,0.15)',
-                          border: '1px solid rgba(108,99,255,0.25)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginBottom: 16,
-                        }}
-                      >
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        const renderFeatureCard = (feature, idx) => {
+          const isFlip = idx % 2 !== 0;
+          return (
+            <section key={idx} id={feature.id} style={{ padding: '48px 48px' }}>
+              <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
+                <div
+                  id={`f-${idx}`}
+                  data-animate
+                  className={`feature-card anim ${isFlip ? 'fc-flip' : ''} ${isV(`f-${idx}`) ? 'vis' : ''}`}
+                >
+                  {feature.img ? (
+                    <div className="fc-image" style={{ background: feature.gradient }}>
+                      <img src={feature.img} alt={feature.title} />
+                    </div>
+                  ) : (
+                    <div className="fc-image-placeholder" style={{ background: feature.gradient }}>
+                      <div className="fc-ph-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                           <rect
                             x="3"
                             y="3"
@@ -279,165 +256,38 @@
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
-                          <circle cx="15.5" cy="8.5" r="1.5" fill="var(--accent)" />
                         </svg>
                       </div>
-                      <p
-                        className="sans"
-                        style={{
-                          fontSize: 'var(--fs-sm)',
-                          color: 'rgba(255,255,255,0.45)',
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {feature.screenshotCaption}
-                      </p>
                     </div>
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background:
-                          'radial-gradient(ellipse at 50% 50%, rgba(108,99,255,0.06) 0%, transparent 60%)',
-                      }}
-                    />
-                  </div>
-                )}
-                <div style={{ padding: '36px 40px 40px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.015em' }}>
-                      {feature.title}
-                    </h3>
-                    {feature.premium && (
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: 9,
-                          letterSpacing: '0.1em',
-                          color: 'var(--orange)',
-                          background: 'rgba(251,191,36,0.08)',
-                          border: '1px solid rgba(251,191,36,0.2)',
-                          padding: '3px 9px',
-                        }}
-                      >
-                        Premium Access
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 500,
-                      color: 'var(--accent)',
-                      marginBottom: 14,
-                    }}
-                  >
-                    {feature.subtitle}
-                  </p>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-base)',
-                      lineHeight: 1.75,
-                      color: 'var(--text-secondary)',
-                      marginBottom: 24,
-                      maxWidth: 680,
-                    }}
-                  >
-                    {feature.desc}
-                  </p>
-                  <div
-                    style={{
-                      padding: '14px 20px',
-                      background: 'var(--accent-subtle)',
-                      borderLeft: '3px solid var(--accent)',
-                      marginBottom: 24,
-                      display: 'inline-block',
-                    }}
-                  >
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: 'var(--fs-xs)',
-                        color: 'var(--accent)',
-                        letterSpacing: '0.03em',
-                      }}
-                    >
-                      {feature.highlight}
-                    </span>
-                  </div>
-                  <div style={{ marginBottom: 20 }}>
-                    <div
-                      className="mono"
-                      style={{
-                        fontSize: 10.5,
-                        color: 'var(--text-muted)',
-                        letterSpacing: '0.1em',
-                        marginBottom: 12,
-                      }}
-                    >
-                      KEY FEATURES
+                  )}
+                  <div className="fc-content">
+                    <div className="fc-header">
+                      <div className="fc-title">{feature.title}</div>
+                      <div className="fc-subtitle sans">{feature.subtitle}</div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <div className="fc-desc sans">{feature.desc}</div>
+                    <div className="fc-features">
+                      <div className="fc-features-label">Key capabilities</div>
                       {feature.keyFeatures.map((kf, j) => (
-                        <div
-                          key={j}
-                          className="sans"
-                          style={{
-                            display: 'flex',
-                            gap: 10,
-                            alignItems: 'flex-start',
-                            padding: '10px 14px',
-                            background: 'rgba(108,99,255,0.03)',
-                            borderLeft: '2px solid rgba(108,99,255,0.15)',
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: 'var(--accent)',
-                              fontSize: 11,
-                              marginTop: 3,
-                              flexShrink: 0,
-                            }}
-                          >
-                            →
-                          </span>
-                          <span
-                            style={{
-                              fontSize: 'var(--fs-sm)',
-                              color: 'var(--text-secondary)',
-                              lineHeight: 1.6,
-                            }}
-                          >
-                            {kf}
-                          </span>
+                        <div key={j} className="fc-feat-item sans">
+                          <span className="fc-feat-arrow">→</span>
+                          {kf}
                         </div>
                       ))}
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {feature.tags.map((t, j) => (
-                      <span
-                        key={j}
-                        className="mono"
-                        style={{
-                          fontSize: 10.5,
-                          padding: '4px 10px',
-                          border: '1px solid var(--border)',
-                          color: 'var(--text-muted)',
-                          letterSpacing: '0.03em',
-                        }}
-                      >
-                        {t}
-                      </span>
-                    ))}
+                    <div className="fc-tags">
+                      {feature.tags.map((t, j) => (
+                        <span key={j} className="fc-tag">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
-        );
+            </section>
+          );
+        };
 
         return (
           <div

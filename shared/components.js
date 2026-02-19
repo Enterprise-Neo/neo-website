@@ -270,37 +270,37 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <a
             href={SITE.loginUrl}
-            className="sans"
-            style={{
-              padding: '8px 20px',
-              fontSize: 'var(--fs-sm)',
-              fontWeight: 500,
-              color: 'var(--text-secondary)',
-              textDecoration: 'none',
-              border: '1px solid var(--accent)',
-              borderRadius: 'var(--radius-btn)',
-              minWidth: 110,
-              textAlign: 'center',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap',
-            }}
+            className="cta-btn w120 cta-btn-condensed cta-btn-outline sans"
+            // style={{
+            //   padding: '8px 20px',
+            //   fontSize: 'var(--fs-sm)',
+            //   fontWeight: 500,
+            //   color: 'var(--text-secondary)',
+            //   textDecoration: 'none',
+            //   border: '1px solid var(--accent)',
+            //   borderRadius: 'var(--radius-btn)',
+            //   minWidth: 110,
+            //   textAlign: 'center',
+            //   display: 'inline-flex',
+            //   alignItems: 'center',
+            //   justifyContent: 'center',
+            //   whiteSpace: 'nowrap',
+            // }}
           >
             Sign In
           </a>
           <a
             href={SITE.signupUrl}
-            className="cta-btn sans"
-            style={{
-              padding: '8px 20px',
-              fontSize: 'var(--fs-sm)',
-              borderRadius: 'var(--radius-btn)',
-              textDecoration: 'none',
-              minWidth: 110,
-            }}
+            className="cta-btn w120 cta-btn-condensed sans"
+            // style={{
+            //   padding: '8px 20px',
+            //   fontSize: 'var(--fs-sm)',
+            //   borderRadius: 'var(--radius-btn)',
+            //   textDecoration: 'none',
+            //   minWidth: 110,
+            // }}
           >
-            Get Started
+            Sign Up
           </a>
         </div>
       </div>
