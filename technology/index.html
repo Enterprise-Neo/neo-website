@@ -644,6 +644,191 @@
         );
       };
 
+      /* ━━━ Pipeline Timeline Component ━━━ */
+      const PIPELINE_CYCLE_MS = 5500;
+
+      const PipelineTimeline = ({ stages }) => {
+        const [activeIdx, setActiveIdx] = useState(0);
+        const timelineRef = useRef(null);
+        const railFillRef = useRef(null);
+        const cycleTimerRef = useRef(null);
+        const resumeTimerRef = useRef(null);
+
+        const positionRail = useCallback(() => {
+          const tl = timelineRef.current;
+          const fill = railFillRef.current;
+          if (!tl || !fill) return;
+
+          const items = tl.querySelectorAll('.tl-item');
+          if (!items.length) return;
+
+          const tlRect = tl.getBoundingClientRect();
+          const firstDot = items[0].querySelector('.tl-dot');
+          const activeDot = items[activeIdx].querySelector('.tl-dot');
+          if (!firstDot || !activeDot) return;
+
+          const startY =
+            firstDot.getBoundingClientRect().top - tlRect.top + firstDot.offsetHeight / 2;
+
+          if (activeIdx === 0) {
+            fill.style.top = startY + 'px';
+            fill.style.height = '0px';
+          } else {
+            const endY =
+              activeDot.getBoundingClientRect().top - tlRect.top + activeDot.offsetHeight / 2;
+            fill.style.top = startY + 'px';
+            fill.style.height = endY - startY + 'px';
+          }
+        }, [activeIdx]);
+
+        const startCycle = useCallback(() => {
+          clearTimeout(cycleTimerRef.current);
+          clearTimeout(resumeTimerRef.current);
+          let idx = 0;
+          const tick = () => {
+            setActiveIdx(idx);
+            idx = (idx + 1) % stages.length;
+            cycleTimerRef.current = setTimeout(tick, PIPELINE_CYCLE_MS);
+          };
+          tick();
+        }, [stages.length]);
+
+        const handleSelect = useCallback(
+          (idx) => {
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+            setActiveIdx(idx);
+            resumeTimerRef.current = setTimeout(() => {
+              startCycle();
+            }, 14000);
+          },
+          [startCycle]
+        );
+
+        /* Init cycle */
+        useEffect(() => {
+          const initRaf = requestAnimationFrame(() => {
+            startCycle();
+          });
+          return () => {
+            cancelAnimationFrame(initRaf);
+            clearTimeout(cycleTimerRef.current);
+            clearTimeout(resumeTimerRef.current);
+          };
+        }, [startCycle]);
+
+        /* Position rail on activeIdx change and after fonts */
+        useEffect(() => {
+          const raf = requestAnimationFrame(positionRail);
+          if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(positionRail);
+          }
+          const onResize = () => requestAnimationFrame(positionRail);
+          window.addEventListener('resize', onResize);
+          return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener('resize', onResize);
+          };
+        }, [positionRail]);
+
+        const s = stages[activeIdx];
+        const tagCls = s.ip || s.id === 'output' ? 'ip' : '';
+
+        return (
+          <div>
+            <div className="pipeline-split">
+              {/* LEFT: Timeline */}
+              <div className="pipeline-timeline has-active" ref={timelineRef}>
+                <div className="timeline-rail" />
+                <div className="timeline-rail-fill" ref={railFillRef} />
+
+                {stages.map((stage, i) => (
+                  <div
+                    key={stage.id}
+                    className={
+                      'tl-item' +
+                      (stage.ip ? ' ip' : '') +
+                      (i === activeIdx ? ' active' : '') +
+                      (i < activeIdx ? ' passed' : '')
+                    }
+                    onClick={() => handleSelect(i)}
+                  >
+                    <div className="tl-dot">
+                      <span className="num">{stage.num}</span>
+                    </div>
+                    <div className="tl-text">
+                      <div className="tl-title">{stage.label}</div>
+                      <div className="tl-sub">{stage.subtitle}</div>
+                    </div>
+                    {stage.ip && <span className="tl-ip-badge">IP</span>}
+                  </div>
+                ))}
+              </div>
+
+              {/* RIGHT: Detail Panel */}
+              <div className={'pipeline-detail' + (s.ip ? ' ip-active' : '')}>
+                <div className="dp-body">
+                  <div className="detail-content" key={activeIdx}>
+                    <div className="dp-header">
+                      <div>
+                        <div className="dp-num-title">
+                          <span className="dp-num">{s.num}</span>
+                          <span className="dp-title">{s.label}</span>
+                        </div>
+                        <div className="dp-subtitle">{s.subtitle}</div>
+                      </div>
+                      <div className="dp-badges-inline">
+                        {s.ip && <span className="dd-prop-badge">PROPRIETARY IP</span>}
+                      </div>
+                    </div>
+                    <div className="dp-desc sans">{s.desc}</div>
+                  </div>
+                </div>
+                <div className="dp-footer">
+                  <div className="dp-footer-label">Key capabilities</div>
+                  <div className="dp-tags" key={activeIdx + '-tags'}>
+                    {s.tags.map((t, j) => (
+                      <span key={j} className={'dp-tag' + (tagCls ? ' ' + tagCls : '')}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats bar */}
+            <div className="pipeline-stats-bar">
+              {[
+                {
+                  v: '100%',
+                  l: 'Deterministic',
+                  d: 'Every duty calculation uses deterministic regex, pattern matching, and tree traversal. No LLM in the decision path.',
+                },
+                {
+                  v: '5',
+                  l: 'Proprietary Stages',
+                  d: 'Five of seven pipeline stages contain core IP — novel algorithms for hierarchy recovery, resolution, and evaluation.',
+                },
+                {
+                  v: 'Full',
+                  l: 'Traceability',
+                  d: 'Every answer traces back to specific rules, source notes, PDF page numbers, and government revision identifiers.',
+                },
+              ].map((stat, i) => (
+                <div key={i} className="pipeline-stat-card">
+                  <div className="pipeline-stat-top">
+                    <span className="pipeline-stat-val">{stat.v}</span>
+                    <span className="pipeline-stat-label sans">{stat.l}</span>
+                  </div>
+                  <div className="pipeline-stat-desc sans">{stat.d}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
       const stages = [
         {
           id: 'ingest',
@@ -736,9 +921,6 @@
       ];
 
       const NeoTariffTechnology = () => {
-        const [activeStage, setActiveStage] = useState(null);
-        const [hoveredLayer, setHoveredLayer] = useState(null);
-
         const isV = useScrollAnimation();
         return (
           <div
@@ -834,280 +1016,7 @@
                     off-the-shelf NLP. No LLM in the decision path.
                   </p>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <div
-                        style={{
-                          width: 3,
-                          height: 14,
-                          background: 'rgba(108,99,255,0.25)',
-                          borderRadius: 1,
-                        }}
-                      />
-                      <span
-                        className="mono"
-                        style={{ fontSize: 10, color: 'var(--accent)', letterSpacing: '0.06em' }}
-                      >
-                        Proprietary IP
-                      </span>
-                    </div>
-                    <div
-                      style={{ width: 1, height: 12, background: 'var(--border)', margin: '0 8px' }}
-                    />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <div
-                        style={{
-                          width: 3,
-                          height: 14,
-                          background: 'var(--bg-elevated)',
-                          borderRadius: 1,
-                        }}
-                      />
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: 10,
-                          color: 'var(--text-muted)',
-                          letterSpacing: '0.06em',
-                        }}
-                      >
-                        Standard infrastructure
-                      </span>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                    {stages.map((stage) => {
-                      const isActive = activeStage === stage.id;
-                      const isIp = stage.ip;
-                      return (
-                        <div
-                          key={stage.id}
-                          className={`stage-card ${isIp ? 'ip' : 'std'} ${isActive ? 'active' : ''}`}
-                          onClick={() => setActiveStage(isActive ? null : stage.id)}
-                          style={{ padding: isActive ? '22px 28px 20px' : '14px 28px' }}
-                        >
-                          {isIp && isActive && (
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                height: 1,
-                                background:
-                                  'linear-gradient(90deg, var(--accent), transparent 70%)',
-                              }}
-                            />
-                          )}
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 'var(--fs-xs)',
-                                  color: isIp
-                                    ? isActive
-                                      ? 'var(--accent)'
-                                      : 'rgba(108,99,255,0.4)'
-                                    : 'var(--text-muted)',
-                                  letterSpacing: '0.04em',
-                                  fontWeight: 500,
-                                  minWidth: 22,
-                                }}
-                              >
-                                {stage.num}
-                              </span>
-                              <h3
-                                className="sans"
-                                style={{
-                                  fontSize: 'var(--fs-base)',
-                                  fontWeight: 600,
-                                  margin: 0,
-                                  color: isActive
-                                    ? 'var(--text-primary)'
-                                    : isIp
-                                      ? 'var(--text-secondary)'
-                                      : 'var(--text-muted)',
-                                  letterSpacing: '-0.01em',
-                                  transition: 'color 0.25s',
-                                }}
-                              >
-                                {stage.label}
-                              </h3>
-                              <span
-                                className="mono"
-                                style={{
-                                  fontSize: 10,
-                                  color: 'var(--text-muted)',
-                                  letterSpacing: '0.03em',
-                                }}
-                              >
-                                {stage.subtitle}
-                              </span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                              {isIp && (
-                                <span
-                                  className="mono"
-                                  style={{
-                                    fontSize: 9,
-                                    letterSpacing: '0.1em',
-                                    color: 'var(--accent)',
-                                    background: 'rgba(108,99,255,0.08)',
-                                    border: '1px solid rgba(108,99,255,0.15)',
-                                    padding: '2px 7px',
-                                  }}
-                                >
-                                  Proprietary IP
-                                </span>
-                              )}
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 14 14"
-                                style={{
-                                  transform: isActive ? 'rotate(180deg)' : 'rotate(0)',
-                                  transition: 'transform 0.3s',
-                                }}
-                              >
-                                <path
-                                  d="M3 5.5L7 9.5L11 5.5"
-                                  stroke="var(--text-muted)"
-                                  strokeWidth="1.2"
-                                  fill="none"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                          {isActive && (
-                            <div style={{ marginTop: 16, paddingLeft: 36 }}>
-                              <p
-                                className="sans"
-                                style={{
-                                  fontSize: 'var(--fs-base)',
-                                  lineHeight: 1.6,
-                                  color: 'var(--text-secondary)',
-                                  margin: '0 0 16px',
-                                  maxWidth: 560,
-                                }}
-                              >
-                                {stage.desc}
-                              </p>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                                {stage.tags.map((t, j) => (
-                                  <span
-                                    key={j}
-                                    className="mono"
-                                    style={{
-                                      fontSize: 10.5,
-                                      padding: '4px 10px',
-                                      letterSpacing: '0.02em',
-                                      color: isIp
-                                        ? 'var(--accent)'
-                                        : stage.id === 'output'
-                                          ? 'var(--green)'
-                                          : 'var(--text-muted)',
-                                      background: isIp
-                                        ? 'rgba(108,99,255,0.06)'
-                                        : stage.id === 'output'
-                                          ? 'rgba(74,222,128,0.06)'
-                                          : 'rgba(255,255,255,0.02)',
-                                      border: `1px solid ${isIp ? 'rgba(108,99,255,0.12)' : stage.id === 'output' ? 'rgba(74,222,128,0.12)' : 'var(--border)'}`,
-                                    }}
-                                  >
-                                    {t}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 40,
-                      padding: '28px 32px',
-                      border: '1px solid var(--border)',
-                      borderRadius: 'var(--radius)',
-                      background: 'var(--bg-card)',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr 1fr',
-                      gap: 32,
-                      position: 'relative',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 2,
-                        background:
-                          'linear-gradient(90deg, transparent, rgba(108,99,255,0.4), transparent)',
-                      }}
-                    />
-                    {[
-                      {
-                        v: '100%',
-                        l: 'Deterministic',
-                        s: 'Every duty calculation uses deterministic regex, pattern matching, and tree traversal. No LLM in the decision path.',
-                      },
-                      {
-                        v: '5 / 7',
-                        l: 'Proprietary Stages',
-                        s: 'Five of seven pipeline stages contain core IP — novel algorithms for hierarchy recovery, resolution, and evaluation.',
-                      },
-                      {
-                        v: 'Full',
-                        l: 'Traceability',
-                        s: 'Every answer traces back to specific rules, source notes, PDF page numbers, and government revision identifiers.',
-                      },
-                    ].map((stat, i) => (
-                      <div key={i}>
-                        <div
-                          style={{
-                            fontSize: 26,
-                            fontWeight: 600,
-                            color: 'var(--accent)',
-                            letterSpacing: '-0.02em',
-                            marginBottom: 6,
-                          }}
-                        >
-                          {stat.v}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 8 }}
-                        >
-                          {stat.l}
-                        </div>
-                        <p
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            lineHeight: 1.6,
-                            color: 'var(--text-secondary)',
-                            margin: 0,
-                          }}
-                        >
-                          {stat.s}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  <PipelineTimeline stages={stages} />
                 </div>
               </div>
             </section>
@@ -1526,17 +1435,17 @@
                       flexWrap: 'nowrap',
                     }}
                   >
-                    <button className="cta-btn sans">Request a Demo</button>
+                    <button className="cta-btn w200 sans">Request a Demo</button>
                     <a
                       href="/product/platform"
-                      className="cta-btn cta-btn-outline sans"
+                      className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
                       Explore Platform
                     </a>
                     <a
                       href="/product/api"
-                      className="cta-btn cta-btn-ghost sans"
+                      className="cta-btn w200 cta-btn-ghost sans"
                       style={{ textDecoration: 'none' }}
                     >
                       API Reference
