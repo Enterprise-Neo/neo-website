@@ -526,57 +526,171 @@
                     Our team shares analysis, frameworks, and lessons learned from working at the
                     intersection of trade policy, data engineering, and enterprise decision-making.
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
                     {[
                       {
-                        title: 'Understanding the True Cost of Tariff Complexity',
-                        tag: 'Trade Policy',
-                        desc: 'How fragmented tariff data and manual processes create hidden costs that compound across the supply chain.',
+                        title: "The CEO\u2019s Tariff Playbook: Why Scenario Planning Beats Crystal Ball Gazing",
+                        desc: "What Shell\u2019s oil crisis playbook teaches today\u2019s trade war survivors: scenario planning wins.",
+                        date: 'July 22, 2025',
+                        img: '/images/articles/article-ceos-tariff-playbook.png',
+                        link: 'https://www.linkedin.com/pulse/ceos-tariff-playbook-why-scenario-planning-beats-crystal-joy-peters-ineac/',
                       },
                       {
-                        title: 'From Lookup Tables to Logic Engines',
-                        tag: 'Technology',
-                        desc: 'Why deterministic rule evaluation produces fundamentally different — and better — duty answers than static rate lookups.',
+                        title: 'Myth-Busting: Luxury Cosmetics Are Not Helpless Against Tariffs',
+                        desc: 'How strategic sourcing, smart design, and financial levers help premium brands navigate tariff headwinds.',
+                        date: 'July 17, 2025',
+                        img: '/images/articles/article-myth-busting-luxury-cosmetics.png',
+                        link: 'https://www.linkedin.com/pulse/myth-busting-luxury-cosmetics-helpless-against-tariffs-joy-peters-sl6yf/',
                       },
                       {
-                        title: 'Scenario Planning in an Era of Tariff Volatility',
-                        tag: 'Strategy',
-                        desc: 'How leading importers use scenario modeling to turn tariff uncertainty into operational advantage.',
+                        title: 'Tariffs, Culture, and the Cost of Beauty: The New Divide Hitting Brands and Consumers',
+                        desc: "Tariffs are rewriting who survives in beauty\u2014find out why indie brands are at risk.",
+                        date: 'July 17, 2025',
+                        img: '/images/articles/article-tariffs-culture-cost-of-beauty.png',
+                        link: 'https://www.linkedin.com/pulse/tariffs-culture-cost-beauty-new-divide-hitting-brands-joy-peters-5lr9e/',
+                      },
+                      {
+                        title: 'From Trade Shock to Strategic Edge: Why Boards Must Lead on Tariff Resilience',
+                        desc: "Tariffs are boardroom risks\u2014not just sourcing issues. Learn how directors can turn trade shocks into strategic advantage.",
+                        date: 'April 28, 2025',
+                        img: '/images/articles/article-from-trade-shock-strategic-edge.jpeg',
+                        link: 'https://www.linkedin.com/pulse/from-trade-shock-strategic-edge-why-boards-must-lead-tariff-zeyfc/',
+                      },
+                      {
+                        title: 'U.S. Tariffs: Same Dance, Different Tune?',
+                        desc: 'When trade rules shift, agility wins. This is how one firm turned tariffs into an advantage.',
+                        date: 'April 14, 2025',
+                        img: '/images/articles/article-us-tariffs-same-dance-different-tune.png',
+                        link: 'https://www.linkedin.com/pulse/us-tariffs-same-dance-different-tune-enterprise-neo-4ukee/',
+                      },
+                      {
+                        title: "When the coop gets rattled, it\u2019s the strongest birds that keep laying",
+                        desc: "Tariffs are testing F&B brands\u2014see why only the strongest players keep winning at the shelf.",
+                        date: 'April 11, 2025',
+                        img: '/images/articles/article-when-the-coop-gets-rattled.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-coop-gets-rattled-its-strongest-birds-keep-laying-kuhme/',
+                      },
+                      {
+                        title: 'When Tariffs Hit Hardest: How SMBs Can Survive What Giants Absorb',
+                        desc: 'A shipment gone wrong. A wake-up call. Five ways SMBs can stay ahead of the next tariff hit.',
+                        date: 'April 10, 2025',
+                        img: '/images/articles/article-when-tariffs-hit-hardest-smbs.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-tariffs-hit-hardest-how-smbs-can-survive-what-giants-za88e/',
+                      },
+                      {
+                        title: 'When the Silent Gears Jam: The Untold Tariff Risk in Salt, Fertilizers, and the Commodities Economy',
+                        desc: "This isn\u2019t about gadgets\u2014it\u2019s about what keeps the country running.",
+                        date: 'April 10, 2025',
+                        img: '/images/articles/article-when-the-silent-gears-jam.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-silent-gears-jam-untold-tariff-risk-salt-fertilizers-pasqe/',
+                      },
+                      {
+                        title: "Like Brady at the Line: A CEO\u2019s Bold Audible to Win Amid Tariff Shocks and Demand Swings",
+                        desc: 'Inaction is costing margin. Learn the 6 strategic moves industrial leaders must make now.',
+                        date: 'April 7, 2025',
+                        img: '/images/articles/article-like-brady-at-the-line.jpeg',
+                        link: 'https://www.linkedin.com/pulse/like-brady-line-ceos-bold-audible-win-amid-tariff-shocks-t9fuf/',
+                      },
+                      {
+                        title: 'Strategic Commerce in 2025: Rethinking Global Operations in a Fragmenting Trade Environment',
+                        desc: 'Globalization is out. Geo-economics is in. Are you ready to lead in the new trade regime?',
+                        date: 'April 6, 2025',
+                        img: '/images/articles/article-strategic-commerce-2025.jpeg',
+                        link: 'https://www.linkedin.com/pulse/strategic-commerce-2025-rethinking-global-operations-fragmenting-txspe/',
                       },
                     ].map((article, i) => (
-                      <div key={i} className="info-card" style={{ padding: '24px 22px' }}>
+                      <a
+                        key={i}
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="info-card"
+                        style={{
+                          padding: 0,
+                          overflow: 'hidden',
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          transition: 'border-color 0.25s, transform 0.25s',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--accent)';
+                          e.currentTarget.style.transform = 'translateY(-3px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                          e.currentTarget.style.transform = '';
+                        }}
+                      >
                         <div
-                          className="mono"
                           style={{
-                            fontSize: 10,
-                            letterSpacing: '0.1em',
-                            color: 'var(--accent)',
-                            marginBottom: 12,
+                            width: '100%',
+                            height: 160,
+                            overflow: 'hidden',
+                            background: 'var(--bg-dark)',
                           }}
                         >
-                          {article.tag.toUpperCase()}
+                          <img
+                            src={article.img}
+                            alt=""
+                            loading="lazy"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              display: 'block',
+                            }}
+                          />
                         </div>
-                        <div
-                          className="sans"
-                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 10, lineHeight: 1.4 }}
-                        >
-                          {article.title}
+                        <div style={{ padding: '18px 22px 22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          <div
+                            className="mono"
+                            style={{
+                              fontSize: 10,
+                              letterSpacing: '0.1em',
+                              color: 'var(--text-muted)',
+                              marginBottom: 10,
+                            }}
+                          >
+                            {article.date.toUpperCase()}
+                          </div>
+                          <div
+                            className="sans"
+                            style={{
+                              fontSize: 'var(--fs-base)',
+                              fontWeight: 600,
+                              marginBottom: 10,
+                              lineHeight: 1.4,
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            {article.title}
+                          </div>
+                          <div
+                            className="sans section-desc"
+                            style={{ fontSize: 'var(--fs-sm)', flex: 1 }}
+                          >
+                            {article.desc}
+                          </div>
+                          <div
+                            className="sans"
+                            style={{
+                              fontSize: 'var(--fs-sm)',
+                              color: 'var(--accent)',
+                              marginTop: 14,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                            }}
+                          >
+                            Read on LinkedIn
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                              <path d="M5 3h8v8M13 3L3 13" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
                         </div>
-                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
-                          {article.desc}
-                        </div>
-                        <div
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            color: 'var(--text-muted)',
-                            fontStyle: 'italic',
-                            marginTop: 14,
-                          }}
-                        >
-                          Coming soon
-                        </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </div>
