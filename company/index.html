@@ -32,6 +32,17 @@
       const NeoTariffCompany = () => {
         const isV = useScrollAnimation();
 
+        // Handle hash-based navigation (e.g. /company/#insights)
+        useEffect(() => {
+          const hash = window.location.hash.slice(1);
+          if (hash) {
+            setTimeout(() => {
+              const el = document.getElementById(hash);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 400);
+          }
+        }, []);
+
         const sideNavSections = [
           { id: 'phil', label: 'Our Philosophy' },
           { id: 'team', label: 'Our Team' },
@@ -194,7 +205,7 @@
                 style={{
                   position: 'relative',
                   width: '100%',
-                  height: isLarge ? 320 : 240,
+                  height: isLarge ? 240 : 180,
                   overflow: 'hidden',
                 }}
               >

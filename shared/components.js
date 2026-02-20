@@ -85,6 +85,8 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
   const [neotariffOpen, setNeotariffOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const ntTimer = React.useRef(null);
+  const coTimer = React.useRef(null);
 
   useEffect(() => {
     if (!transparent) return;
@@ -93,6 +95,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
     return () => window.removeEventListener('scroll', h);
   }, [transparent]);
 
+  // Click-outside fallback
   useEffect(() => {
     const h = (e) => {
       if (!e.target.closest('.dropdown-neotariff')) setNeotariffOpen(false);
@@ -102,8 +105,14 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
     return () => document.removeEventListener('click', h);
   }, []);
 
+  const showNt = () => { clearTimeout(ntTimer.current); setNeotariffOpen(true); setCompanyOpen(false); };
+  const hideNt = () => { ntTimer.current = setTimeout(() => setNeotariffOpen(false), 150); };
+  const showCo = () => { clearTimeout(coTimer.current); setCompanyOpen(true); setNeotariffOpen(false); };
+  const hideCo = () => { coTimer.current = setTimeout(() => setCompanyOpen(false), 150); };
+
   const isNeoTariffPage = ['neotariff', 'platform', 'api', 'sdk', 'technology'].includes(activePage);
   const isCompanyPage = ['company'].includes(activePage);
+  const isEnterpriseBrand = ['home', 'company'].includes(activePage);
   const navClasses = [
     'neo-nav',
     'sans',
@@ -120,6 +129,20 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
     fontWeight: activePage === page ? 600 : 400,
     color: activePage === page ? 'var(--text-primary)' : 'var(--text-secondary)',
     ...(activePage === page ? { borderBottom: '2px solid var(--accent)', marginBottom: -1 } : {}),
+  });
+
+  const dropdownTriggerStyle = (isActive) => ({
+    padding: '8px 14px',
+    fontSize: 'var(--fs-sm)',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+    fontWeight: isActive ? 600 : 400,
+    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+    borderBottom: isActive ? '2px solid var(--accent)' : 'none',
+    marginBottom: isActive ? -1 : 0,
+    cursor: 'pointer',
   });
 
   return (
@@ -151,72 +174,72 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
             N
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'baseline' }}>
-          <span
-            style={{
-              color: 'var(--text-primary)',
-              fontSize: 16,
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Neo
-          </span>
-          <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 400 }}>
-            Tariff
-          </span>
-        </div>
-        <span
-          className="mono"
-          style={{ fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.08em' }}
-        >
-          {SITE.tagline}
-        </span>
+        {isEnterpriseBrand ? (
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+            <span
+              style={{
+                color: 'var(--text-primary)',
+                fontSize: 16,
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Enterprise
+            </span>
+            <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 700 }}>
+              Neo
+            </span>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline' }}>
+              <span
+                style={{
+                  color: 'var(--text-primary)',
+                  fontSize: 16,
+                  fontWeight: 700,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                Neo
+              </span>
+              <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 400 }}>
+                Tariff
+              </span>
+            </div>
+            <span
+              className="mono"
+              style={{ fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.08em' }}
+            >
+              {SITE.tagline}
+            </span>
+          </>
+        )}
       </a>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          {/* NeoTariff dropdown */}
-          <div className="dropdown-neotariff" style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setNeotariffOpen(!neotariffOpen);
-                setCompanyOpen(false);
-              }}
+          {/* NeoTariff dropdown — hover to show, click navigates */}
+          <div
+            className="dropdown-neotariff"
+            style={{ position: 'relative' }}
+            onMouseEnter={showNt}
+            onMouseLeave={hideNt}
+          >
+            <a
+              href="/neotariff/"
               className="sans"
-              style={{
-                padding: '8px 14px',
-                fontSize: 'var(--fs-sm)',
-                background: 'none',
-                borderTop: 'none',
-                borderLeft: 'none',
-                borderRight: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                fontWeight: isNeoTariffPage ? 600 : 400,
-                color: isNeoTariffPage ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderBottom: isNeoTariffPage ? '2px solid var(--accent)' : 'none',
-                marginBottom: isNeoTariffPage ? -1 : 0,
-              }}
+              style={dropdownTriggerStyle(isNeoTariffPage)}
             >
               NeoTariff <ChevronDown open={neotariffOpen} />
-            </button>
+            </a>
             <div className={`dropdown-menu ${neotariffOpen ? 'open' : ''}`}>
-              <a
-                href="/neotariff/"
-                style={activePage === 'neotariff' ? { color: 'var(--accent)' } : {}}
-              >
-                Overview
-              </a>
-              <div className="dd-label sans">PLATFORM ACCESS</div>
+              <div className="dd-label sans">FEATURES</div>
               <a
                 href="/neotariff/platform/"
                 style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
               >
-                Web Application
+                Platform
               </a>
               <a href="/neotariff/api/" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
                 REST API
@@ -235,37 +258,26 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
             Pricing
           </a>
 
-          {/* Company dropdown */}
-          <div className="dropdown-company" style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setCompanyOpen(!companyOpen);
-                setNeotariffOpen(false);
-              }}
+          {/* Company dropdown — hover to show, click navigates */}
+          <div
+            className="dropdown-company"
+            style={{ position: 'relative' }}
+            onMouseEnter={showCo}
+            onMouseLeave={hideCo}
+          >
+            <a
+              href="/company/"
               className="sans"
-              style={{
-                padding: '8px 14px',
-                fontSize: 'var(--fs-sm)',
-                background: 'none',
-                borderTop: 'none',
-                borderLeft: 'none',
-                borderRight: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                fontWeight: isCompanyPage ? 600 : 400,
-                color: isCompanyPage ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderBottom: isCompanyPage ? '2px solid var(--accent)' : 'none',
-                marginBottom: isCompanyPage ? -1 : 0,
-              }}
+              style={dropdownTriggerStyle(isCompanyPage)}
             >
               Company <ChevronDown open={companyOpen} />
-            </button>
+            </a>
             <div className={`dropdown-menu ${companyOpen ? 'open' : ''}`}>
+              <a href="/company/#phil">
+                Our Philosophy
+              </a>
               <a
-                href="/company/"
+                href="/company/#team"
                 style={activePage === 'company' ? { color: 'var(--accent)' } : {}}
               >
                 Leadership & Team
