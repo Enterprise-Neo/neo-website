@@ -1,19 +1,32 @@
-# Neo Tariff — Netlify Redirects
+# Enterprise NEO / NeoTariff — Netlify Redirects
 # Clean URLs are handled automatically by folder/index.html structure.
 # These catch edge cases and ensure proper routing.
 
-# Trailing slash normalization
-/technology          /technology/            301
-/product/platform    /product/platform/      301
-/product/api         /product/api/           301
-/product/sdk         /product/sdk/           301
-/pricing             /pricing/               301
-/company             /company/               301
+# Trailing slash normalization — new structure
+/neotariff              /neotariff/             301
+/neotariff/platform     /neotariff/platform/    301
+/neotariff/api          /neotariff/api/         301
+/neotariff/sdk          /neotariff/sdk/         301
+/neotariff/technology   /neotariff/technology/  301
+/pricing                /pricing/               301
+/company                /company/               301
 
-# Old URL redirects (preserve bookmarks / SEO)
-/platform            /product/platform/      301
-/platform/           /product/platform/      301
-/api                 /product/api/           301
-/api/                /product/api/           301
-/sdk                 /product/sdk/           301
-/sdk/                /product/sdk/           301
+# Old Product paths → new NeoTariff nested structure
+/product/platform       /neotariff/platform/    301
+/product/platform/      /neotariff/platform/    301
+/product/api            /neotariff/api/         301
+/product/api/           /neotariff/api/         301
+/product/sdk            /neotariff/sdk/         301
+/product/sdk/           /neotariff/sdk/         301
+
+# Old Technology path
+/technology             /neotariff/technology/  301
+/technology/            /neotariff/technology/  301
+
+# Legacy short paths
+/platform               /neotariff/platform/    301
+/platform/              /neotariff/platform/    301
+/api                    /neotariff/api/         301
+/api/                   /neotariff/api/         301
+/sdk                    /neotariff/sdk/         301
+/sdk/                   /neotariff/sdk/         301

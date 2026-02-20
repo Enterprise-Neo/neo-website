@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neo Tariff — Pricing</title>
+    <link rel="stylesheet" href="/shared/styles.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+    <script type="text/babel" src="/shared/components.js"></script>
+    <script type="text/babel">
+      const {
+        NeoNav,
+        NeoFooter,
+        NeoGrain,
+        NeoDivider,
+        NeoHero,
+        NeoSideNav,
+        useScrollAnimation,
+        ArrowIcon,
+      } = window;
+      const { useState } = React;
+
+      const NeoTariffPricing = () => {
+        const [activeFaq, setActiveFaq] = useState(null);
+        const isV = useScrollAnimation();
+
+        const sideNavSections = [
+          { id: 'trial', label: 'Free Trial' },
+          { id: 'ctable', label: 'Plans' },
+          { id: 'pfaq', label: 'FAQ' },
+          { id: 'pcta', label: 'Get Started' },
+        ];
+
+        /* ═══════════════════════════════════════
+           DATA — edit these objects to update the page
+           ═══════════════════════════════════════ */
+
+        /* ── Trial strip config ── */
+        const trial = {
+          title: 'Free trial',
+          subtitle: 'try the full platform before you commit',
+          description: 'No credit card required. All features unlocked.',
+          credits: '1,000',
+          days: '7',
+          cta: 'Start Free Trial',
+          href: null,
+        };
+
+        /* ── Plan columns (order matters — matches table column order) ── */
+        const plans = [
+          {
+            name: 'Pay-As-You-Go',
+            price: '$0',
+            perCredit: '$0.35 / credit',
+            barWidth: '100%',
+            barColor: '#6B697A',
+            cta: 'Get Started',
+            ctaStyle: 'fill',
+          },
+          {
+            name: 'Small',
+            price: '$1,000',
+            perCredit: '$0.30 / credit',
+            barWidth: '86%',
+            barColor: '#8B5CF6',
+            cta: 'Get Started',
+            ctaStyle: 'fill',
+          },
+          {
+            name: 'Medium',
+            price: '$2,500',
+            perCredit: '$0.18 / credit',
+            barWidth: '51%',
+            barColor: 'var(--accent)',
+            cta: 'Get Started',
+            ctaStyle: 'fill',
+          },
+          {
+            name: 'Large',
+            price: '$5,000',
+            perCredit: '$0.12 / credit',
+            barWidth: '34%',
+            barColor: 'var(--blue)',
+            cta: 'Get Started',
+            ctaStyle: 'fill',
+          },
+          {
+            name: 'Enterprise',
+            price: 'Custom',
+            perCredit: 'Volume pricing',
+            barWidth: '15%',
+            barColor: 'var(--orange)',
+            cta: 'Contact Us',
+            ctaStyle: 'ghost',
+          },
+        ];
+
+        /* ── Table sections & rows ──
+           Each section has a label and rows.
+           Each row has a feature name and values[] matching plans[] order.
+           Value types:
+             '✓'        → rendered as .c-check
+             string     → rendered as .c-val
+             '—'        → rendered as .c-muted dash
+             { text, muted }  → text with muted note
+        */
+        const tableSections = [
+          {
+            label: 'VOLUME',
+            rows: [
+              {
+                feature: 'Annual credits',
+                values: ['Usage-based', '42,000', '174,000', '504,000', 'Custom'],
+                muted: [true, false, false, false, true],
+              },
+              {
+                feature: 'Monthly credits',
+                values: ['—', '3,500', '14,500', '42,000', 'Custom'],
+                muted: [true, false, false, false, true],
+              },
+              {
+                feature: 'Overage rate',
+                values: [
+                  '$0.35 / credit',
+                  '$0.30 / credit',
+                  '$0.18 / credit',
+                  '$0.12 / credit',
+                  'Negotiated',
+                ],
+                muted: [true, true, true, true, true],
+              },
+            ],
+          },
+          {
+            label: 'PLATFORM ACCESS',
+            rows: [
+              { feature: 'Web App', values: ['✓', '✓', '✓', '✓', '✓'] },
+              {
+                feature: 'REST API',
+                featureSub: '50 endpoints',
+                values: ['✓', '✓', '✓', '✓', '✓'],
+              },
+              { feature: 'Python SDK', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'TARIFF ENGINE',
+            rows: [
+              { feature: 'Deterministic engine', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Bulk processing', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: '232 / 301 / IEEPA', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Rate traceability', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'HTS history', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'HTS browser', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Live updates', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'INTELLIGENCE',
+            rows: [
+              { feature: 'Scenario comparison', values: ['✓', '✓', '✓', '✓', '✓'] },
+              { feature: 'Supplier matching', values: ['✓', '✓', '✓', '✓', '✓'] },
+            ],
+          },
+          {
+            label: 'SUPPORT',
+            rows: [
+              { feature: 'Docs & knowledge base', values: ['✓', '✓', '✓', '✓', '✓'] },
+              {
+                feature: 'Priority support',
+                values: ['—', '✓', '✓', '✓', '✓'],
+                muted: [true, false, false, false, false],
+              },
+              {
+                feature: 'Dedicated onboarding',
+                values: ['—', '—', '—', '—', '✓'],
+                muted: [true, true, true, true, false],
+              },
+              {
+                feature: 'Custom SLAs',
+                values: ['—', '—', '—', '—', '✓'],
+                muted: [true, true, true, true, false],
+              },
+            ],
+          },
+        ];
+
+        /* ── FAQ ── */
+        const faqs = [
+          {
+            q: 'What is a credit?',
+            a: 'A credit is the unit of consumption across the Neo Tariff platform. Each API call or platform action consumes credits based on complexity. A single duty calculation is 1 credit. Batch calculations consume 1 credit per entry. Search, context lookups, and HTS browsing actions are typically fractional credits. Your account dashboard shows real-time usage and remaining balance.',
+          },
+          {
+            q: 'Do all plans include the same features?',
+            a: 'Yes. Every plan — including Pay-As-You-Go — gets full access to the entire Neo Tariff platform: the duty & landed cost engine, portfolio analysis, interactive HTS browser, scenario comparison, supplier matching, REST API, Python SDK, and all 50 API endpoints. The only difference between plans is the volume of credits and per-credit cost.',
+          },
+          {
+            q: 'How does the Pay-As-You-Go plan work?',
+            a: "Pay-As-You-Go has no monthly fee and no commitment. You pay $0.35 per credit, billed only for what you use. It's the easiest way to start using Neo Tariff — you get full platform and API access from day one, with no minimum spend.",
+          },
+          {
+            q: 'What happens if I exceed my included credits?',
+            a: "On subscription plans (Small through Large), overage credits are available at your plan's per-credit rate. Your dashboard tracks usage in real-time so there are no surprises. If you're consistently exceeding your allocation, upgrading to the next tier will lower your effective per-credit cost.",
+          },
+          {
+            q: 'Can I switch plans?',
+            a: 'Yes. You can upgrade your plan at any time to access a higher credit allocation and lower per-credit rate. Contact our team to discuss plan changes or to move to a custom arrangement.',
+          },
+          {
+            q: 'Is there a free trial?',
+            a: 'Pay-As-You-Go is effectively a free-to-start plan — $0/month with no commitment. You only pay for what you use at $0.35 per credit. This lets you explore the full platform and API with real duty calculations before committing to a subscription.',
+          },
+          {
+            q: 'Can I use just the API without the web platform?',
+            a: 'Yes. All plans include full REST API access (50 endpoints, 16 groups) and the Python SDK (pip install neo-tariff). You can integrate Neo Tariff directly into your systems — ERP, TMS, procurement platforms, or custom analytics — without ever using the web interface.',
+          },
+          {
+            q: 'How does Neo Tariff stay current with tariff changes?',
+            a: "We continuously monitor the U.S. International Trade Commission for new HTS releases. When a new revision is published, our 7-stage pipeline ingests, parses, and validates the changes — typically within hours of official publication. We've tracked 34 revisions since early 2025. You always get calculations against the latest schedule.",
+          },
+          {
+            q: 'What tariff programs and surcharges are covered?',
+            a: 'Neo Tariff covers the full U.S. HTS including all Chapter 99 rules: Section 301 (China tariffs), Section 232 (steel & aluminum), IEEPA reciprocal duties, trade program benefits (USMCA, GSP, and 28 more), and all supersession, exclusion, and priority logic between overlapping rules. Every calculation is traceable to the specific rule and legal authority that produced it.',
+          },
+          {
+            q: 'How is this different from a tariff lookup tool or AI classifier?',
+            a: "Lookup tools give you a rate from a table. AI classifiers suggest an HTS code. Neo Tariff is a deterministic rules engine that computes the complete duty outcome — evaluating base rates, additional duties, exclusions, conditions, material splits, transit windows, and rule priority — and explains every step with legal citations. If you need defensible, scenario-true numbers for real business decisions, that's the difference.",
+          },
+          {
+            q: 'Do you offer annual billing or custom volume pricing?',
+            a: 'Yes. Annual commitments come with volume savings, and Enterprise plans are fully customizable for high-volume or enterprise requirements. Contact our sales team to discuss pricing that fits your usage patterns.',
+          },
+          {
+            q: 'What kind of support is included?',
+            a: 'All plans include access to actively managed API documentation, interactive Swagger docs, the PyPI package, and our knowledge base. Subscription plans (Small and above) include priority support. Enterprise plans include dedicated support, guided onboarding, and optional advisory services.',
+          },
+          {
+            q: 'Is my data stored or shared?',
+            a: "No. Neo Tariff is stateless by design. Cost and quantity values are used only for that request's duty math and are not logged, stored, or aggregated. Your HTS codes, countries, and values never leave the calculation pipeline.",
+          },
+        ];
+
+        /* ═══════════════════════════════════════
+           HELPERS
+           ═══════════════════════════════════════ */
+
+        const renderCellValue = (val, isMuted, key) => {
+          if (val === '✓') {
+            return (
+              <td key={key}>
+                <span className="c-check">✓</span>
+              </td>
+            );
+          }
+          if (val === '—' || isMuted) {
+            return (
+              <td key={key} className="c-muted">
+                {val}
+              </td>
+            );
+          }
+          return (
+            <td key={key}>
+              <span className="c-val">{val}</span>
+            </td>
+          );
+        };
+
+        /* ═══════════════════════════════════════
+           RENDER
+           ═══════════════════════════════════════ */
+
+        return (
+          <div
+            style={{
+              fontFamily: '"Source Serif 4",Georgia,serif',
+              background: 'var(--bg)',
+              color: 'var(--text-primary)',
+              minHeight: '100vh',
+            }}
+          >
+            <NeoGrain />
+            <NeoNav activePage="pricing" />
+            <NeoSideNav sections={sideNavSections} />
+
+            {/* ━━━ Hero ━━━ */}
+            <NeoHero
+              label="Pricing"
+              title="All features included. Pick your scale."
+              description="Full platform and direct API access on every plan — pay only for what you need."
+              glow="center-low"
+              paddingBottom={24}
+            />
+
+            {/* ━━━ Free Trial Strip ━━━ */}
+            <section style={{ padding: '0 48px 20px' }}>
+              <div
+                id="trial"
+                data-animate
+                className={`trial-strip section-inner anim ${isV('trial') ? 'vis' : ''}`}
+              >
+                <div className="trial-strip-inner">
+                  <div className="trial-strip-left">
+                    <div className="trial-strip-icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+                          stroke="var(--green)"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="trial-strip-title sans">
+                        <strong>{trial.title}</strong> — {trial.subtitle}
+                      </div>
+                      <div className="trial-strip-sub sans">{trial.description}</div>
+                    </div>
+                  </div>
+                  <div className="trial-strip-right">
+                    <div className="trial-strip-stat">
+                      <div className="trial-strip-stat-val">{trial.credits}</div>
+                      <div className="trial-strip-stat-label sans">Credits</div>
+                    </div>
+                    <div className="trial-strip-divider" />
+                    <div className="trial-strip-stat">
+                      <div className="trial-strip-stat-val">{trial.days}</div>
+                      <div className="trial-strip-stat-label sans">Days</div>
+                    </div>
+                    <div className="trial-strip-divider" />
+                    {trial.href ? (
+                      <a href={trial.href} className="trial-cta">
+                        {trial.cta}
+                        <ArrowIcon size={14} />
+                      </a>
+                    ) : (
+                      <button className="trial-cta">
+                        {trial.cta}
+                        <ArrowIcon size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ━━━ Comparison Table ━━━ */}
+            <section style={{ padding: '0 48px 72px' }}>
+              <div
+                id="ctable"
+                data-animate
+                className={`section-inner anim ${isV('ctable') ? 'vis' : ''}`}
+              >
+                <table className="c-table">
+                  <thead>
+                    <tr>
+                      <th />
+                      {plans.map((p, i) => (
+                        <th key={i}>
+                          <div className="c-th-name">
+                            <span className="c-th-dot" style={{ background: p.barColor }} />
+                            {p.name}
+                          </div>
+                          <div className="c-th-price mono">{p.price}</div>
+                          <div className="c-th-sub sans">{p.perCredit}</div>
+                          <div className="c-th-bar">
+                            <div
+                              className="c-th-bar-fill"
+                              style={{ width: p.barWidth, background: p.barColor }}
+                            />
+                          </div>
+                          <div className="c-th-cta">
+                            <button
+                              className={`cta-btn cta-btn-condensed ${p.ctaStyle === 'ghost' ? 'cta-btn-outline' : ''}`}
+                            >
+                              {p.cta}
+                            </button>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableSections.map((section, si) => (
+                      <React.Fragment key={si}>
+                        <tr className="c-section-row">
+                          <td colSpan={plans.length + 1}>{section.label}</td>
+                        </tr>
+                        {section.rows.map((row, ri) => (
+                          <tr key={ri}>
+                            <td className="sans">
+                              {row.feature}
+                              {row.featureSub && (
+                                <span
+                                  className="mono"
+                                  style={{
+                                    fontSize: 9,
+                                    color: 'var(--text-muted)',
+                                    marginLeft: 6,
+                                  }}
+                                >
+                                  {row.featureSub}
+                                </span>
+                              )}
+                            </td>
+                            {row.values.map((val, ci) =>
+                              renderCellValue(val, row.muted && row.muted[ci], ci)
+                            )}
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <div className="divider" />
+
+            {/* ━━━ FAQ ━━━ */}
+            <section style={{ padding: '64px 48px' }}>
+              <div className="section-inner">
+                <div id="pfaq" data-animate className={`anim ${isV('pfaq') ? 'vis' : ''}`}>
+                  <div style={{ marginBottom: 36 }}>
+                    <div className="section-label">FAQ</div>
+                    <h2 className="section-heading" style={{ fontSize: 30 }}>
+                      Frequently asked questions
+                    </h2>
+                  </div>
+                  {faqs.map((f, i) => (
+                    <div key={i} className="faq-item">
+                      <div
+                        className="faq-q sans"
+                        onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                      >
+                        <span
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 500, paddingRight: 16 }}
+                        >
+                          {f.q}
+                        </span>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          style={{
+                            flexShrink: 0,
+                            transform: activeFaq === i ? 'rotate(180deg)' : 'rotate(0)',
+                            transition: 'transform 0.3s',
+                          }}
+                        >
+                          <path
+                            d="M4 6l4 4 4-4"
+                            stroke={activeFaq === i ? 'var(--accent)' : 'var(--text-muted)'}
+                            strokeWidth="1.3"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className={`faq-a sans ${activeFaq === i ? 'open' : ''}`}>
+                        <p className="section-desc" style={{ lineHeight: 1.75 }}>
+                          {f.a}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <div className="divider" />
+
+            {/* ━━━ CTA ━━━ */}
+            <section
+              style={{
+                padding: '96px 48px',
+                textAlign: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div className="cta-glow" />
+              <div className="section-inner-narrow" style={{ position: 'relative' }}>
+                <div id="pcta" data-animate className={`anim ${isV('pcta') ? 'vis' : ''}`}>
+                  <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
+                    Ready to get started?
+                  </h2>
+                  <p className="sans section-desc" style={{ marginBottom: 32 }}>
+                    Start with Pay-As-You-Go at no monthly cost, or talk to our team about the right
+                    plan for your volume.
+                  </p>
+                  <div className="cta-row">
+                    <a
+                      href={SITE.signupUrl}
+                      className="cta-btn w200 sans"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      Get Started Free
+                    </a>
+                    <button className="cta-btn w200 cta-btn-outline sans">Contact Sales</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <NeoFooter />
+          </div>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<NeoTariffPricing />);
+    </script>
+  </body>
+</html>

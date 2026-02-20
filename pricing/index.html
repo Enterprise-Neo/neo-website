@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neo Tariff — Pricing</title>
+    <title>NeoTariff — Pricing</title>
     <link rel="stylesheet" href="/shared/styles.css" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -34,179 +34,81 @@
         const isV = useScrollAnimation();
 
         const sideNavSections = [
-          { id: 'trial', label: 'Free Trial' },
-          { id: 'ctable', label: 'Plans' },
+          { id: 'plans-h', label: 'Plans' },
+          { id: 'included-h', label: "What's Included" },
           { id: 'pfaq', label: 'FAQ' },
           { id: 'pcta', label: 'Get Started' },
         ];
 
-        /* ═══════════════════════════════════════
-           DATA — edit these objects to update the page
-           ═══════════════════════════════════════ */
-
-        /* ── Trial strip config ── */
-        const trial = {
-          title: 'Free trial',
-          subtitle: 'try the full platform before you commit',
-          description: 'No credit card required. All features unlocked.',
-          credits: '1,000',
-          days: '7',
-          cta: 'Start Free Trial',
-          href: null,
-        };
-
-        /* ── Plan columns (order matters — matches table column order) ── */
-        const plans = [
+        /* ── 3 Pricing Panels ── */
+        const panels = [
           {
-            name: 'Pay-As-You-Go',
-            price: '$0',
-            perCredit: '$0.35 / credit',
-            barWidth: '100%',
-            barColor: '#6B697A',
-            cta: 'Get Started',
-            ctaStyle: 'fill',
+            name: 'Free Trial',
+            highlight: '7 Days',
+            details: [
+              '1,000 credits included',
+              'Full platform access',
+              'No credit card required',
+            ],
+            cta: 'Start Free Trial',
+            ctaHref: SITE.signupUrl,
+            ctaStyle: '',
+            accent: 'var(--green)',
           },
           {
-            name: 'Small',
-            price: '$1,000',
-            perCredit: '$0.30 / credit',
-            barWidth: '86%',
-            barColor: '#8B5CF6',
-            cta: 'Get Started',
-            ctaStyle: 'fill',
+            name: 'Pay As You Go',
+            highlight: '$0.35 / credit',
+            details: [
+              'No monthly commitment',
+              'Full platform + API access',
+              'Optional pre-paid plans at discount',
+            ],
+            cta: 'Start Free Trial',
+            ctaHref: SITE.signupUrl,
+            ctaStyle: '',
+            accent: 'var(--accent)',
           },
           {
-            name: 'Medium',
-            price: '$2,500',
-            perCredit: '$0.18 / credit',
-            barWidth: '51%',
-            barColor: 'var(--accent)',
-            cta: 'Get Started',
-            ctaStyle: 'fill',
-          },
-          {
-            name: 'Large',
-            price: '$5,000',
-            perCredit: '$0.12 / credit',
-            barWidth: '34%',
-            barColor: 'var(--blue)',
-            cta: 'Get Started',
-            ctaStyle: 'fill',
-          },
-          {
-            name: 'Enterprise',
-            price: 'Custom',
-            perCredit: 'Volume pricing',
-            barWidth: '15%',
-            barColor: 'var(--orange)',
+            name: 'Licensed Customs Broker',
+            highlight: '90%+ discount',
+            details: [
+              'Exclusive broker pricing',
+              'Verification required',
+              'Full platform + API access',
+            ],
             cta: 'Contact Us',
-            ctaStyle: 'ghost',
+            ctaHref: '/company/',
+            ctaStyle: 'cta-btn-outline',
+            accent: 'var(--orange)',
           },
         ];
 
-        /* ── Table sections & rows ──
-           Each section has a label and rows.
-           Each row has a feature name and values[] matching plans[] order.
-           Value types:
-             '✓'        → rendered as .c-check
-             string     → rendered as .c-val
-             '—'        → rendered as .c-muted dash
-             { text, muted }  → text with muted note
-        */
-        const tableSections = [
-          {
-            label: 'VOLUME',
-            rows: [
-              {
-                feature: 'Annual credits',
-                values: ['Usage-based', '42,000', '174,000', '504,000', 'Custom'],
-                muted: [true, false, false, false, true],
-              },
-              {
-                feature: 'Monthly credits',
-                values: ['—', '3,500', '14,500', '42,000', 'Custom'],
-                muted: [true, false, false, false, true],
-              },
-              {
-                feature: 'Overage rate',
-                values: [
-                  '$0.35 / credit',
-                  '$0.30 / credit',
-                  '$0.18 / credit',
-                  '$0.12 / credit',
-                  'Negotiated',
-                ],
-                muted: [true, true, true, true, true],
-              },
-            ],
-          },
-          {
-            label: 'PLATFORM ACCESS',
-            rows: [
-              { feature: 'Web App', values: ['✓', '✓', '✓', '✓', '✓'] },
-              {
-                feature: 'REST API',
-                featureSub: '50 endpoints',
-                values: ['✓', '✓', '✓', '✓', '✓'],
-              },
-              { feature: 'Python SDK', values: ['✓', '✓', '✓', '✓', '✓'] },
-            ],
-          },
-          {
-            label: 'TARIFF ENGINE',
-            rows: [
-              { feature: 'Deterministic engine', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'Bulk processing', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: '232 / 301 / IEEPA', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'Rate traceability', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'HTS history', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'HTS browser', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'Live updates', values: ['✓', '✓', '✓', '✓', '✓'] },
-            ],
-          },
-          {
-            label: 'INTELLIGENCE',
-            rows: [
-              { feature: 'Scenario comparison', values: ['✓', '✓', '✓', '✓', '✓'] },
-              { feature: 'Supplier matching', values: ['✓', '✓', '✓', '✓', '✓'] },
-            ],
-          },
-          {
-            label: 'SUPPORT',
-            rows: [
-              { feature: 'Docs & knowledge base', values: ['✓', '✓', '✓', '✓', '✓'] },
-              {
-                feature: 'Priority support',
-                values: ['—', '✓', '✓', '✓', '✓'],
-                muted: [true, false, false, false, false],
-              },
-              {
-                feature: 'Dedicated onboarding',
-                values: ['—', '—', '—', '—', '✓'],
-                muted: [true, true, true, true, false],
-              },
-              {
-                feature: 'Custom SLAs',
-                values: ['—', '—', '—', '—', '✓'],
-                muted: [true, true, true, true, false],
-              },
-            ],
-          },
+        /* ── What's Included ── */
+        const included = [
+          { check: true, text: 'Full web platform access (all tools)' },
+          { check: true, text: 'REST API access (50 endpoints, 16 groups)' },
+          { check: true, text: 'Python SDK access' },
+          { check: true, text: 'NeoTariff RuleGraph\u2122 (versioned, auditable)' },
+          { check: true, text: '249 countries with program eligibility' },
+          { check: true, text: '30 trade programs (GSP, USMCA, & more)' },
+          { check: true, text: 'Updates within <1hr of official publication' },
+          { check: false, text: 'Custom SLAs \u2014 Contact us' },
+          { check: false, text: 'Dedicated onboarding \u2014 Contact us' },
         ];
 
         /* ── FAQ ── */
         const faqs = [
           {
             q: 'What is a credit?',
-            a: 'A credit is the unit of consumption across the Neo Tariff platform. Each API call or platform action consumes credits based on complexity. A single duty calculation is 1 credit. Batch calculations consume 1 credit per entry. Search, context lookups, and HTS browsing actions are typically fractional credits. Your account dashboard shows real-time usage and remaining balance.',
+            a: 'A credit is the unit of consumption across the NeoTariff platform. Each API call or platform action consumes credits based on complexity. A single duty calculation is 1 credit. Batch calculations consume 1 credit per entry. Search, context lookups, and HTS browsing actions are typically fractional credits. Your account dashboard shows real-time usage and remaining balance.',
           },
           {
             q: 'Do all plans include the same features?',
-            a: 'Yes. Every plan — including Pay-As-You-Go — gets full access to the entire Neo Tariff platform: the duty & landed cost engine, portfolio analysis, interactive HTS browser, scenario comparison, supplier matching, REST API, Python SDK, and all 50 API endpoints. The only difference between plans is the volume of credits and per-credit cost.',
+            a: 'Yes. Every plan \u2014 including Pay-As-You-Go \u2014 gets full access to the entire NeoTariff platform: the duty & landed cost engine, portfolio analysis, interactive HTS Navigator, scenario comparison, supplier matching, REST API, Python SDK, and all 50 API endpoints. The only difference between plans is the volume of credits and per-credit cost.',
           },
           {
             q: 'How does the Pay-As-You-Go plan work?',
-            a: "Pay-As-You-Go has no monthly fee and no commitment. You pay $0.35 per credit, billed only for what you use. It's the easiest way to start using Neo Tariff — you get full platform and API access from day one, with no minimum spend.",
+            a: "Pay-As-You-Go has no monthly fee and no commitment. You pay $0.35 per credit, billed only for what you use. It's the easiest way to start using NeoTariff \u2014 you get full platform and API access from day one, with no minimum spend.",
           },
           {
             q: 'What happens if I exceed my included credits?',
@@ -218,23 +120,23 @@
           },
           {
             q: 'Is there a free trial?',
-            a: 'Pay-As-You-Go is effectively a free-to-start plan — $0/month with no commitment. You only pay for what you use at $0.35 per credit. This lets you explore the full platform and API with real duty calculations before committing to a subscription.',
+            a: 'Yes! Every new account starts with a 7-day free trial including 1,000 credits \u2014 no credit card required. This lets you explore the full platform and API with real duty calculations before committing.',
           },
           {
             q: 'Can I use just the API without the web platform?',
-            a: 'Yes. All plans include full REST API access (50 endpoints, 16 groups) and the Python SDK (pip install neo-tariff). You can integrate Neo Tariff directly into your systems — ERP, TMS, procurement platforms, or custom analytics — without ever using the web interface.',
+            a: 'Yes. All plans include full REST API access (50 endpoints, 16 groups) and the Python SDK (pip install neo-tariff). You can integrate NeoTariff directly into your systems \u2014 ERP, TMS, procurement platforms, or custom analytics \u2014 without ever using the web interface.',
           },
           {
-            q: 'How does Neo Tariff stay current with tariff changes?',
-            a: "We continuously monitor the U.S. International Trade Commission for new HTS releases. When a new revision is published, our 7-stage pipeline ingests, parses, and validates the changes — typically within hours of official publication. We've tracked 34 revisions since early 2025. You always get calculations against the latest schedule.",
+            q: 'How does NeoTariff stay current with tariff changes?',
+            a: "We continuously monitor the U.S. International Trade Commission for new HTS releases. When a new revision is published, our 7-stage pipeline ingests, parses, and validates the changes \u2014 typically within hours of official publication. We've tracked 34 revisions since early 2025. You always get calculations against the latest schedule.",
           },
           {
             q: 'What tariff programs and surcharges are covered?',
-            a: 'Neo Tariff covers the full U.S. HTS including all Chapter 99 rules: Section 301 (China tariffs), Section 232 (steel & aluminum), IEEPA reciprocal duties, trade program benefits (USMCA, GSP, and 28 more), and all supersession, exclusion, and priority logic between overlapping rules. Every calculation is traceable to the specific rule and legal authority that produced it.',
+            a: 'NeoTariff covers the full U.S. HTS including all Chapter 99 rules: Section 301 (China tariffs), Section 232 (steel & aluminum), IEEPA reciprocal duties, trade program benefits (USMCA, GSP, and 28 more), and all supersession, exclusion, and priority logic between overlapping rules. Every calculation is traceable to the specific rule and legal authority that produced it.',
           },
           {
             q: 'How is this different from a tariff lookup tool or AI classifier?',
-            a: "Lookup tools give you a rate from a table. AI classifiers suggest an HTS code. Neo Tariff is a deterministic rules engine that computes the complete duty outcome — evaluating base rates, additional duties, exclusions, conditions, material splits, transit windows, and rule priority — and explains every step with legal citations. If you need defensible, scenario-true numbers for real business decisions, that's the difference.",
+            a: "Lookup tools give you a rate from a table. AI classifiers suggest an HTS code. NeoTariff is a deterministic rules engine that computes the complete duty outcome \u2014 evaluating base rates, additional duties, exclusions, conditions, material splits, transit windows, and rule priority \u2014 and explains every step with legal citations. If you need defensible, scenario-true numbers for real business decisions, that's the difference.",
           },
           {
             q: 'Do you offer annual billing or custom volume pricing?',
@@ -246,39 +148,9 @@
           },
           {
             q: 'Is my data stored or shared?',
-            a: "No. Neo Tariff is stateless by design. Cost and quantity values are used only for that request's duty math and are not logged, stored, or aggregated. Your HTS codes, countries, and values never leave the calculation pipeline.",
+            a: "No. NeoTariff is stateless by design. Cost and quantity values are used only for that request's duty math and are not logged, stored, or aggregated. Your HTS codes, countries, and values never leave the calculation pipeline.",
           },
         ];
-
-        /* ═══════════════════════════════════════
-           HELPERS
-           ═══════════════════════════════════════ */
-
-        const renderCellValue = (val, isMuted, key) => {
-          if (val === '✓') {
-            return (
-              <td key={key}>
-                <span className="c-check">✓</span>
-              </td>
-            );
-          }
-          if (val === '—' || isMuted) {
-            return (
-              <td key={key} className="c-muted">
-                {val}
-              </td>
-            );
-          }
-          return (
-            <td key={key}>
-              <span className="c-val">{val}</span>
-            </td>
-          );
-        };
-
-        /* ═══════════════════════════════════════
-           RENDER
-           ═══════════════════════════════════════ */
 
         return (
           <div
@@ -296,134 +168,160 @@
             {/* ━━━ Hero ━━━ */}
             <NeoHero
               label="Pricing"
-              title="All features included. Pick your scale."
-              description="Full platform and direct API access on every plan — pay only for what you need."
+              title="Simple pricing. Full platform access."
+              description="Every plan includes the complete NeoTariff platform — web tools, REST API, and Python SDK. Start free, pay as you go, or contact us for broker pricing."
               glow="center-low"
               paddingBottom={24}
             />
 
-            {/* ━━━ Free Trial Strip ━━━ */}
-            <section style={{ padding: '0 48px 20px' }}>
+            {/* ━━━ 3-Panel Pricing Cards ━━━ */}
+            <section style={{ padding: '0 48px 48px' }}>
               <div
-                id="trial"
+                id="plans-h"
                 data-animate
-                className={`trial-strip section-inner anim ${isV('trial') ? 'vis' : ''}`}
+                className={`section-inner anim ${isV('plans-h') ? 'vis' : ''}`}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 20,
+                }}
               >
-                <div className="trial-strip-inner">
-                  <div className="trial-strip-left">
-                    <div className="trial-strip-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path
-                          d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
-                          stroke="var(--green)"
-                          strokeWidth="1.8"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
+                {panels.map((p, i) => (
+                  <div
+                    key={i}
+                    className="info-card"
+                    style={{
+                      padding: '36px 28px',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 2,
+                        background: `linear-gradient(90deg,transparent,${p.accent},transparent)`,
+                      }}
+                    />
+                    <div
+                      className="sans"
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        color: p.accent,
+                        marginBottom: 16,
+                      }}
+                    >
+                      {p.name.toUpperCase()}
                     </div>
-                    <div>
-                      <div className="trial-strip-title sans">
-                        <strong>{trial.title}</strong> — {trial.subtitle}
-                      </div>
-                      <div className="trial-strip-sub sans">{trial.description}</div>
+                    <div
+                      className="mono"
+                      style={{
+                        fontSize: 32,
+                        fontWeight: 700,
+                        marginBottom: 20,
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {p.highlight}
                     </div>
+                    <div style={{ flex: 1 }}>
+                      {p.details.map((d, j) => (
+                        <div
+                          key={j}
+                          className="sans"
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            color: 'var(--text-secondary)',
+                            lineHeight: 1.6,
+                            marginBottom: 8,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                          }}
+                        >
+                          <span style={{ color: 'var(--green)' }}>✓</span>
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                    <a
+                      href={p.ctaHref}
+                      className={`cta-btn sans ${p.ctaStyle}`}
+                      style={{
+                        textDecoration: 'none',
+                        marginTop: 24,
+                        textAlign: 'center',
+                        display: 'block',
+                      }}
+                    >
+                      {p.cta} <ArrowIcon size={14} />
+                    </a>
                   </div>
-                  <div className="trial-strip-right">
-                    <div className="trial-strip-stat">
-                      <div className="trial-strip-stat-val">{trial.credits}</div>
-                      <div className="trial-strip-stat-label sans">Credits</div>
-                    </div>
-                    <div className="trial-strip-divider" />
-                    <div className="trial-strip-stat">
-                      <div className="trial-strip-stat-val">{trial.days}</div>
-                      <div className="trial-strip-stat-label sans">Days</div>
-                    </div>
-                    <div className="trial-strip-divider" />
-                    {trial.href ? (
-                      <a href={trial.href} className="trial-cta">
-                        {trial.cta}
-                        <ArrowIcon size={14} />
-                      </a>
-                    ) : (
-                      <button className="trial-cta">
-                        {trial.cta}
-                        <ArrowIcon size={14} />
-                      </button>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
             </section>
 
-            {/* ━━━ Comparison Table ━━━ */}
-            <section style={{ padding: '0 48px 72px' }}>
-              <div
-                id="ctable"
-                data-animate
-                className={`section-inner anim ${isV('ctable') ? 'vis' : ''}`}
-              >
-                <table className="c-table">
-                  <thead>
-                    <tr>
-                      <th />
-                      {plans.map((p, i) => (
-                        <th key={i}>
-                          <div className="c-th-name">
-                            <span className="c-th-dot" style={{ background: p.barColor }} />
-                            {p.name}
-                          </div>
-                          <div className="c-th-price mono">{p.price}</div>
-                          <div className="c-th-sub sans">{p.perCredit}</div>
-                          <div className="c-th-bar">
-                            <div
-                              className="c-th-bar-fill"
-                              style={{ width: p.barWidth, background: p.barColor }}
-                            />
-                          </div>
-                          <div className="c-th-cta">
-                            <button
-                              className={`cta-btn cta-btn-condensed ${p.ctaStyle === 'ghost' ? 'cta-btn-outline' : ''}`}
-                            >
-                              {p.cta}
-                            </button>
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {tableSections.map((section, si) => (
-                      <React.Fragment key={si}>
-                        <tr className="c-section-row">
-                          <td colSpan={plans.length + 1}>{section.label}</td>
-                        </tr>
-                        {section.rows.map((row, ri) => (
-                          <tr key={ri}>
-                            <td className="sans">
-                              {row.feature}
-                              {row.featureSub && (
-                                <span
-                                  className="mono"
-                                  style={{
-                                    fontSize: 9,
-                                    color: 'var(--text-muted)',
-                                    marginLeft: 6,
-                                  }}
-                                >
-                                  {row.featureSub}
-                                </span>
-                              )}
-                            </td>
-                            {row.values.map((val, ci) =>
-                              renderCellValue(val, row.muted && row.muted[ci], ci)
-                            )}
-                          </tr>
-                        ))}
-                      </React.Fragment>
+            <div className="divider" />
+
+            {/* ━━━ What's Included ━━━ */}
+            <section style={{ padding: '64px 48px' }}>
+              <div className="section-inner">
+                <div
+                  id="included-h"
+                  data-animate
+                  className={`anim ${isV('included-h') ? 'vis' : ''}`}
+                >
+                  <div style={{ marginBottom: 32 }}>
+                    <div className="section-label">What's Included</div>
+                    <h2 className="section-heading" style={{ fontSize: 30 }}>
+                      Every plan includes full platform access
+                    </h2>
+                  </div>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px 48px',
+                      maxWidth: 800,
+                    }}
+                  >
+                    {included.map((item, i) => (
+                      <div
+                        key={i}
+                        className="sans"
+                        style={{
+                          fontSize: 'var(--fs-base)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '8px 0',
+                          color: item.check ? 'var(--text-primary)' : 'var(--text-muted)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: item.check ? 'var(--green)' : 'var(--text-muted)',
+                            fontWeight: 600,
+                            fontSize: 16,
+                            width: 20,
+                            textAlign: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {item.check ? '✓' : '✗'}
+                        </span>
+                        {item.text}
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -499,8 +397,8 @@
                     Ready to get started?
                   </h2>
                   <p className="sans section-desc" style={{ marginBottom: 32 }}>
-                    Start with Pay-As-You-Go at no monthly cost, or talk to our team about the right
-                    plan for your volume.
+                    Start with a 7-day free trial — full platform access, 1,000 credits, no credit
+                    card required. Or contact our team for broker pricing.
                   </p>
                   <div className="cta-row">
                     <a
@@ -508,9 +406,15 @@
                       className="cta-btn w200 sans"
                       style={{ textDecoration: 'none' }}
                     >
-                      Get Started Free
+                      Start Free Trial
                     </a>
-                    <button className="cta-btn w200 cta-btn-outline sans">Contact Sales</button>
+                    <a
+                      href="/company/"
+                      className="cta-btn w200 cta-btn-outline sans"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      Contact Us
+                    </a>
                   </div>
                 </div>
               </div>

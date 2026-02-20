@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Neo Tariff — Shared React Components
+   NeoTariff — Shared React Components
    ─────────────────────────────────────────────────────────────
    This file defines the Nav, Footer, and utility components
    shared by all pages. Loaded as type="text/babel" so JSX works.
@@ -13,7 +13,7 @@ const { useState, useEffect, useCallback } = React;
    Change URLs, labels, and external links here.
 */
 const SITE = {
-  name: 'Neo Tariff',
+  name: 'NeoTariff',
   tagline: 'by Enterprise-Neo',
   loginUrl: 'https://tariff.enterprise-neo.com/',
   signupUrl: 'https://tariff.enterprise-neo.com/signup',
@@ -21,7 +21,7 @@ const SITE = {
   apiDocsUrl: 'https://tariff-data.enterprise-neo.com/docs',
   pypiUrl: 'https://pypi.org/project/neo-tariff/',
   githubUrl: 'https://github.com/Enterprise-Neo',
-  copyright: '© 2025 Enterprise-Neo. All rights reserved.',
+  copyright: '© 2026 Enterprise-Neo. All rights reserved.',
 };
 
 /* ── Scroll Animation Hook ── */
@@ -78,12 +78,12 @@ const ChevronDown = ({ open }) => (
    NAV COMPONENT
    ────────────────────────────────────────────
    Props:
-     activePage: "overview"|"technology"|"pricing"|"company"|"platform"|"api"|"sdk"
-     transparent: boolean — if true, nav starts transparent and becomes solid on scroll (overview hero)
+     activePage: "home"|"neotariff"|"technology"|"pricing"|"company"|"platform"|"api"|"sdk"
+     transparent: boolean — if true, nav starts transparent and becomes solid on scroll (hero)
    ════════════════════════════════════════════ */
-window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
-  const [productOpen, setProductOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+window.NeoNav = ({ activePage = 'home', transparent = true }) => {
+  const [neotariffOpen, setNeotariffOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -95,14 +95,15 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
 
   useEffect(() => {
     const h = (e) => {
-      if (!e.target.closest('.dropdown-product')) setProductOpen(false);
-      if (!e.target.closest('.dropdown-resources')) setResourcesOpen(false);
+      if (!e.target.closest('.dropdown-neotariff')) setNeotariffOpen(false);
+      if (!e.target.closest('.dropdown-company')) setCompanyOpen(false);
     };
     document.addEventListener('click', h);
     return () => document.removeEventListener('click', h);
   }, []);
 
-  const isProductPage = ['platform', 'api', 'sdk'].includes(activePage);
+  const isNeoTariffPage = ['neotariff', 'platform', 'api', 'sdk', 'technology'].includes(activePage);
+  const isCompanyPage = ['company'].includes(activePage);
   const navClasses = [
     'neo-nav',
     'sans',
@@ -175,13 +176,13 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          {/* Product dropdown */}
-          <div className="dropdown-product" style={{ position: 'relative' }}>
+          {/* NeoTariff dropdown */}
+          <div className="dropdown-neotariff" style={{ position: 'relative' }}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setProductOpen(!productOpen);
-                setResourcesOpen(false);
+                setNeotariffOpen(!neotariffOpen);
+                setCompanyOpen(false);
               }}
               className="sans"
               style={{
@@ -195,74 +196,82 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 4,
-                fontWeight: isProductPage ? 600 : 400,
-                color: isProductPage ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderBottom: isProductPage ? '2px solid var(--accent)' : 'none',
-                marginBottom: isProductPage ? -1 : 0,
+                fontWeight: isNeoTariffPage ? 600 : 400,
+                color: isNeoTariffPage ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderBottom: isNeoTariffPage ? '2px solid var(--accent)' : 'none',
+                marginBottom: isNeoTariffPage ? -1 : 0,
               }}
             >
-              Product <ChevronDown open={productOpen} />
+              NeoTariff <ChevronDown open={neotariffOpen} />
             </button>
-            <div className={`dropdown-menu ${productOpen ? 'open' : ''}`}>
+            <div className={`dropdown-menu ${neotariffOpen ? 'open' : ''}`}>
               <a
-                href="/product/platform"
+                href="/neotariff/"
+                style={activePage === 'neotariff' ? { color: 'var(--accent)' } : {}}
+              >
+                Overview
+              </a>
+              <div className="dd-label sans">PLATFORM ACCESS</div>
+              <a
+                href="/neotariff/platform/"
                 style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
               >
-                Platform
+                Web Application
               </a>
-              <a href="/product/api" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
+              <a href="/neotariff/api/" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
                 REST API
               </a>
-              <a href="/product/sdk" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
+              <a href="/neotariff/sdk/" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
                 Python SDK
+              </a>
+              <div className="dd-label sans">LEARN MORE</div>
+              <a href="/neotariff/technology/" style={activePage === 'technology' ? { color: 'var(--accent)' } : {}}>
+                Underlying Technology
               </a>
             </div>
           </div>
 
-          <a href="/technology" className="sans" style={linkStyle('technology')}>
-            Technology
-          </a>
-          <a href="/pricing" className="sans" style={linkStyle('pricing')}>
+          <a href="/pricing/" className="sans" style={linkStyle('pricing')}>
             Pricing
           </a>
-          <a href="/company" className="sans" style={linkStyle('company')}>
-            Company
-          </a>
 
-          {/* Resources dropdown */}
-          <div className="dropdown-resources" style={{ position: 'relative' }}>
+          {/* Company dropdown */}
+          <div className="dropdown-company" style={{ position: 'relative' }}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setResourcesOpen(!resourcesOpen);
-                setProductOpen(false);
+                setCompanyOpen(!companyOpen);
+                setNeotariffOpen(false);
               }}
               className="sans"
               style={{
                 padding: '8px 14px',
                 fontSize: 'var(--fs-sm)',
-                fontWeight: 400,
-                color: 'var(--text-secondary)',
                 background: 'none',
-                border: 'none',
+                borderTop: 'none',
+                borderLeft: 'none',
+                borderRight: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 4,
+                fontWeight: isCompanyPage ? 600 : 400,
+                color: isCompanyPage ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderBottom: isCompanyPage ? '2px solid var(--accent)' : 'none',
+                marginBottom: isCompanyPage ? -1 : 0,
               }}
             >
-              Resources <ChevronDown open={resourcesOpen} />
+              Company <ChevronDown open={companyOpen} />
             </button>
-            <div className={`dropdown-menu ${resourcesOpen ? 'open' : ''}`}>
-              <div className="dd-label sans">DEVELOPER DOCS</div>
-              <a href={SITE.apiDocsUrl} target="_blank">
-                Swagger API Docs ↗
+            <div className={`dropdown-menu ${companyOpen ? 'open' : ''}`}>
+              <a
+                href="/company/"
+                style={activePage === 'company' ? { color: 'var(--accent)' } : {}}
+              >
+                Leadership & Team
               </a>
-              <a href={SITE.pypiUrl} target="_blank">
-                PyPI: neo-tariff ↗
-              </a>
-              <a href={SITE.githubUrl} target="_blank">
-                GitHub ↗
+              <a href="/company/#insights">
+                Insights / Perspectives
               </a>
             </div>
           </div>
@@ -271,34 +280,12 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
           <a
             href={SITE.loginUrl}
             className="cta-btn w120 cta-btn-condensed cta-btn-outline sans"
-            // style={{
-            //   padding: '8px 20px',
-            //   fontSize: 'var(--fs-sm)',
-            //   fontWeight: 500,
-            //   color: 'var(--text-secondary)',
-            //   textDecoration: 'none',
-            //   border: '1px solid var(--accent)',
-            //   borderRadius: 'var(--radius-btn)',
-            //   minWidth: 110,
-            //   textAlign: 'center',
-            //   display: 'inline-flex',
-            //   alignItems: 'center',
-            //   justifyContent: 'center',
-            //   whiteSpace: 'nowrap',
-            // }}
           >
             Sign In
           </a>
           <a
             href={SITE.signupUrl}
             className="cta-btn w120 cta-btn-condensed sans"
-            // style={{
-            //   padding: '8px 20px',
-            //   fontSize: 'var(--fs-sm)',
-            //   borderRadius: 'var(--radius-btn)',
-            //   textDecoration: 'none',
-            //   minWidth: 110,
-            // }}
           >
             Sign Up
           </a>
@@ -382,16 +369,16 @@ window.NeoFooter = () => (
               marginBottom: 10,
             }}
           >
-            PRODUCT
+            NEOTARIFF
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/product/platform" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              Platform
+            <a href="/neotariff/platform/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Web Application
             </a>
-            <a href="/product/api" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/neotariff/api/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               REST API
             </a>
-            <a href="/product/sdk" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/neotariff/sdk/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Python SDK
             </a>
           </div>
@@ -409,10 +396,10 @@ window.NeoFooter = () => (
             LEARN
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/technology" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              Technology
+            <a href="/neotariff/technology/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Underlying Technology
             </a>
-            <a href="/pricing" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/pricing/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Pricing
             </a>
           </div>
@@ -454,11 +441,11 @@ window.NeoFooter = () => (
             COMPANY
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/company" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              About
+            <a href="/company/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Leadership
             </a>
-            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              GitHub ↗
+            <a href="/company/#insights" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Insights
             </a>
           </div>
         </div>

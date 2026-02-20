@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neo Tariff — Company</title>
+    <title>NeoTariff — Company</title>
     <link rel="stylesheet" href="/shared/styles.css" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -36,6 +36,7 @@
           { id: 'phil', label: 'Our Philosophy' },
           { id: 'team', label: 'Our Team' },
           { id: 'adv', label: 'Advisory' },
+          { id: 'insights', label: 'Insights' },
           { id: 'qt', label: 'Quote' },
           { id: 'ccta', label: 'Get Started' },
         ];
@@ -307,7 +308,7 @@
                   that shows its work.
                 </>
               }
-              description="Enterprise-Neo builds Neo Tariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled tariff graph and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario."
+              description="Enterprise-Neo builds NeoTariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled RuleGraph™ and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario."
               glow="center-low"
             />
 
@@ -325,11 +326,11 @@
                     {[
                       {
                         title: 'Data engine first, UI second',
-                        desc: 'A robust tariff graph and calculation engine as the foundation. The web app and APIs are access layers on top of a single source of truth — not the other way around.',
+                        desc: 'A robust RuleGraph™ and calculation engine as the foundation. The web app and APIs are access layers on top of a single source of truth — not the other way around.',
                       },
                       {
                         title: 'Versioned and transparent, not black-box',
-                        desc: "Every rule and rate is tied to a specific HTS release and change history. Every calculation is traceable through the tariff graph. If you can't explain the answer, it's not an answer.",
+                        desc: "Every rule and rate is tied to a specific HTS release and change history. Every calculation is traceable through the RuleGraph™. If you can't explain the answer, it's not an answer.",
                       },
                       {
                         title: 'Scenario-driven, not just lookup-driven',
@@ -373,7 +374,7 @@
                   <div style={{ marginBottom: 48 }}>
                     <div className="section-label">Our Team</div>
                     <h2 className="section-heading-lg" style={{ marginBottom: 12 }}>
-                      Meet the experts behind Neo Tariff.
+                      Meet the experts behind NeoTariff.
                     </h2>
                     <p className="sans section-desc" style={{ maxWidth: 540 }}>
                       A team of engineers, trade experts, and operators building tariff intelligence
@@ -480,7 +481,7 @@
                       },
                       {
                         title: 'Classification Optimization',
-                        desc: 'Review existing classifications against the tariff graph. Surface misclassifications and rate-saving opportunities.',
+                        desc: 'Review existing classifications against the RuleGraph™. Surface misclassifications and rate-saving opportunities.',
                       },
                       {
                         title: 'Post-Summary Correction Sizing',
@@ -488,7 +489,7 @@
                       },
                       {
                         title: 'Custom Integration',
-                        desc: 'Help your engineering team connect the Neo Tariff API to your existing systems — ERP, TMS, procurement, or analytics.',
+                        desc: 'Help your engineering team connect the NeoTariff API to your existing systems — ERP, TMS, procurement, or analytics.',
                       },
                     ].map((s, i) => (
                       <div key={i} className="info-card" style={{ padding: '22px 20px' }}>
@@ -500,6 +501,80 @@
                         </div>
                         <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
                           {s.desc}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div className="divider" />
+
+            {/* ━━━ Insights & Perspectives ━━━ */}
+            <section style={{ padding: '72px 48px' }}>
+              <div className="section-inner">
+                <div id="insights" data-animate className={`anim ${isV('insights') ? 'vis' : ''}`}>
+                  <div className="section-label">Insights &amp; Perspectives</div>
+                  <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
+                    Perspectives on tariff intelligence, trade regulation, and operational strategy.
+                  </h2>
+                  <p
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, marginBottom: 28, maxWidth: 580 }}
+                  >
+                    Our team shares analysis, frameworks, and lessons learned from working at the
+                    intersection of trade policy, data engineering, and enterprise decision-making.
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                    {[
+                      {
+                        title: 'Understanding the True Cost of Tariff Complexity',
+                        tag: 'Trade Policy',
+                        desc: 'How fragmented tariff data and manual processes create hidden costs that compound across the supply chain.',
+                      },
+                      {
+                        title: 'From Lookup Tables to Logic Engines',
+                        tag: 'Technology',
+                        desc: 'Why deterministic rule evaluation produces fundamentally different — and better — duty answers than static rate lookups.',
+                      },
+                      {
+                        title: 'Scenario Planning in an Era of Tariff Volatility',
+                        tag: 'Strategy',
+                        desc: 'How leading importers use scenario modeling to turn tariff uncertainty into operational advantage.',
+                      },
+                    ].map((article, i) => (
+                      <div key={i} className="info-card" style={{ padding: '24px 22px' }}>
+                        <div
+                          className="mono"
+                          style={{
+                            fontSize: 10,
+                            letterSpacing: '0.1em',
+                            color: 'var(--accent)',
+                            marginBottom: 12,
+                          }}
+                        >
+                          {article.tag.toUpperCase()}
+                        </div>
+                        <div
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-base)', fontWeight: 600, marginBottom: 10, lineHeight: 1.4 }}
+                        >
+                          {article.title}
+                        </div>
+                        <div className="sans section-desc" style={{ fontSize: 'var(--fs-sm)' }}>
+                          {article.desc}
+                        </div>
+                        <div
+                          className="sans"
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            color: 'var(--text-muted)',
+                            fontStyle: 'italic',
+                            marginTop: 14,
+                          }}
+                        >
+                          Coming soon
                         </div>
                       </div>
                     ))}
