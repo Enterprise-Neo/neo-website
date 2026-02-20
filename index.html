@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neo Tariff — Tariff Intelligence Engine</title>
+    <title>NeoTariff</title>
     <link rel="stylesheet" href="/shared/styles.css" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -22,6 +22,7 @@
         NeoFooter,
         NeoGrain,
         NeoDivider,
+        NeoHero,
         NeoScreenshot,
         NeoSideNav,
         useScrollAnimation,
@@ -202,139 +203,35 @@
             <NeoSideNav sections={sections} />
 
             {/* ══ Hero ══ */}
-            <section
+            <NeoHero
               id="hero"
-              style={{
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                padding: '140px 48px 80px',
-                position: 'relative',
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '70%',
-                  height: '100%',
-                  background:
-                    'radial-gradient(ellipse at 25% 20%,rgba(var(--accent-rgb),0.18) 0%,transparent 60%)',
-                  pointerEvents: 'none',
-                }}
-              />
-              <div style={{ maxWidth: 'var(--max-width)', position: 'relative' }}>
-                <div
-                  className="section-label"
-                  style={{ animation: 'fadeIn 1s var(--ease) 0.05s both' }}
-                >
-                  Tariff Intelligence Engine
+              label="Tariff Intelligence Engine"
+              fullHeight
+              textSize="large"
+              alignContent="left"
+              showScrollIndicator
+              title={<>
+                <div className="hero-line">
+                  <span style={{ fontWeight: 600 }}>From lookup to logic.</span>
                 </div>
-                <div className="display" style={{ marginBottom: 32 }}>
-                  <div className="hero-line">
-                    <span
-                      style={{
-                        fontSize: 64,
-                        fontWeight: 600,
-                        lineHeight: 1.2,
-                        letterSpacing: '-0.03em',
-                      }}
-                    >
-                      From lookup to logic.
-                    </span>
-                  </div>
-                  <div className="hero-line">
-                    <span
-                      style={{
-                        fontSize: 64,
-                        fontWeight: 300,
-                        lineHeight: 1.2,
-                        letterSpacing: '-0.03em',
-                        color: 'var(--text-secondary)',
-                      }}
-                    >
-                      Precise, explainable duties
-                    </span>
-                  </div>
-                  <div className="hero-line">
-                    <span
-                      style={{
-                        fontSize: 64,
-                        fontWeight: 300,
-                        lineHeight: 1.2,
-                        letterSpacing: '-0.03em',
-                        color: 'var(--text-secondary)',
-                      }}
-                    >
-                      for any scenario.
-                    </span>
-                  </div>
+                <div className="hero-line">
+                  <span style={{ fontWeight: 300, color: 'var(--text-secondary)' }}>
+                    Precise, explainable duties
+                  </span>
                 </div>
-                <p
-                  className="sans"
-                  style={{
-                    fontSize: 'var(--fs-md)',
-                    lineHeight: 1.75,
-                    color: 'var(--text-secondary)',
-                    maxWidth: 600,
-                    marginBottom: 44,
-                    animation: 'fadeIn 1s var(--ease) 0.65s both',
-                  }}
-                >
-                  Neo Tariff transforms the full U.S. HTS into a structured, version-controlled
-                  tariff graph — and uses a deterministic calculation engine to deliver accurate,
-                  auditable duty answers. Not a lookup tool. Not an AI guess. A rules engine that
-                  shows its work.
-                </p>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: 14,
-                    animation: 'fadeIn 1s var(--ease) 0.85s both',
-                  }}
-                >
-                  <button className="cta-btn w200 sans">
-                    Request a Demo <ArrowIcon />
-                  </button>
-                  <a
-                    href="/pricing"
-                    className="cta-btn w200 cta-btn-outline sans"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    See Pricing
-                  </a>
+                <div className="hero-line">
+                  <span style={{ fontWeight: 300, color: 'var(--text-secondary)' }}>
+                    for any scenario.
+                  </span>
                 </div>
-              </div>
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 36,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 6,
-                  animation: 'fadeIn 1s var(--ease) 1.3s both',
-                }}
-              >
-                <span
-                  className="mono"
-                  style={{ fontSize: 9.5, color: 'var(--text-muted)', letterSpacing: '0.12em' }}
-                >
-                  SCROLL
-                </span>
-                <div
-                  style={{
-                    width: 1,
-                    height: 36,
-                    background: 'linear-gradient(180deg,var(--text-muted),transparent)',
-                  }}
-                />
-              </div>
-            </section>
+              </>}
+              description="Neo Tariff transforms the full U.S. HTS into a structured, version-controlled tariff graph — and uses a deterministic calculation engine to deliver accurate, auditable duty answers. Not a lookup tool. Not an AI guess. A rules engine that shows its work."
+              descMaxWidth={600}
+              ctas={[
+                { element: 'button', label: 'Request a Demo', icon: <ArrowIcon />, className: 'w200' },
+                { href: '/pricing', label: 'See Pricing', className: 'w200 cta-btn-outline' },
+              ]}
+            />
 
             {/* ══ The Problem ══ */}
             <section id="problem" style={{ padding: 'var(--section-pad)' }}>
@@ -837,7 +734,7 @@
                               position: 'absolute',
                               inset: 0,
                               background:
-                                'radial-gradient(ellipse at 50% 50%,rgba(var(--accent-rgb),0.08) 0%,transparent 70%)',
+                                'radial-gradient(ellipse at 50% 50%,rgba(var(--accent-bright-rgb),0.08) 0%,transparent 70%)',
                             }}
                           />
                         </div>

@@ -33,15 +33,28 @@ body {
    DESIGN TOKENS — Change these to restyle everything
    ════════════════════════════════════════════ */
 :root {
-  /* Primary Accent Color Version 1 - Purple */
+  /* Primary Accent Color Version 1 - Purple
+     Hex: #6C63FF | Bright: #7B73FF | Dim: #5A52E0 */
   /* --accent-rgb: 108, 99, 255;
   --accent-bright-rgb: 123, 115, 255;
   --accent-dim-rgb: 90, 82, 224; */
 
-  /* Primary Accent Color Version 2 - Orange */
+  /* Primary Accent Color Version 2 - Orange
+     Hex: #E96F49 | Bright: #F99E6E | Dim: #D2643C */
   --accent-rgb: 233, 111, 73;
   --accent-bright-rgb: 249, 158, 110;
   --accent-dim-rgb: 210, 100, 60;
+
+  /*
+     NOTE: Favicon & PWA icons don't use CSS variables — they must be
+     updated manually when switching accent colors. Update these files:
+       • /favicon.svg            — change the fill="#HEX" value
+       • /site.webmanifest       — change "theme_color"
+       • /favicon.ico            — regenerate from updated SVG
+       • /apple-touch-icon.png   — regenerate from updated SVG
+       • /icon-192.png           — regenerate from updated SVG
+       • /icon-512.png           — regenerate from updated SVG
+  */
 
   /* Accent Colors - Computed from RGB channels */
   --accent: rgb(var(--accent-rgb));
@@ -208,6 +221,107 @@ h3 {
   animation-delay: 0.45s;
 }
 
+/* ── NeoHero Component ── */
+
+.neo-hero {
+  padding: 140px 48px 64px;
+  position: relative;
+}
+.neo-hero--full {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 140px 48px 80px;
+}
+
+.neo-hero__glow {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.neo-hero__content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  position: relative;
+}
+.neo-hero__content--left {
+  margin: 0;
+}
+
+.neo-hero__title {
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 18px;
+}
+.neo-hero__title--lg {
+  font-size: 64px;
+  margin-bottom: 32px;
+}
+
+.neo-hero__desc {
+  font-size: var(--fs-md);
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+.neo-hero--full .neo-hero__desc {
+  margin-bottom: 44px;
+}
+
+.neo-hero__ctas {
+  display: flex;
+  gap: 14px;
+}
+
+.neo-hero__stats {
+  display: flex;
+  gap: 28px;
+  font-size: var(--fs-sm);
+}
+.neo-hero__stats--with-ctas {
+  margin-top: 28px;
+}
+
+.neo-hero__stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.neo-hero__stat-val {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: var(--fs-base);
+}
+.neo-hero__stat-label {
+  color: var(--text-muted);
+}
+
+.neo-hero__scroll {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.neo-hero__scroll-text {
+  font-size: 9.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+}
+.neo-hero__scroll-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(180deg, var(--text-muted), transparent);
+}
+
 /* ════════════════════════════════════════════
    SHARED COMPONENT STYLES
    ════════════════════════════════════════════ */
@@ -278,7 +392,7 @@ h3 {
   transform: translateX(-50%);
   width: 80%;
   height: 100%;
-  background: radial-gradient(ellipse at 50% 30%, rgba(var(--accent-rgb), 0.1) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 30%, rgba(var(--accent-bright-rgb), 0.1) 0%, transparent 65%);
   pointer-events: none;
 }
 
