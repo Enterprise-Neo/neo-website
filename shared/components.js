@@ -588,31 +588,36 @@ window.NeoScreenshot = ({
      title:          heading — string or JSX
      description:    paragraph — string or JSX
      stats:          optional array of { val, label }
-     ctas:           optional array of { href, label, external? }
-     descMaxWidth:   optional max-width for description (default 620)
+     ctas:           optional array of { href, label, external?, element?, className?, icon? }
+     descMaxWidth:   optional max-width for description (default 680)
      paddingBottom:  optional bottom padding (default 64)
      glow:           optional preset: 'center'|'center-low'|'right'|'narrow' (default 'center')
+     id:             optional id for the section element (e.g. for scroll-spy)
+     fullHeight:     optional bool — true = 100vh centered layout (default false)
+     textSize:       optional 'default'|'large' — large = 64px title (default 'default')
+     alignContent:   optional 'center'|'left' — left removes margin auto (default 'center')
+     showScrollIndicator: optional bool — renders SCROLL indicator (default false)
    ════════════════════════════════════════════ */
 const GLOW_PRESETS = {
   center: {
     left: 0,
     width: '70%',
-    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(var(--accent-bright-rgb),0.18) 0%, transparent 60%)',
   },
   'center-low': {
     left: 0,
     width: '70%',
-    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(var(--accent-bright-rgb),0.18) 0%, transparent 60%)',
   },
   right: {
     left: 0,
     width: '70%',
-    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(var(--accent-bright-rgb),0.18) 0%, transparent 60%)',
   },
   narrow: {
     left: 0,
     width: '70%',
-    background: 'radial-gradient(ellipse at 25% 20%, rgba(108,99,255,0.18) 0%, transparent 60%)',
+    background: 'radial-gradient(ellipse at 25% 20%, rgba(var(--accent-bright-rgb),0.18) 0%, transparent 60%)',
   },
 };
 
@@ -637,99 +642,102 @@ window.NeoHero = ({
   descMaxWidth = 680,
   paddingBottom = 64,
   glow = 'center',
+  id,
+  fullHeight = false,
+  textSize = 'default',
+  alignContent = 'center',
+  showScrollIndicator = false,
 }) => {
   const glowStyle = typeof glow === 'string' ? GLOW_PRESETS[glow] || GLOW_PRESETS.center : glow;
   const hasCtas = ctas && ctas.length > 0;
   const hasStats = stats && stats.length > 0;
-  const statsDelay = hasCtas ? 0.5 : 0.4;
+  const isLarge = textSize === 'large';
+
+  // Animation config: home uses fadeIn/1s, sub-pages use fadeUp/0.6s
+  const anim = fullHeight ? 'fadeIn' : 'fadeUp';
+  const dur = fullHeight ? '1s' : '0.6s';
+  const delays = fullHeight
+    ? { label: 0.05, title: null, desc: 0.65, ctas: 0.85, stats: 0.95, scroll: 1.3 }
+    : { label: 0.1, title: 0.2, desc: 0.3, ctas: 0.4, stats: hasCtas ? 0.5 : 0.4 };
+  const makeAnim = (delay) =>
+    delay != null ? `${anim} ${dur} var(--ease) ${delay}s both` : undefined;
+
+  const sectionClass = fullHeight ? 'neo-hero neo-hero--full' : 'neo-hero';
+  const contentClass = alignContent === 'left'
+    ? 'neo-hero__content neo-hero__content--left'
+    : 'neo-hero__content';
+  const titleClass = isLarge
+    ? 'neo-hero__title neo-hero__title--lg display'
+    : 'neo-hero__title display';
 
   return (
-    <section style={{ padding: `140px 48px ${paddingBottom}px`, position: 'relative' }}>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          height: '100%',
-          pointerEvents: 'none',
-          ...glowStyle,
-        }}
-      />
-      <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-        <div className="section-label" style={{ animation: 'fadeUp 0.6s var(--ease) 0.1s both' }}>
+    <section
+      id={id}
+      className={sectionClass}
+      style={!fullHeight && paddingBottom !== 64 ? { paddingBottom } : undefined}
+    >
+      <div className="neo-hero__glow" style={glowStyle} />
+      <div className={contentClass}>
+        <div className="section-label" style={{ animation: makeAnim(delays.label) }}>
           {label}
         </div>
-        <h1
-          className="display"
-          style={{
-            fontSize: 52,
-            fontWeight: 600,
-            lineHeight: 1.2,
-            letterSpacing: '-0.03em',
-            marginBottom: 18,
-            animation: 'fadeUp 0.6s var(--ease) 0.2s both',
-          }}
-        >
-          {title}
-        </h1>
+        {isLarge ? (
+          <div className={titleClass}>{title}</div>
+        ) : (
+          <h1 className={titleClass} style={{ animation: makeAnim(delays.title) }}>
+            {title}
+          </h1>
+        )}
         <p
-          className="sans"
+          className="neo-hero__desc sans"
           style={{
-            fontSize: 'var(--fs-md)',
-            lineHeight: 1.75,
-            color: 'var(--text-secondary)',
             maxWidth: descMaxWidth,
-            marginBottom: 28,
-            animation: 'fadeUp 0.6s var(--ease) 0.3s both',
+            animation: makeAnim(delays.desc),
           }}
         >
           {description}
         </p>
         {hasCtas && (
-          <div
-            style={{
-              display: 'flex',
-              gap: 14,
-              animation: 'fadeUp 0.6s var(--ease) 0.4s both',
-            }}
-          >
-            {ctas.map((cta, i) => (
-              <a
-                key={i}
-                href={cta.href}
-                target={cta.external ? '_blank' : undefined}
-                className="cta-btn sans"
-                style={{ textDecoration: 'none' }}
-              >
-                {cta.label} {cta.external && <ExternalLinkIcon />}
-              </a>
-            ))}
+          <div className="neo-hero__ctas" style={{ animation: makeAnim(delays.ctas) }}>
+            {ctas.map((cta, i) =>
+              cta.element === 'button' ? (
+                <button key={i} className={`cta-btn sans ${cta.className || ''}`}>
+                  {cta.label} {cta.icon}
+                </button>
+              ) : (
+                <a
+                  key={i}
+                  href={cta.href}
+                  target={cta.external ? '_blank' : undefined}
+                  className={`cta-btn sans ${cta.className || ''}`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  {cta.label} {cta.external && <ExternalLinkIcon />} {cta.icon && !cta.external && cta.icon}
+                </a>
+              )
+            )}
           </div>
         )}
         {hasStats && (
           <div
-            className="sans"
-            style={{
-              display: 'flex',
-              gap: 28,
-              fontSize: 'var(--fs-sm)',
-              ...(hasCtas ? { marginTop: 28 } : {}),
-              animation: `fadeUp 0.6s var(--ease) ${statsDelay}s both`,
-            }}
+            className={`neo-hero__stats sans ${hasCtas ? 'neo-hero__stats--with-ctas' : ''}`}
+            style={{ animation: makeAnim(delays.stats) }}
           >
             {stats.map((s, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span
-                  className="mono"
-                  style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 'var(--fs-base)' }}
-                >
-                  {s.val}
-                </span>
-                <span style={{ color: 'var(--text-muted)' }}>{s.label}</span>
+              <div key={i} className="neo-hero__stat">
+                <span className="neo-hero__stat-val mono">{s.val}</span>
+                <span className="neo-hero__stat-label">{s.label}</span>
               </div>
             ))}
           </div>
         )}
       </div>
+      {showScrollIndicator && (
+        <div className="neo-hero__scroll" style={{ animation: makeAnim(delays.scroll) }}>
+          <span className="neo-hero__scroll-text mono">SCROLL</span>
+          <div className="neo-hero__scroll-line" />
+        </div>
+      )}
     </section>
   );
 };
