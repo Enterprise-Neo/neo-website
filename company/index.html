@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neo Tariff — Company</title>
+    <title>NeoTariff — Company</title>
     <link rel="stylesheet" href="/shared/styles.css" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -32,19 +32,30 @@
       const NeoTariffCompany = () => {
         const isV = useScrollAnimation();
 
+        // Handle hash-based navigation (e.g. /company/#insights)
+        useEffect(() => {
+          const hash = window.location.hash.slice(1);
+          if (hash) {
+            setTimeout(() => {
+              const el = document.getElementById(hash);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 400);
+          }
+        }, []);
+
         const sideNavSections = [
           { id: 'phil', label: 'Our Philosophy' },
           { id: 'team', label: 'Our Team' },
-          { id: 'adv', label: 'Advisory' },
-          { id: 'qt', label: 'Quote' },
-          { id: 'ccta', label: 'Get Started' },
+          { id: 'adv', label: 'Advisory Services' },
+          { id: 'insights', label: 'Insights' },
+          { id: 'ccta', label: 'Contact Us' },
         ];
 
         const leadership = [
           {
             name: 'Joy Peters',
             role: 'CEO and Co-Founder',
-            img: 'https://framerusercontent.com/images/bpaBZ04MVFwW953hRDPVRjgyep4.png?width=289&height=411',
+            img: '/images/headshots/team-joy-peters.png',
             linkedin: 'https://www.linkedin.com/in/joypeters/',
             desc: [
               '30+ years management consulting experience, gaining intimate knowledge of Board/CXOs decision-making on strategic issues',
@@ -55,7 +66,7 @@
           {
             name: 'Dhaval Garg',
             role: 'COO and Co-Founder',
-            img: 'https://framerusercontent.com/images/0d7h7mD12opAJtfxxSdpamWOamk.png?width=339&height=527',
+            img: '/images/headshots/team-dhaval-garg.png',
             linkedin: 'https://www.linkedin.com/in/dhavalgarg/',
             desc: [
               '15+ years of professional services experience across management consulting, financial services and technology',
@@ -66,7 +77,7 @@
           {
             name: 'Garrett Amaru',
             role: 'CTO',
-            img: 'https://framerusercontent.com/images/TZ5tZX3P7htFiA2i45Vn9fp3w.png?width=350&height=379',
+            img: '/images/headshots/team-garrett-amaru.png',
             linkedin: 'https://www.linkedin.com/in/garrettamaru',
             desc: [
               '13 years of product strategy, AI, product development, and management consulting experience',
@@ -80,7 +91,7 @@
           {
             name: 'Reginald Smith',
             role: 'Tariff Expert',
-            img: 'https://framerusercontent.com/images/MEYlAfqvR1QWHqZrzvPN8OLte8.png?width=288&height=309',
+            img: '/images/headshots/team-reginald-smith.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Supply chain and logistics consultant with 20+ years of industry experience in heavy manufacturing and food',
@@ -91,7 +102,7 @@
           {
             name: 'Mark Roberts',
             role: 'Advisor',
-            img: 'https://framerusercontent.com/images/XS9X99FL65eVN2064MlPlJTVLY.png?width=368&height=419',
+            img: '/images/headshots/team-mark-roberts.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Former CEO of Morton Salt, COO and Executive Board Member of the K+S Group',
@@ -102,7 +113,7 @@
           {
             name: 'Katherine Ross',
             role: 'Advisor',
-            img: 'https://framerusercontent.com/images/gYNQEnAXrMtWBLX0LazZfxWV6U.png?width=375&height=541',
+            img: '/images/headshots/team-katherine-ross.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Board director and former senior executive with global operating experience in Health Care, Consumer Goods, and Supply Chain in Fortune 50 companies (J&J, PepsiCo)',
@@ -112,7 +123,7 @@
           {
             name: 'Philippe Lambotte',
             role: 'Advisor',
-            img: 'https://framerusercontent.com/images/bbVgAwthnQInnTjCMSwJom0Z8.png?width=398&height=627',
+            img: '/images/headshots/team-philippe-lambotte.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Senior Supply Chain executive with 35+ years experience in global end-to-end roles in planning, logistics, order to cash/customer care, manufacturing and procurement strategy',
@@ -124,7 +135,7 @@
           {
             name: 'Andrea Pope',
             role: 'Advisor',
-            img: 'https://framerusercontent.com/images/IRJVdiZXaAe4fZQltV7xyM9I.png?width=400&height=400',
+            img: '/images/headshots/team-andrea-pope.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Data Scientist with proven expertise in AI, product management, and analytics',
@@ -134,7 +145,7 @@
           {
             name: 'Lanchi Venator',
             role: 'Advisor',
-            img: 'https://framerusercontent.com/images/xLw7kR9sdUhUYHIhy0rS1pbz8XQ.png?width=408&height=538',
+            img: '/images/headshots/team-lanchi-venator.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'CFO at MiniLuxe',
@@ -148,7 +159,7 @@
           {
             name: 'Jon Edwards',
             role: 'Commercial Expert',
-            img: 'https://framerusercontent.com/images/iWTiNU7sJ9divLEA4h2MVgbq4I.png?width=374&height=496',
+            img: '/images/headshots/team-jon-edwards.png',
             linkedin: 'https://linkedin.com',
             desc: [
               '20+ years of management consulting experience, working with Fortune 500 and mid-market leaders',
@@ -159,7 +170,7 @@
           {
             name: 'Jeffery Jones',
             role: 'Energy and Consulting',
-            img: 'https://framerusercontent.com/images/W7Sozs4rvLoReInNEMmSd8UPuH8.png?width=281&height=314',
+            img: '/images/headshots/team-jeffery-jones.png',
             linkedin: 'https://linkedin.com',
             desc: [
               'Seasoned management consultant with a strong focus on energy, utilities, and defense, advising on inflation, labor, operations, and supply chains',
@@ -171,7 +182,9 @@
 
         const PersonCard = ({ person, size }) => {
           const [hovered, setHovered] = useState(false);
+          const [expanded, setExpanded] = useState(false);
           const isLarge = size === 'large';
+          const imgH = isLarge ? 240 : 180;
           return (
             <div
               onMouseEnter={() => setHovered(true)}
@@ -186,14 +199,16 @@
                 transition: 'all 0.35s var(--ease)',
                 transform: hovered ? 'translateY(-4px)' : '',
                 borderColor: hovered ? 'rgba(var(--accent-rgb),0.3)' : 'var(--border)',
+                cursor: person.desc ? 'pointer' : 'default',
               }}
+              onClick={() => { if (person.desc) setExpanded(!expanded); }}
             >
               {/* Image area */}
               <div
                 style={{
                   position: 'relative',
                   width: '100%',
-                  height: isLarge ? 320 : 240,
+                  height: imgH,
                   overflow: 'hidden',
                 }}
               >
@@ -205,6 +220,8 @@
                     height: '100%',
                     objectFit: 'cover',
                     objectPosition: 'center top',
+                    transform: 'scale(0.88)',
+                    transformOrigin: 'center top',
                     filter: hovered ? 'brightness(1.05)' : 'brightness(0.9)',
                     transition: 'all 0.4s var(--ease)',
                   }}
@@ -222,6 +239,7 @@
                   href={person.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   style={{
                     position: 'absolute',
                     top: 14,
@@ -242,42 +260,90 @@
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                 </a>
+                {/* Bio overlay — slides up from bottom of image */}
+                {person.desc && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      maxHeight: expanded ? imgH : 0,
+                      overflow: 'hidden',
+                      transition: 'max-height 0.4s var(--ease)',
+                      background: 'rgba(var(--bg-rgb), 0.92)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '14px 16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 6,
+                      }}
+                    >
+                      {person.desc.map((d, di) => (
+                        <div
+                          key={di}
+                          className="sans"
+                          style={{
+                            fontSize: 11,
+                            lineHeight: 1.55,
+                            color: 'var(--text-secondary)',
+                          }}
+                        >
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              {/* Info */}
-              <div style={{ padding: '18px 20px 22px' }}>
-                <div
-                  className="sans"
-                  style={{
-                    fontSize: isLarge ? 'var(--fs-md)' : 'var(--fs-base)',
-                    fontWeight: 700,
-                    marginBottom: 4,
-                  }}
-                >
-                  {person.name}
-                </div>
-                <div
-                  className="sans"
-                  style={{
-                    fontSize: 'var(--fs-sm)',
-                    color: 'var(--text-muted)',
-                    letterSpacing: '0.01em',
-                    marginBottom: person.desc ? 10 : 0,
-                  }}
-                >
-                  {person.role}
+              {/* Name & role */}
+              <div style={{ padding: '14px 20px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <div>
+                  <div
+                    className="sans"
+                    style={{
+                      fontSize: isLarge ? 'var(--fs-md)' : 'var(--fs-base)',
+                      fontWeight: 700,
+                      marginBottom: 2,
+                    }}
+                  >
+                    {person.name}
+                  </div>
+                  <div
+                    className="sans"
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-muted)',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {person.role}
+                  </div>
                 </div>
                 {person.desc && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 2 }}>
-                    {person.desc.map((d, di) => (
-                      <div
-                        key={di}
-                        className="sans"
-                        style={{ fontSize: 11.5, lineHeight: 1.6, color: 'var(--text-secondary)' }}
-                      >
-                        {d}
-                      </div>
-                    ))}
-                  </div>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 16 16"
+                    style={{
+                      flexShrink: 0,
+                      transform: expanded ? 'rotate(180deg)' : 'rotate(0)',
+                      transition: 'transform 0.3s var(--ease)',
+                    }}
+                  >
+                    <path
+                      d="M4 6l4 4 4-4"
+                      stroke={expanded ? 'var(--accent)' : 'var(--text-muted)'}
+                      strokeWidth="1.3"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 )}
               </div>
             </div>
@@ -307,7 +373,7 @@
                   that shows its work.
                 </>
               }
-              description="Enterprise-Neo builds Neo Tariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled tariff graph and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario."
+              description="Enterprise-Neo builds NeoTariff — a tariff data engine and scenario platform that transforms official HTS materials into a structured, version-controlled RuleGraph™ and uses a deterministic calculation engine to deliver accurate, auditable duty answers for any scenario."
               glow="center-low"
             />
 
@@ -319,17 +385,17 @@
                 <div id="phil" data-animate className={`anim ${isV('phil') ? 'vis' : ''}`}>
                   <div className="section-label">Our Philosophy</div>
                   <h2 className="section-heading" style={{ fontSize: 32, marginBottom: 28 }}>
-                    What we believe about building tariff intelligence.
+                    What We Believe About Building Tariff Intelligence
                   </h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                     {[
                       {
                         title: 'Data engine first, UI second',
-                        desc: 'A robust tariff graph and calculation engine as the foundation. The web app and APIs are access layers on top of a single source of truth — not the other way around.',
+                        desc: 'A robust RuleGraph™ and calculation engine as the foundation. The web app and APIs are access layers on top of a single source of truth — not the other way around.',
                       },
                       {
                         title: 'Versioned and transparent, not black-box',
-                        desc: "Every rule and rate is tied to a specific HTS release and change history. Every calculation is traceable through the tariff graph. If you can't explain the answer, it's not an answer.",
+                        desc: "Every rule and rate is tied to a specific HTS release and change history. Every calculation is traceable through the RuleGraph™. If you can't explain the answer, it's not an answer.",
                       },
                       {
                         title: 'Scenario-driven, not just lookup-driven',
@@ -373,7 +439,7 @@
                   <div style={{ marginBottom: 48 }}>
                     <div className="section-label">Our Team</div>
                     <h2 className="section-heading-lg" style={{ marginBottom: 12 }}>
-                      Meet the experts behind Neo Tariff.
+                      Meet the Experts Behind NeoTariff
                     </h2>
                     <p className="sans section-desc" style={{ maxWidth: 540 }}>
                       A team of engineers, trade experts, and operators building tariff intelligence
@@ -455,7 +521,7 @@
                 <div id="adv" data-animate className={`anim ${isV('adv') ? 'vis' : ''}`}>
                   <div className="section-label">Advisory Services</div>
                   <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
-                    Expert-led engagements powered by the engine.
+                    Expert-Led Engagements, Powered by the Engine
                   </h2>
                   <p
                     className="sans section-desc"
@@ -480,7 +546,7 @@
                       },
                       {
                         title: 'Classification Optimization',
-                        desc: 'Review existing classifications against the tariff graph. Surface misclassifications and rate-saving opportunities.',
+                        desc: 'Review existing classifications against the RuleGraph™. Surface misclassifications and rate-saving opportunities.',
                       },
                       {
                         title: 'Post-Summary Correction Sizing',
@@ -488,7 +554,7 @@
                       },
                       {
                         title: 'Custom Integration',
-                        desc: 'Help your engineering team connect the Neo Tariff API to your existing systems — ERP, TMS, procurement, or analytics.',
+                        desc: 'Help your engineering team connect the NeoTariff API to your existing systems — ERP, TMS, procurement, or analytics.',
                       },
                     ].map((s, i) => (
                       <div key={i} className="info-card" style={{ padding: '22px 20px' }}>
@@ -502,6 +568,194 @@
                           {s.desc}
                         </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div className="divider" />
+
+            {/* ━━━ Insights & Perspectives ━━━ */}
+            <section style={{ padding: '72px 48px' }}>
+              <div className="section-inner">
+                <div id="insights" data-animate className={`anim ${isV('insights') ? 'vis' : ''}`}>
+                  <div className="section-label">Insights &amp; Perspectives</div>
+                  <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
+                    Perspectives on tariff intelligence, trade regulation, and operational strategy.
+                  </h2>
+                  <p
+                    className="sans section-desc"
+                    style={{ lineHeight: 1.75, marginBottom: 28, maxWidth: 580 }}
+                  >
+                    Our team shares analysis, frameworks, and lessons learned from working at the
+                    intersection of trade policy, data engineering, and enterprise decision-making.
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+                    {[
+                      {
+                        title: "The CEO\u2019s Tariff Playbook: Why Scenario Planning Beats Crystal Ball Gazing",
+                        desc: "What Shell\u2019s oil crisis playbook teaches today\u2019s trade war survivors: scenario planning wins.",
+                        date: 'July 22, 2025',
+                        img: '/images/articles/article-ceos-tariff-playbook.png',
+                        link: 'https://www.linkedin.com/pulse/ceos-tariff-playbook-why-scenario-planning-beats-crystal-joy-peters-ineac/',
+                      },
+                      {
+                        title: 'Myth-Busting: Luxury Cosmetics Are Not Helpless Against Tariffs',
+                        desc: 'How strategic sourcing, smart design, and financial levers help premium brands navigate tariff headwinds.',
+                        date: 'July 17, 2025',
+                        img: '/images/articles/article-myth-busting-luxury-cosmetics.png',
+                        link: 'https://www.linkedin.com/pulse/myth-busting-luxury-cosmetics-helpless-against-tariffs-joy-peters-sl6yf/',
+                      },
+                      {
+                        title: 'Tariffs, Culture, and the Cost of Beauty: The New Divide Hitting Brands and Consumers',
+                        desc: "Tariffs are rewriting who survives in beauty\u2014find out why indie brands are at risk.",
+                        date: 'July 17, 2025',
+                        img: '/images/articles/article-tariffs-culture-cost-of-beauty.png',
+                        link: 'https://www.linkedin.com/pulse/tariffs-culture-cost-beauty-new-divide-hitting-brands-joy-peters-5lr9e/',
+                      },
+                      {
+                        title: 'From Trade Shock to Strategic Edge: Why Boards Must Lead on Tariff Resilience',
+                        desc: "Tariffs are boardroom risks\u2014not just sourcing issues. Learn how directors can turn trade shocks into strategic advantage.",
+                        date: 'April 28, 2025',
+                        img: '/images/articles/article-from-trade-shock-strategic-edge.jpeg',
+                        link: 'https://www.linkedin.com/pulse/from-trade-shock-strategic-edge-why-boards-must-lead-tariff-zeyfc/',
+                      },
+                      {
+                        title: 'U.S. Tariffs: Same Dance, Different Tune?',
+                        desc: 'When trade rules shift, agility wins. This is how one firm turned tariffs into an advantage.',
+                        date: 'April 14, 2025',
+                        img: '/images/articles/article-us-tariffs-same-dance-different-tune.png',
+                        link: 'https://www.linkedin.com/pulse/us-tariffs-same-dance-different-tune-enterprise-neo-4ukee/',
+                      },
+                      {
+                        title: "When the coop gets rattled, it\u2019s the strongest birds that keep laying",
+                        desc: "Tariffs are testing F&B brands\u2014see why only the strongest players keep winning at the shelf.",
+                        date: 'April 11, 2025',
+                        img: '/images/articles/article-when-the-coop-gets-rattled.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-coop-gets-rattled-its-strongest-birds-keep-laying-kuhme/',
+                      },
+                      {
+                        title: 'When Tariffs Hit Hardest: How SMBs Can Survive What Giants Absorb',
+                        desc: 'A shipment gone wrong. A wake-up call. Five ways SMBs can stay ahead of the next tariff hit.',
+                        date: 'April 10, 2025',
+                        img: '/images/articles/article-when-tariffs-hit-hardest-smbs.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-tariffs-hit-hardest-how-smbs-can-survive-what-giants-za88e/',
+                      },
+                      {
+                        title: 'When the Silent Gears Jam: The Untold Tariff Risk in Salt, Fertilizers, and the Commodities Economy',
+                        desc: "This isn\u2019t about gadgets\u2014it\u2019s about what keeps the country running.",
+                        date: 'April 10, 2025',
+                        img: '/images/articles/article-when-the-silent-gears-jam.jpeg',
+                        link: 'https://www.linkedin.com/pulse/when-silent-gears-jam-untold-tariff-risk-salt-fertilizers-pasqe/',
+                      },
+                      {
+                        title: "Like Brady at the Line: A CEO\u2019s Bold Audible to Win Amid Tariff Shocks and Demand Swings",
+                        desc: 'Inaction is costing margin. Learn the 6 strategic moves industrial leaders must make now.',
+                        date: 'April 7, 2025',
+                        img: '/images/articles/article-like-brady-at-the-line.jpeg',
+                        link: 'https://www.linkedin.com/pulse/like-brady-line-ceos-bold-audible-win-amid-tariff-shocks-t9fuf/',
+                      },
+                      {
+                        title: 'Strategic Commerce in 2025: Rethinking Global Operations in a Fragmenting Trade Environment',
+                        desc: 'Globalization is out. Geo-economics is in. Are you ready to lead in the new trade regime?',
+                        date: 'April 6, 2025',
+                        img: '/images/articles/article-strategic-commerce-2025.jpeg',
+                        link: 'https://www.linkedin.com/pulse/strategic-commerce-2025-rethinking-global-operations-fragmenting-txspe/',
+                      },
+                    ].map((article, i) => (
+                      <a
+                        key={i}
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="info-card"
+                        style={{
+                          padding: 0,
+                          overflow: 'hidden',
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          transition: 'border-color 0.25s, transform 0.25s',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--accent)';
+                          e.currentTarget.style.transform = 'translateY(-3px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                          e.currentTarget.style.transform = '';
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '100%',
+                            height: 160,
+                            overflow: 'hidden',
+                            background: 'var(--bg-dark)',
+                          }}
+                        >
+                          <img
+                            src={article.img}
+                            alt=""
+                            loading="lazy"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              display: 'block',
+                            }}
+                          />
+                        </div>
+                        <div style={{ padding: '18px 22px 22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          <div
+                            className="mono"
+                            style={{
+                              fontSize: 10,
+                              letterSpacing: '0.1em',
+                              color: 'var(--text-muted)',
+                              marginBottom: 10,
+                            }}
+                          >
+                            {article.date.toUpperCase()}
+                          </div>
+                          <div
+                            className="sans"
+                            style={{
+                              fontSize: 'var(--fs-base)',
+                              fontWeight: 600,
+                              marginBottom: 10,
+                              lineHeight: 1.4,
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            {article.title}
+                          </div>
+                          <div
+                            className="sans section-desc"
+                            style={{ fontSize: 'var(--fs-sm)', flex: 1 }}
+                          >
+                            {article.desc}
+                          </div>
+                          <div
+                            className="sans"
+                            style={{
+                              fontSize: 'var(--fs-sm)',
+                              color: 'var(--accent)',
+                              marginTop: 14,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                            }}
+                          >
+                            Read on LinkedIn
+                            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                              <path d="M5 3h8v8M13 3L3 13" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
+                        </div>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -539,7 +793,7 @@
               <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="ccta" data-animate className={`anim ${isV('ccta') ? 'vis' : ''}`}>
                   <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
-                    Let's talk about your tariff challenges.
+                    Let's Talk About Your Tariff Challenges
                   </h2>
                   <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Whether you need a platform, an API, or advisory support — we'd like to

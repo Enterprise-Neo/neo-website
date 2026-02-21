@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Neo Tariff — Shared React Components
+   NeoTariff — Shared React Components
    ─────────────────────────────────────────────────────────────
    This file defines the Nav, Footer, and utility components
    shared by all pages. Loaded as type="text/babel" so JSX works.
@@ -13,7 +13,7 @@ const { useState, useEffect, useCallback } = React;
    Change URLs, labels, and external links here.
 */
 const SITE = {
-  name: 'Neo Tariff',
+  name: 'NeoTariff',
   tagline: 'by Enterprise-Neo',
   loginUrl: 'https://tariff.enterprise-neo.com/',
   signupUrl: 'https://tariff.enterprise-neo.com/signup',
@@ -21,7 +21,7 @@ const SITE = {
   apiDocsUrl: 'https://tariff-data.enterprise-neo.com/docs',
   pypiUrl: 'https://pypi.org/project/neo-tariff/',
   githubUrl: 'https://github.com/Enterprise-Neo',
-  copyright: '© 2025 Enterprise-Neo. All rights reserved.',
+  copyright: '© 2026 Enterprise-Neo. All rights reserved.',
 };
 
 /* ── Scroll Animation Hook ── */
@@ -78,13 +78,15 @@ const ChevronDown = ({ open }) => (
    NAV COMPONENT
    ────────────────────────────────────────────
    Props:
-     activePage: "overview"|"technology"|"pricing"|"company"|"platform"|"api"|"sdk"
-     transparent: boolean — if true, nav starts transparent and becomes solid on scroll (overview hero)
+     activePage: "home"|"neotariff"|"technology"|"pricing"|"company"|"platform"|"api"|"sdk"
+     transparent: boolean — if true, nav starts transparent and becomes solid on scroll (hero)
    ════════════════════════════════════════════ */
-window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
-  const [productOpen, setProductOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+window.NeoNav = ({ activePage = 'home', transparent = true }) => {
+  const [neotariffOpen, setNeotariffOpen] = useState(false);
+  const [companyOpen, setCompanyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const ntTimer = React.useRef(null);
+  const coTimer = React.useRef(null);
 
   useEffect(() => {
     if (!transparent) return;
@@ -93,16 +95,24 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
     return () => window.removeEventListener('scroll', h);
   }, [transparent]);
 
+  // Click-outside fallback
   useEffect(() => {
     const h = (e) => {
-      if (!e.target.closest('.dropdown-product')) setProductOpen(false);
-      if (!e.target.closest('.dropdown-resources')) setResourcesOpen(false);
+      if (!e.target.closest('.dropdown-neotariff')) setNeotariffOpen(false);
+      if (!e.target.closest('.dropdown-company')) setCompanyOpen(false);
     };
     document.addEventListener('click', h);
     return () => document.removeEventListener('click', h);
   }, []);
 
-  const isProductPage = ['platform', 'api', 'sdk'].includes(activePage);
+  const showNt = () => { clearTimeout(ntTimer.current); setNeotariffOpen(true); setCompanyOpen(false); };
+  const hideNt = () => { ntTimer.current = setTimeout(() => setNeotariffOpen(false), 150); };
+  const showCo = () => { clearTimeout(coTimer.current); setCompanyOpen(true); setNeotariffOpen(false); };
+  const hideCo = () => { coTimer.current = setTimeout(() => setCompanyOpen(false), 150); };
+
+  const isNeoTariffPage = ['neotariff', 'platform', 'api', 'sdk', 'technology'].includes(activePage);
+  const isCompanyPage = ['company'].includes(activePage);
+  const isEnterpriseBrand = ['home', 'company'].includes(activePage);
   const navClasses = [
     'neo-nav',
     'sans',
@@ -119,6 +129,20 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
     fontWeight: activePage === page ? 600 : 400,
     color: activePage === page ? 'var(--text-primary)' : 'var(--text-secondary)',
     ...(activePage === page ? { borderBottom: '2px solid var(--accent)', marginBottom: -1 } : {}),
+  });
+
+  const dropdownTriggerStyle = (isActive) => ({
+    padding: '8px 14px',
+    fontSize: 'var(--fs-sm)',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+    fontWeight: isActive ? 600 : 400,
+    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+    borderBottom: isActive ? '2px solid var(--accent)' : 'none',
+    marginBottom: isActive ? -1 : 0,
+    cursor: 'pointer',
   });
 
   return (
@@ -150,119 +174,116 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
             N
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'baseline' }}>
-          <span
-            style={{
-              color: 'var(--text-primary)',
-              fontSize: 16,
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Neo
-          </span>
-          <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 400 }}>
-            Tariff
-          </span>
-        </div>
-        <span
-          className="mono"
-          style={{ fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.08em' }}
-        >
-          {SITE.tagline}
-        </span>
+        {isEnterpriseBrand ? (
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+            <span
+              style={{
+                color: 'var(--text-primary)',
+                fontSize: 16,
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Enterprise
+            </span>
+            <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 700 }}>
+              Neo
+            </span>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline' }}>
+              <span
+                style={{
+                  color: 'var(--text-primary)',
+                  fontSize: 16,
+                  fontWeight: 700,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                Neo
+              </span>
+              <span style={{ color: 'var(--accent-bright)', fontSize: 16, fontWeight: 400 }}>
+                Tariff
+              </span>
+            </div>
+            <span
+              className="mono"
+              style={{ fontSize: 10, color: 'var(--text-secondary)', letterSpacing: '0.08em' }}
+            >
+              {SITE.tagline}
+            </span>
+          </>
+        )}
       </a>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          {/* Product dropdown */}
-          <div className="dropdown-product" style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setProductOpen(!productOpen);
-                setResourcesOpen(false);
-              }}
+          {/* NeoTariff dropdown — hover to show, click navigates */}
+          <div
+            className="dropdown-neotariff"
+            style={{ position: 'relative' }}
+            onMouseEnter={showNt}
+            onMouseLeave={hideNt}
+          >
+            <a
+              href="/neotariff/"
               className="sans"
-              style={{
-                padding: '8px 14px',
-                fontSize: 'var(--fs-sm)',
-                background: 'none',
-                borderTop: 'none',
-                borderLeft: 'none',
-                borderRight: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                fontWeight: isProductPage ? 600 : 400,
-                color: isProductPage ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderBottom: isProductPage ? '2px solid var(--accent)' : 'none',
-                marginBottom: isProductPage ? -1 : 0,
-              }}
+              style={dropdownTriggerStyle(isNeoTariffPage)}
             >
-              Product <ChevronDown open={productOpen} />
-            </button>
-            <div className={`dropdown-menu ${productOpen ? 'open' : ''}`}>
+              NeoTariff <ChevronDown open={neotariffOpen} />
+            </a>
+            <div className={`dropdown-menu ${neotariffOpen ? 'open' : ''}`}>
+              <div className="dd-label sans">PRODUCT FEATURES</div>
               <a
-                href="/product/platform"
+                href="/neotariff/platform/"
                 style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
               >
                 Platform
               </a>
-              <a href="/product/api" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
+              <a href="/neotariff/api/" style={activePage === 'api' ? { color: 'var(--accent)' } : {}}>
                 REST API
               </a>
-              <a href="/product/sdk" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
+              <a href="/neotariff/sdk/" style={activePage === 'sdk' ? { color: 'var(--accent)' } : {}}>
                 Python SDK
+              </a>
+              <div className="dd-label sans">LEARN MORE</div>
+              <a href="/neotariff/technology/" style={activePage === 'technology' ? { color: 'var(--accent)' } : {}}>
+                Underlying Technology
               </a>
             </div>
           </div>
 
-          <a href="/technology" className="sans" style={linkStyle('technology')}>
-            Technology
-          </a>
-          <a href="/pricing" className="sans" style={linkStyle('pricing')}>
+          <a href="/pricing/" className="sans" style={linkStyle('pricing')}>
             Pricing
           </a>
-          <a href="/company" className="sans" style={linkStyle('company')}>
-            Company
-          </a>
 
-          {/* Resources dropdown */}
-          <div className="dropdown-resources" style={{ position: 'relative' }}>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setResourcesOpen(!resourcesOpen);
-                setProductOpen(false);
-              }}
+          {/* Company dropdown — hover to show, click navigates */}
+          <div
+            className="dropdown-company"
+            style={{ position: 'relative' }}
+            onMouseEnter={showCo}
+            onMouseLeave={hideCo}
+          >
+            <a
+              href="/company/"
               className="sans"
-              style={{
-                padding: '8px 14px',
-                fontSize: 'var(--fs-sm)',
-                fontWeight: 400,
-                color: 'var(--text-secondary)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
+              style={dropdownTriggerStyle(isCompanyPage)}
             >
-              Resources <ChevronDown open={resourcesOpen} />
-            </button>
-            <div className={`dropdown-menu ${resourcesOpen ? 'open' : ''}`}>
-              <div className="dd-label sans">DEVELOPER DOCS</div>
-              <a href={SITE.apiDocsUrl} target="_blank">
-                Swagger API Docs ↗
+              Company <ChevronDown open={companyOpen} />
+            </a>
+            <div className={`dropdown-menu ${companyOpen ? 'open' : ''}`}>
+              <a href="/company/#phil">
+                Our Philosophy
               </a>
-              <a href={SITE.pypiUrl} target="_blank">
-                PyPI: neo-tariff ↗
+              <a
+                href="/company/#team"
+                style={activePage === 'company' ? { color: 'var(--accent)' } : {}}
+              >
+                Leadership & Team
               </a>
-              <a href={SITE.githubUrl} target="_blank">
-                GitHub ↗
+              <a href="/company/#insights">
+                Insights / Perspectives
               </a>
             </div>
           </div>
@@ -271,34 +292,12 @@ window.NeoNav = ({ activePage = 'overview', transparent = true }) => {
           <a
             href={SITE.loginUrl}
             className="cta-btn w120 cta-btn-condensed cta-btn-outline sans"
-            // style={{
-            //   padding: '8px 20px',
-            //   fontSize: 'var(--fs-sm)',
-            //   fontWeight: 500,
-            //   color: 'var(--text-secondary)',
-            //   textDecoration: 'none',
-            //   border: '1px solid var(--accent)',
-            //   borderRadius: 'var(--radius-btn)',
-            //   minWidth: 110,
-            //   textAlign: 'center',
-            //   display: 'inline-flex',
-            //   alignItems: 'center',
-            //   justifyContent: 'center',
-            //   whiteSpace: 'nowrap',
-            // }}
           >
             Sign In
           </a>
           <a
             href={SITE.signupUrl}
             className="cta-btn w120 cta-btn-condensed sans"
-            // style={{
-            //   padding: '8px 20px',
-            //   fontSize: 'var(--fs-sm)',
-            //   borderRadius: 'var(--radius-btn)',
-            //   textDecoration: 'none',
-            //   minWidth: 110,
-            // }}
           >
             Sign Up
           </a>
@@ -382,16 +381,16 @@ window.NeoFooter = () => (
               marginBottom: 10,
             }}
           >
-            PRODUCT
+            NEOTARIFF
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/product/platform" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              Platform
+            <a href="/neotariff/platform/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Web Application
             </a>
-            <a href="/product/api" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/neotariff/api/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               REST API
             </a>
-            <a href="/product/sdk" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/neotariff/sdk/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Python SDK
             </a>
           </div>
@@ -409,10 +408,10 @@ window.NeoFooter = () => (
             LEARN
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/technology" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              Technology
+            <a href="/neotariff/technology/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Underlying Technology
             </a>
-            <a href="/pricing" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+            <a href="/pricing/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
               Pricing
             </a>
           </div>
@@ -454,11 +453,11 @@ window.NeoFooter = () => (
             COMPANY
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-            <a href="/company" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              About
+            <a href="/company/" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Leadership
             </a>
-            <a href={SITE.githubUrl} className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
-              GitHub ↗
+            <a href="/company/#insights" className="nav-link" style={{ fontSize: 'var(--fs-sm)' }}>
+              Insights
             </a>
           </div>
         </div>
@@ -585,7 +584,7 @@ window.NeoScreenshot = ({
    Reusable hero section shared across all inner pages.
    Props:
      label:          section label text (e.g. "Technology")
-     title:          heading — string or JSX
+     title:          heading — string, string[], or JSX (array = one line per entry)
      description:    paragraph — string or JSX
      stats:          optional array of { val, label }
      ctas:           optional array of { href, label, external?, element?, className?, icon? }
@@ -670,6 +669,10 @@ window.NeoHero = ({
     ? 'neo-hero__title neo-hero__title--lg display'
     : 'neo-hero__title display';
 
+  const renderedTitle = Array.isArray(title)
+    ? title.map((line, i) => <React.Fragment key={i}>{line}{i < title.length - 1 && <br />}</React.Fragment>)
+    : title;
+
   return (
     <section
       id={id}
@@ -682,10 +685,10 @@ window.NeoHero = ({
           {label}
         </div>
         {isLarge ? (
-          <div className={titleClass}>{title}</div>
+          <div className={titleClass}>{renderedTitle}</div>
         ) : (
           <h1 className={titleClass} style={{ animation: makeAnim(delays.title) }}>
-            {title}
+            {renderedTitle}
           </h1>
         )}
         <p
