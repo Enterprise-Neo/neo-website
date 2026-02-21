@@ -35,11 +35,9 @@
         const isV = useScrollAnimation();
 
         const sideNavSections = [
-          { id: 'feat', label: 'Capabilities' },
-          { id: 'res-h', label: 'Resources' },
-          { id: 'err', label: 'Errors' },
+          { id: 'feat', label: 'What It Provides' },
+          { id: 'res-h', label: 'Resource Groups' },
           { id: 'qs', label: 'Quick Start' },
-          { id: 'cta', label: 'Get Started' },
         ];
         const resources = [
           {
@@ -236,7 +234,7 @@
             <NeoHero
               label="NeoTariff &middot; Python SDK"
               title="Build With Confidence"
-              description="Full API surface in a typed Python package. Sync and async clients, Pydantic response models, automatic retries, and batch methods. 5 resource groups, 15 typed response models."
+              description="Full API surface in a typed Python package. Sync and async clients, Pydantic response models, automatic retries, and batch methods. 5 resource groups, 15 typed response models. Install in seconds. Query in three lines."
               glow="narrow"
               ctas={[{ href: SITE.pypiUrl, label: 'View on PyPI', external: true }]}
               stats={[
@@ -256,7 +254,7 @@
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
                 <div id="feat" data-animate className={`anim ${isV('feat') ? 'vis' : ''}`}>
-                  <div className="section-label">SDK Capabilities</div>
+                  <div className="section-label">What the SDK Provides</div>
                   <div
                     style={{
                       display: 'grid',

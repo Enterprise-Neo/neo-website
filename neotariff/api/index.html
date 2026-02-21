@@ -35,11 +35,9 @@
         const isV = useScrollAnimation();
 
         const sideNavSections = [
-          { id: 'caps', label: 'Capabilities' },
-          { id: 'grp-h', label: 'Endpoints' },
-          { id: 'err', label: 'Errors' },
+          { id: 'caps', label: 'What It Delivers' },
+          { id: 'grp-h', label: 'Endpoint Reference' },
           { id: 'qs', label: 'Quick Start' },
-          { id: 'cta', label: 'Get Started' },
         ];
         const groups = [
           {
@@ -447,7 +445,7 @@
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
                 <div id="caps" data-animate className={`anim ${isV('caps') ? 'vis' : ''}`}>
-                  <div className="section-label">API Capabilities</div>
+                  <div className="section-label">What the API Delivers</div>
                   <div
                     style={{
                       display: 'grid',
@@ -517,7 +515,7 @@
                   className={`anim ${isV('grp-h') ? 'vis' : ''}`}
                   style={{ marginBottom: 32 }}
                 >
-                  <div className="section-label">Endpoint Groups</div>
+                  <div className="section-label">Endpoint Reference</div>
                   <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     {groups.length} groups. {totalEndpoints} endpoints.
                   </h2>
