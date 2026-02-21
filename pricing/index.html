@@ -31,6 +31,7 @@
 
       const NeoTariffPricing = () => {
         const [activeFaq, setActiveFaq] = useState(null);
+        const [showPrepaid, setShowPrepaid] = useState(false);
         const isV = useScrollAnimation();
 
         const sideNavSections = [
@@ -49,9 +50,9 @@
               'Full platform access',
               'No credit card required',
             ],
-            cta: 'Start Free Trial',
+            cta: 'Start Free',
             ctaHref: SITE.signupUrl,
-            ctaStyle: '',
+            ctaClass: 'pb-cta-fill',
             accent: 'var(--green)',
           },
           {
@@ -60,16 +61,15 @@
             details: [
               'No monthly commitment',
               'Full platform + API access',
-              'Optional pre-paid plans at discount',
             ],
-            cta: 'Start Free Trial',
+            cta: 'Start Free',
             ctaHref: SITE.signupUrl,
-            ctaStyle: '',
+            ctaClass: 'pb-cta-fill',
             accent: 'var(--accent)',
           },
           {
-            name: 'Licensed Customs Broker',
-            highlight: '90%+ discount',
+            name: 'Licensed Broker',
+            highlight: '90%+ off',
             details: [
               'Exclusive broker pricing',
               'Verification required',
@@ -77,22 +77,30 @@
             ],
             cta: 'Contact Us',
             ctaHref: '/company/',
-            ctaStyle: 'cta-btn-outline',
+            ctaClass: 'pb-cta-outline',
             accent: 'var(--orange)',
           },
         ];
 
+        const prepaidTiers = [
+          { name: 'PAYG', rate: '$0.35', muted: true, save: null },
+          { name: 'SMALL', rate: '$0.30', save: '14% off' },
+          { name: 'MEDIUM', rate: '$0.18', save: '49% off' },
+          { name: 'LARGE', rate: '$0.12', save: '66% off' },
+          { name: 'ENTERPRISE', rate: 'Custom', muted: true, small: true, save: null },
+        ];
+
         /* ── What's Included ── */
         const included = [
-          { check: true, text: 'Full web platform access (all tools)' },
-          { check: true, text: 'REST API access (50 endpoints, 16 groups)' },
-          { check: true, text: 'Python SDK access' },
-          { check: true, text: 'NeoTariff RuleGraph\u2122 (versioned, auditable)' },
-          { check: true, text: '249 countries with program eligibility' },
-          { check: true, text: '30 trade programs (GSP, USMCA, & more)' },
-          { check: true, text: 'Updates within <1hr of official publication' },
-          { check: false, text: 'Custom SLAs \u2014 Contact us' },
-          { check: false, text: 'Dedicated onboarding \u2014 Contact us' },
+          { check: true, text: 'Web platform (all tools)' },
+          { check: true, text: 'REST API \u00b7 50 endpoints \u00b7 16 groups' },
+          { check: true, text: 'Python SDK' },
+          { check: true, text: 'RuleGraph\u2122 (versioned, auditable)' },
+          { check: true, text: '249 countries' },
+          { check: true, text: '30 trade programs' },
+          { check: true, text: 'Sub-1hr tariff updates' },
+          { check: false, text: 'Custom SLAs' },
+          { check: false, text: 'Dedicated onboarding' },
         ];
 
         /* ── FAQ ── */
@@ -167,103 +175,101 @@
             {/* ━━━ Hero ━━━ */}
             <NeoHero
               label="Pricing"
-              title="Simple pricing. Full platform access."
+              title={["Simple pricing.", "Full platform access."]}
               description="Every plan includes the complete NeoTariff platform — web tools, REST API, and Python SDK — on a simple credit-based system. Start free, scale as you grow."
               glow="center-low"
               paddingBottom={24}
             />
 
-            {/* ━━━ 3-Panel Pricing Cards ━━━ */}
+            {/* ━━━ Unified Pricing Bar ━━━ */}
             <section style={{ padding: '0 48px 48px' }}>
               <div
                 id="plans-h"
                 data-animate
                 className={`section-inner anim ${isV('plans-h') ? 'vis' : ''}`}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: 20,
-                }}
               >
-                {panels.map((p, i) => (
-                  <div
-                    key={i}
-                    className="info-card"
-                    style={{
-                      padding: '36px 28px',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 2,
-                        background: `linear-gradient(90deg,transparent,${p.accent},transparent)`,
-                      }}
-                    />
-                    <div
-                      className="sans"
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        color: p.accent,
-                        marginBottom: 16,
-                      }}
-                    >
-                      {p.name.toUpperCase()}
-                    </div>
-                    <div
-                      className="mono"
-                      style={{
-                        fontSize: 32,
-                        fontWeight: 700,
-                        marginBottom: 20,
-                        letterSpacing: '-0.02em',
-                      }}
-                    >
-                      {p.highlight}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      {p.details.map((d, j) => (
+                <div className="pricing-bar">
+                  {/* Header row */}
+                  <div className="pb-header">
+                    {panels.map((p, i) => (
+                      <div key={i} className="pb-col">
                         <div
-                          key={j}
-                          className="sans"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.6,
-                            marginBottom: 8,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                          }}
-                        >
-                          <span style={{ color: 'var(--green)' }}>✓</span>
-                          {d}
+                          className="pb-col-bar"
+                          style={{ background: `linear-gradient(90deg,transparent,${p.accent},transparent)` }}
+                        />
+                        <div className="pb-tag sans" style={{ color: p.accent }}>
+                          {p.name.toUpperCase()}
                         </div>
-                      ))}
-                    </div>
-                    <a
-                      href={p.ctaHref}
-                      className={`cta-btn sans ${p.ctaStyle}`}
-                      style={{
-                        textDecoration: 'none',
-                        marginTop: 24,
-                        textAlign: 'center',
-                        display: 'block',
-                      }}
-                    >
-                      {p.cta} <ArrowIcon size={14} />
-                    </a>
+                        <div className="pb-price mono">{p.highlight}</div>
+                        <a href={p.ctaHref} className={`pb-cta sans ${p.ctaClass}`}>
+                          {p.cta} →
+                        </a>
+                      </div>
+                    ))}
                   </div>
-                ))}
+
+                  {/* Details row */}
+                  <div className="pb-body">
+                    {panels.map((p, i) => (
+                      <div key={i} className="pb-details sans">
+                        {p.details.map((d, j) => (
+                          <div key={j} className="pb-detail">
+                            <span style={{ color: 'var(--green)' }}>✓</span>
+                            {d}
+                          </div>
+                        ))}
+                        {/* Prepaid toggle — only in Pay As You Go column */}
+                        {i === 1 && (
+                          <button
+                            className={`prepaid-trigger sans ${showPrepaid ? 'open' : ''}`}
+                            onClick={() => setShowPrepaid(!showPrepaid)}
+                          >
+                            <span className="trigger-icon">
+                              <svg className="trigger-chevron" width="9" height="9" viewBox="0 0 9 9" fill="none">
+                                <path d="M2 3.5l2.5 2.5L7 3.5" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </span>
+                            Save up to 66% with pre-paid plans
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Expandable prepaid section */}
+                  <div className={`prepaid-expandable ${showPrepaid ? 'open' : ''}`}>
+                    <div className="prepaid-expandable-inner">
+                      <div className="prepaid-content">
+                        <div className="prepaid-strip-label mono">
+                          <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                            <path d="M6 1v10M1 6h10" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                          PRE-PAID VOLUME PLANS · REDUCE YOUR PER-CREDIT COST
+                        </div>
+                        <div className="prepaid-tiers">
+                          {prepaidTiers.map((t, i) => (
+                            <div key={i} className="prepaid-tier">
+                              <div className="pt-name sans">{t.name}</div>
+                              <div
+                                className={`pt-rate mono ${t.muted ? 'muted' : ''}`}
+                                style={t.small ? { fontSize: 'var(--fs-xs)' } : undefined}
+                              >
+                                {t.rate}
+                              </div>
+                              <div className={`pt-save ${t.save ? '' : 'none'}`}>
+                                {t.save || '\u2014'}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="prepaid-footer sans">
+                          Full plan details and volume credit breakdowns are available in-platform after sign-up.
+                          {' '}<a href={SITE.signupUrl}>Start free →</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -277,43 +283,19 @@
                   data-animate
                   className={`anim ${isV('included-h') ? 'vis' : ''}`}
                 >
-                  <div style={{ marginBottom: 32 }}>
+                  <div style={{ marginBottom: 14 }}>
                     <div className="section-label">What's Included</div>
-                    <h2 className="section-heading" style={{ fontSize: 30 }}>
+                    <h2 className="section-heading" style={{ fontSize: 22, marginBottom: 4 }}>
                       Full Platform. Every Plan.
                     </h2>
+                    <p className="sans section-desc" style={{ marginBottom: 14 }}>
+                      All features are available on every plan, including the free trial.
+                    </p>
                   </div>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '12px 48px',
-                      maxWidth: 800,
-                    }}
-                  >
+                  <div className="inc-tags">
                     {included.map((item, i) => (
-                      <div
-                        key={i}
-                        className="sans"
-                        style={{
-                          fontSize: 'var(--fs-base)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 12,
-                          padding: '8px 0',
-                          color: item.check ? 'var(--text-primary)' : 'var(--text-muted)',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: item.check ? 'var(--green)' : 'var(--text-muted)',
-                            fontWeight: 600,
-                            fontSize: 16,
-                            width: 20,
-                            textAlign: 'center',
-                            flexShrink: 0,
-                          }}
-                        >
+                      <div key={i} className={`inc-tag sans ${item.check ? 'on' : 'off'}`}>
+                        <span style={{ color: item.check ? 'var(--green)' : 'var(--text-muted)' }}>
                           {item.check ? '✓' : '✗'}
                         </span>
                         {item.text}

@@ -234,7 +234,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
               NeoTariff <ChevronDown open={neotariffOpen} />
             </a>
             <div className={`dropdown-menu ${neotariffOpen ? 'open' : ''}`}>
-              <div className="dd-label sans">FEATURES</div>
+              <div className="dd-label sans">PRODUCT FEATURES</div>
               <a
                 href="/neotariff/platform/"
                 style={activePage === 'platform' ? { color: 'var(--accent)' } : {}}
@@ -584,7 +584,7 @@ window.NeoScreenshot = ({
    Reusable hero section shared across all inner pages.
    Props:
      label:          section label text (e.g. "Technology")
-     title:          heading — string or JSX
+     title:          heading — string, string[], or JSX (array = one line per entry)
      description:    paragraph — string or JSX
      stats:          optional array of { val, label }
      ctas:           optional array of { href, label, external?, element?, className?, icon? }
@@ -669,6 +669,10 @@ window.NeoHero = ({
     ? 'neo-hero__title neo-hero__title--lg display'
     : 'neo-hero__title display';
 
+  const renderedTitle = Array.isArray(title)
+    ? title.map((line, i) => <React.Fragment key={i}>{line}{i < title.length - 1 && <br />}</React.Fragment>)
+    : title;
+
   return (
     <section
       id={id}
@@ -681,10 +685,10 @@ window.NeoHero = ({
           {label}
         </div>
         {isLarge ? (
-          <div className={titleClass}>{title}</div>
+          <div className={titleClass}>{renderedTitle}</div>
         ) : (
           <h1 className={titleClass} style={{ animation: makeAnim(delays.title) }}>
-            {title}
+            {renderedTitle}
           </h1>
         )}
         <p

@@ -566,7 +566,7 @@ h3 {
   background: rgba(var(--bg-card-rgb), 0.98);
   border: 1px solid var(--border);
   backdrop-filter: blur(16px);
-  padding: 12px 0;
+  padding: 0;
   min-width: 200px;
   opacity: 0;
   pointer-events: none;
@@ -596,11 +596,15 @@ h3 {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--text-muted);
+  color: var(--accent);
   padding: 12px 20px 4px;
   cursor: default;
   border-top: 1px solid var(--border);
   margin-top: 4px;
+}
+.dropdown-menu .dd-label:first-child {
+  border-top: none;
+  margin-top: 0;
 }
 
 /* ── Cards ── */
@@ -915,26 +919,218 @@ h3 {
   border-color: rgba(var(--accent-rgb), 0.25);
 }
 
-/* ── Pricing Page ── */
-.pricing-card {
+/* ── Pricing Page — Unified Pricing Bar ── */
+.pricing-bar {
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--bg-card);
-  box-shadow: var(--shadow-card);
-  padding: 32px 24px;
-  position: relative;
   overflow: hidden;
-  transition: all 0.35s;
 }
-.pricing-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.2);
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+.pb-header,
+.pb-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
-.pricing-card.featured {
-  border-color: rgba(var(--accent-rgb), 0.3);
-  background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.06) 0%, var(--bg-card) 100%);
+.pb-header {
+  border-bottom: 1px solid var(--border);
 }
+.pb-col {
+  padding: 18px 22px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.pb-col:last-child { border-right: none; }
+.pb-col-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.pb-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+}
+.pb-price {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.pb-cta {
+  display: block;
+  text-align: center;
+  padding: 7px 12px;
+  border-radius: var(--radius-btn);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.pb-cta:hover { opacity: 0.8; }
+.pb-cta-fill {
+  background: var(--accent);
+  color: #fff;
+}
+.pb-cta-outline {
+  border: 1px solid var(--orange);
+  color: var(--orange);
+}
+.pb-details {
+  padding: 12px 22px 14px;
+  border-right: 1px solid var(--border);
+}
+.pb-details:last-child { border-right: none; }
+.pb-detail {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+/* Prepaid expandable trigger */
+.prepaid-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--accent);
+  padding: 3px 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  text-align: left;
+}
+.prepaid-trigger:hover { opacity: 0.8; }
+.trigger-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px; height: 15px;
+  border: 1px solid rgba(var(--accent-rgb), 0.4);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.prepaid-trigger:hover .trigger-icon {
+  background: rgba(var(--accent-rgb), 0.12);
+}
+.trigger-chevron {
+  transition: transform 0.28s var(--ease);
+}
+.prepaid-trigger.open .trigger-chevron {
+  transform: rotate(180deg);
+}
+
+/* Prepaid expandable section */
+.prepaid-expandable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease), border-color 0.3s ease;
+  border-top: 0px solid transparent;
+}
+.prepaid-expandable.open {
+  grid-template-rows: 1fr;
+  border-top: 1px solid rgba(var(--accent-rgb), 0.12);
+}
+.prepaid-expandable-inner { overflow: hidden; }
+.prepaid-content {
+  padding: 14px 22px 16px;
+  background: rgba(var(--accent-rgb), 0.03);
+}
+.prepaid-strip-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.prepaid-tiers {
+  display: flex;
+  align-items: center;
+  max-width: 500px;
+}
+.prepaid-tier {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.prepaid-tier:not(:last-child)::after {
+  content: '\2192';
+  position: absolute;
+  right: -6px; top: 45%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.pt-name {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+.pt-rate {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.pt-rate.muted { color: var(--text-secondary); }
+.pt-save {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green);
+  background: rgba(74, 222, 128, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  display: inline-block;
+}
+.pt-save.none { opacity: 0; }
+.prepaid-footer {
+  margin-top: 10px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.prepaid-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.prepaid-footer a:hover { text-decoration: underline; }
+
+/* ── Inclusion tags (What's Included pills) ── */
+.inc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.inc-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.inc-tag.on {
+  color: var(--text-primary);
+  border-color: rgba(74, 222, 128, 0.15);
+}
+.inc-tag.off { opacity: 0.45; }
 
 /* ── Platform Page — Feature Card (Alternating Split) ── */
 .feature-card {

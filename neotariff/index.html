@@ -9,6 +9,17 @@
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <style>
+      /* Hide native number input spinners */
+      .roi-no-spin::-webkit-outer-spin-button,
+      .roi-no-spin::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      .roi-no-spin {
+        -moz-appearance: textfield;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -91,16 +102,33 @@
           color: 'var(--text-secondary)',
           lineHeight: 1.5,
         };
-        const inputStyle = {
-          width: 130,
+        const inputWrapperStyle = {
+          display: 'flex',
+          alignItems: 'center',
+          width: 160,
           background: 'var(--bg-card)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-btn)',
-          padding: '6px 12px',
+          padding: '0 10px',
+          gap: 4,
+        };
+        const inputFieldStyle = {
+          flex: 1,
+          width: '100%',
+          background: 'transparent',
+          border: 'none',
+          outline: 'none',
           color: 'var(--text-primary)',
           fontSize: 'var(--fs-sm)',
-          textAlign: 'right',
           fontFamily: '"Source Code Pro",monospace',
+          padding: '7px 0',
+        };
+        const affixStyle = {
+          fontSize: 'var(--fs-sm)',
+          color: 'var(--text-muted)',
+          fontFamily: '"Source Code Pro",monospace',
+          userSelect: 'none',
+          flexShrink: 0,
         };
         const rowStyle = {
           display: 'flex',
@@ -109,36 +137,70 @@
           gap: 12,
           padding: '8px 0',
         };
-        const suffixStyle = {
-          fontSize: 11,
-          color: 'var(--text-muted)',
-          minWidth: 36,
-          textAlign: 'left',
-        };
 
         const NumInput = ({ value, onChange, prefix, suffix, step = 1, min = 0 }) => (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={inputWrapperStyle}>
             {prefix && (
-              <span className="mono" style={suffixStyle}>
+              <span style={affixStyle}>
                 {prefix}
               </span>
             )}
             <input
               type="number"
               inputMode="decimal"
-              style={inputStyle}
+              className="roi-no-spin"
+              style={{
+                ...inputFieldStyle,
+                textAlign: 'right',
+              }}
               value={Number.isFinite(value) ? value : 0}
               min={min}
               step={step}
               onChange={(e) => onChange(parseFloat(e.target.value || '0'))}
             />
             {suffix && (
-              <span className="mono" style={suffixStyle}>
+              <span style={affixStyle}>
                 {suffix}
               </span>
             )}
           </div>
         );
+
+        const fmtCommas = (n) => Number(n).toLocaleString('en-US');
+        const stripCommas = (s) => s.replace(/,/g, '');
+
+        const CurrencyInput = ({ value, onChange }) => {
+          const [editing, setEditing] = useState(false);
+          const [raw, setRaw] = useState('');
+          return (
+            <div style={inputWrapperStyle}>
+              <span style={affixStyle}>$</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                className="roi-no-spin"
+                style={{ ...inputFieldStyle, textAlign: 'right' }}
+                value={editing ? raw : fmtCommas(value)}
+                onFocus={(e) => {
+                  setEditing(true);
+                  setRaw(String(value));
+                  setTimeout(() => e.target.select(), 0);
+                }}
+                onBlur={() => {
+                  const n = parseFloat(stripCommas(raw)) || 0;
+                  onChange(n);
+                  setEditing(false);
+                }}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/[^0-9.,]/g, '');
+                  setRaw(v);
+                  const n = parseFloat(stripCommas(v));
+                  if (Number.isFinite(n)) onChange(n);
+                }}
+              />
+            </div>
+          );
+        };
 
         const roiNeg = (n) =>
           `(${roiCurrency(Math.abs(n)).replace('$', '$')})`;
@@ -184,7 +246,7 @@
                 </div>
                 <div style={rowStyle}>
                   <span className="sans" style={labelStyle}>Average Compensation</span>
-                  <NumInput value={inputs.avgComp} onChange={(v) => set('avgComp', v)} prefix="$" />
+                  <CurrencyInput value={inputs.avgComp} onChange={(v) => set('avgComp', v)} />
                 </div>
                 <div style={rowStyle}>
                   <span className="sans" style={labelStyle}>Manual Work Share</span>
@@ -204,7 +266,7 @@
                 </div>
                 <div style={rowStyle}>
                   <span className="sans" style={labelStyle}>Import Value</span>
-                  <NumInput value={inputs.importValue} onChange={(v) => set('importValue', v)} prefix="$" />
+                  <CurrencyInput value={inputs.importValue} onChange={(v) => set('importValue', v)} />
                 </div>
                 <div style={rowStyle}>
                   <span className="sans" style={labelStyle}>Non-USMCA Share</span>
@@ -359,87 +421,86 @@
                   </span>
                 </div>
 
-                <div style={{ flex: 1 }} />
+              </div>
+            </div>
 
-                {/* Assumptions toggle */}
-                <div style={{ marginTop: 24 }}>
+            {/* Assumptions toggle — full width below both columns */}
+            <div style={{ marginTop: 32, borderTop: '1px solid var(--border)', paddingTop: 20 }}>
+              <div
+                className="sans"
+                onClick={() => setShowAssumptions(!showAssumptions)}
+                style={{
+                  fontSize: 'var(--fs-sm)',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 16 16"
+                  style={{
+                    transform: showAssumptions ? 'rotate(180deg)' : 'rotate(0)',
+                    transition: 'transform 0.2s',
+                  }}
+                >
+                  <path
+                    d="M4 6l4 4 4-4"
+                    stroke="var(--text-muted)"
+                    strokeWidth="1.3"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Calculation Summary &amp; Assumptions / Benchmarks
+              </div>
+              {showAssumptions && (
+                <div
+                  className="sans"
+                  style={{
+                    marginTop: 12,
+                    fontSize: 11.5,
+                    lineHeight: 1.8,
+                    color: 'var(--text-muted)',
+                  }}
+                >
+                  <div>All calculations are done in USD.</div>
+                  <div style={{ marginTop: 6 }}>
+                    <strong>Productivity Savings:</strong> Assumes 70{'\u2013'}80% time savings from
+                    validation, update, and analysis tasks.
+                  </div>
+                  <div style={{ marginTop: 6 }}>
+                    <strong>Tariff Savings from Errors:</strong> 10{'\u2013'}15% savings from errors
+                    made on 25{'\u2013'}35% of imports (USMCA and 25{'\u2013'}37.5% of non-USMCA imports).
+                  </div>
+                  <div style={{ marginTop: 6 }}>
+                    <strong>Tariff Savings from Calculations:</strong> 24{'\u2013'}37.5% savings from
+                    50% of non-USMCA imports.
+                  </div>
+                  <div style={{ marginTop: 6 }}>
+                    <strong>NeoTariff Investment:</strong> $1,000/month to $2,500/month.
+                  </div>
                   <div
-                    className="sans"
-                    onClick={() => setShowAssumptions(!showAssumptions)}
                     style={{
-                      fontSize: 'var(--fs-sm)',
-                      color: 'var(--text-muted)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
+                      marginTop: 12,
+                      paddingTop: 10,
+                      borderTop: '1px solid var(--border)',
+                      fontStyle: 'italic',
+                      fontSize: 11,
+                      lineHeight: 1.7,
                     }}
                   >
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 16 16"
-                      style={{
-                        transform: showAssumptions ? 'rotate(180deg)' : 'rotate(0)',
-                        transition: 'transform 0.2s',
-                      }}
-                    >
-                      <path
-                        d="M4 6l4 4 4-4"
-                        stroke="var(--text-muted)"
-                        strokeWidth="1.3"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    Calculation Summary &amp; Assumptions / Benchmarks
+                    <strong>Disclaimer:</strong> The results of the NeoTariff Benefits Calculator
+                    are illustrative only and not a guarantee or commitment. Actual results may vary
+                    depending on classification accuracy, policy adherence, market conditions, and
+                    tariff management maturity.
                   </div>
-                  {showAssumptions && (
-                    <div
-                      className="sans"
-                      style={{
-                        marginTop: 12,
-                        fontSize: 11.5,
-                        lineHeight: 1.8,
-                        color: 'var(--text-muted)',
-                      }}
-                    >
-                      <div>All calculations are done in USD.</div>
-                      <div style={{ marginTop: 6 }}>
-                        <strong>Productivity Savings:</strong> Assumes 70{'\u2013'}80% time savings from
-                        validation, update, and analysis tasks.
-                      </div>
-                      <div style={{ marginTop: 6 }}>
-                        <strong>Tariff Savings from Errors:</strong> 10{'\u2013'}15% savings from errors
-                        made on 25{'\u2013'}35% of imports (USMCA and 25{'\u2013'}37.5% of non-USMCA imports).
-                      </div>
-                      <div style={{ marginTop: 6 }}>
-                        <strong>Tariff Savings from Calculations:</strong> 24{'\u2013'}37.5% savings from
-                        50% of non-USMCA imports.
-                      </div>
-                      <div style={{ marginTop: 6 }}>
-                        <strong>NeoTariff Investment:</strong> $1,000/month to $2,500/month.
-                      </div>
-                      <div
-                        style={{
-                          marginTop: 12,
-                          paddingTop: 10,
-                          borderTop: '1px solid var(--border)',
-                          fontStyle: 'italic',
-                          fontSize: 11,
-                          lineHeight: 1.7,
-                        }}
-                      >
-                        <strong>Disclaimer:</strong> The results of the NeoTariff Benefits Calculator
-                        are illustrative only and not a guarantee or commitment. Actual results may vary
-                        depending on classification accuracy, policy adherence, market conditions, and
-                        tariff management maturity.
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         );
