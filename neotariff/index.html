@@ -41,32 +41,42 @@
       const roiPct = (n) => `${(n * 100).toFixed(0)}%`;
 
       const roiDefaults = {
-        teamMembers: 2,
-        avgComp: 150_000,
-        manualTimeShare: 0.2,
-        automationTimeSaved: 0.7,
-        importValue: 10_000_000,
-        nonUsmcaShare: 0.6,
-        tariffRate: 0.2,
-        usmcaAddressable: 0.4,
-        nonUsmcaAddressable: 0.5,
-        errorSavingsPct: 0.1,
-        optimizationSavingsPct: 0.4,
-        capturablePct: 0.5,
+        teamMembers: 3,
+        avgComp: 200_000,
+        manualWorkShare: 0.20,
+        importValue: 15_000_000,
+        nonUsmcaShare: 0.40,
+        avgTariffRate: 0.20,
       };
 
       const roiCompute = (i) => {
-        const usmcaShare = 1 - i.nonUsmcaShare;
-        const productivity =
-          i.teamMembers * i.avgComp * i.manualTimeShare * i.automationTimeSaved;
-        const usmcaErrors =
-          i.importValue * usmcaShare * i.tariffRate * i.usmcaAddressable * i.errorSavingsPct * i.capturablePct;
-        const nonUsmcaErrors =
-          i.importValue * i.nonUsmcaShare * i.tariffRate * i.nonUsmcaAddressable * i.errorSavingsPct * i.capturablePct;
-        const nonUsmcaOptimization =
-          i.importValue * i.nonUsmcaShare * i.tariffRate * i.optimizationSavingsPct * i.nonUsmcaAddressable * i.capturablePct;
-        const total = productivity + usmcaErrors + nonUsmcaErrors + nonUsmcaOptimization;
-        return { productivity, usmcaErrors, nonUsmcaErrors, nonUsmcaOptimization, total };
+        const usmcaDuty = i.importValue * (1 - i.nonUsmcaShare) * i.avgTariffRate;
+        const nonUsmcaDuty = i.importValue * i.nonUsmcaShare * i.avgTariffRate;
+
+        const productivityLow = i.teamMembers * i.avgComp * i.manualWorkShare * 0.70;
+        const productivityHigh = i.teamMembers * i.avgComp * i.manualWorkShare * 0.80;
+
+        const errorsLow = (usmcaDuty * 0.20 * 0.10) + (nonUsmcaDuty * 0.25 * 0.10);
+        const errorsHigh = (usmcaDuty * 0.35 * 0.15) + (nonUsmcaDuty * 0.30 * 0.15);
+
+        const optimizationLow = i.importValue * i.nonUsmcaShare * 0.50 * i.avgTariffRate * 0.20;
+        const optimizationHigh = i.importValue * i.nonUsmcaShare * 0.50 * i.avgTariffRate * 0.375;
+
+        const totalLow = productivityLow + errorsLow + optimizationLow;
+        const totalHigh = productivityHigh + errorsHigh + optimizationHigh;
+
+        const investmentLow = 12_000;
+        const investmentHigh = 30_000;
+
+        return {
+          productivityLow, productivityHigh,
+          errorsLow, errorsHigh,
+          optimizationLow, optimizationHigh,
+          totalLow, totalHigh,
+          investmentLow, investmentHigh,
+          netLow: totalLow - investmentLow,
+          netHigh: totalHigh - investmentHigh,
+        };
       };
 
       const RoiCalculator = () => {
@@ -106,8 +116,13 @@
           textAlign: 'left',
         };
 
-        const NumInput = ({ value, onChange, suffix, step = 1, min = 0 }) => (
+        const NumInput = ({ value, onChange, prefix, suffix, step = 1, min = 0 }) => (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {prefix && (
+              <span className="mono" style={suffixStyle}>
+                {prefix}
+              </span>
+            )}
             <input
               type="number"
               inputMode="decimal"
@@ -125,23 +140,8 @@
           </div>
         );
 
-        const ResultRow = ({ label, value, accent }) => (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
-            <span className="sans" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>
-              {label}
-            </span>
-            <span
-              className="mono"
-              style={{
-                fontSize: 'var(--fs-base)',
-                fontWeight: 600,
-                color: accent ? 'var(--green)' : 'var(--text-primary)',
-              }}
-            >
-              {roiCurrency(value)}
-            </span>
-          </div>
-        );
+        const roiNeg = (n) =>
+          `(${roiCurrency(Math.abs(n)).replace('$', '$')})`;
 
         return (
           <div
@@ -166,113 +166,62 @@
                     fontSize: 10.5,
                     letterSpacing: '0.1em',
                     color: 'var(--accent)',
-                    marginBottom: 16,
+                    marginBottom: 24,
+                    padding: '4px 10px',
+                    border: '1px solid rgba(var(--accent-rgb),0.25)',
+                    display: 'inline-block',
                   }}
                 >
-                  ADJUST ASSUMPTIONS
+                  INPUT
                 </div>
 
-                <div className="sans" style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginBottom: 12 }}>
-                  1) Team Productivity
+                <div className="sans" style={{ fontSize: 'var(--fs-md)', fontWeight: 600, marginBottom: 16 }}>
+                  Productivity
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Team members in tariff work</span>
+                  <span className="sans" style={labelStyle}>Team Members</span>
                   <NumInput value={inputs.teamMembers} onChange={(v) => set('teamMembers', v)} />
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Avg. annual compensation</span>
-                  <NumInput value={inputs.avgComp} onChange={(v) => set('avgComp', v)} suffix="USD" />
+                  <span className="sans" style={labelStyle}>Average Compensation</span>
+                  <NumInput value={inputs.avgComp} onChange={(v) => set('avgComp', v)} prefix="$" />
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Time on manual tasks</span>
+                  <span className="sans" style={labelStyle}>Manual Work Share</span>
                   <NumInput
-                    value={inputs.manualTimeShare}
-                    onChange={(v) => set('manualTimeShare', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.manualTimeShare)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Time saved via automation</span>
-                  <NumInput
-                    value={inputs.automationTimeSaved}
-                    onChange={(v) => set('automationTimeSaved', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.automationTimeSaved)}
+                    value={Math.round(inputs.manualWorkShare * 100)}
+                    onChange={(v) => set('manualWorkShare', v / 100)}
+                    step={5}
+                    suffix="%"
                   />
                 </div>
 
                 <div
                   className="sans"
-                  style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, marginTop: 20, marginBottom: 12 }}
+                  style={{ fontSize: 'var(--fs-md)', fontWeight: 600, marginTop: 28, marginBottom: 16 }}
                 >
-                  2) Tariff Savings
+                  Tariff Savings
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Estimated import value</span>
-                  <NumInput value={inputs.importValue} onChange={(v) => set('importValue', v)} suffix="USD" />
+                  <span className="sans" style={labelStyle}>Import Value</span>
+                  <NumInput value={inputs.importValue} onChange={(v) => set('importValue', v)} prefix="$" />
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Non-USMCA share</span>
+                  <span className="sans" style={labelStyle}>Non-USMCA Share</span>
                   <NumInput
-                    value={inputs.nonUsmcaShare}
-                    onChange={(v) => set('nonUsmcaShare', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.nonUsmcaShare)}
+                    value={Math.round(inputs.nonUsmcaShare * 100)}
+                    onChange={(v) => set('nonUsmcaShare', v / 100)}
+                    step={5}
+                    suffix="%"
                   />
                 </div>
                 <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Average tariff rate</span>
+                  <span className="sans" style={labelStyle}>Average Tariff Rate</span>
                   <NumInput
-                    value={inputs.tariffRate}
-                    onChange={(v) => set('tariffRate', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.tariffRate)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>USMCA addressable (errors)</span>
-                  <NumInput
-                    value={inputs.usmcaAddressable}
-                    onChange={(v) => set('usmcaAddressable', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.usmcaAddressable)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Non-USMCA addressable</span>
-                  <NumInput
-                    value={inputs.nonUsmcaAddressable}
-                    onChange={(v) => set('nonUsmcaAddressable', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.nonUsmcaAddressable)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Savings from tariff errors</span>
-                  <NumInput
-                    value={inputs.errorSavingsPct}
-                    onChange={(v) => set('errorSavingsPct', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.errorSavingsPct)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Optimization savings (non-USMCA)</span>
-                  <NumInput
-                    value={inputs.optimizationSavingsPct}
-                    onChange={(v) => set('optimizationSavingsPct', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.optimizationSavingsPct)}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <span className="sans" style={labelStyle}>Capturable savings</span>
-                  <NumInput
-                    value={inputs.capturablePct}
-                    onChange={(v) => set('capturablePct', v)}
-                    step={0.05}
-                    suffix={roiPct(inputs.capturablePct)}
+                    value={Math.round(inputs.avgTariffRate * 100)}
+                    onChange={(v) => set('avgTariffRate', v / 100)}
+                    step={5}
+                    suffix="%"
                   />
                 </div>
               </div>
@@ -292,40 +241,121 @@
                     fontSize: 10.5,
                     letterSpacing: '0.1em',
                     color: 'var(--green)',
-                    marginBottom: 16,
+                    marginBottom: 24,
+                    padding: '4px 10px',
+                    border: '1px solid rgba(76,175,80,0.25)',
+                    display: 'inline-block',
                   }}
                 >
-                  ESTIMATED BENEFITS (ANNUAL)
+                  ESTIMATED ROI FROM NEOTARIFF
                 </div>
 
-                <ResultRow label="Productivity Savings" value={out.productivity} />
-                <ResultRow label="Savings from USMCA tariff errors" value={out.usmcaErrors} />
-                <ResultRow label="Savings from non-USMCA tariff errors" value={out.nonUsmcaErrors} />
-                <ResultRow label="Optimization savings (non-USMCA)" value={out.nonUsmcaOptimization} />
+                {/* Column headers */}
+                <div
+                  className="sans"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 100px 100px',
+                    gap: 8,
+                    padding: '8px 0',
+                    borderBottom: '1px solid var(--border)',
+                    marginBottom: 4,
+                  }}
+                >
+                  <span style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, color: 'var(--text-muted)' }}>Benefit</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, color: 'var(--text-muted)', textAlign: 'right' }}>Low</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, color: 'var(--text-muted)', textAlign: 'right' }}>High</span>
+                </div>
 
+                {/* Benefit rows */}
+                {[
+                  { label: 'Increased Productivity', low: out.productivityLow, high: out.productivityHigh },
+                  { label: 'Tariff Cost Savings (Errors)', low: out.errorsLow, high: out.errorsHigh },
+                  { label: 'Tariff Cost Savings (Optimization)', low: out.optimizationLow, high: out.optimizationHigh },
+                ].map((row, i) => (
+                  <div
+                    key={i}
+                    className="sans"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 100px 100px',
+                      gap: 8,
+                      padding: '10px 0',
+                    }}
+                  >
+                    <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>{row.label}</span>
+                    <span className="mono" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', textAlign: 'right' }}>{roiCurrency(row.low)}</span>
+                    <span className="mono" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', textAlign: 'right' }}>{roiCurrency(row.high)}</span>
+                  </div>
+                ))}
+
+                {/* Total Benefits */}
+                <div
+                  className="sans"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 100px 100px',
+                    gap: 8,
+                    padding: '12px 0',
+                    borderTop: '1px solid var(--border)',
+                    marginTop: 4,
+                  }}
+                >
+                  <span style={{ fontSize: 'var(--fs-sm)', fontWeight: 600 }}>Total Benefits</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, textAlign: 'right' }}>{roiCurrency(out.totalLow)}</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', fontWeight: 600, textAlign: 'right' }}>{roiCurrency(out.totalHigh)}</span>
+                </div>
+
+                {/* NeoTariff Investment */}
+                <div
+                  className="sans"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 100px 100px',
+                    gap: 8,
+                    padding: '10px 0',
+                  }}
+                >
+                  <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>NeoTariff Investment</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)', textAlign: 'right' }}>({roiCurrency(out.investmentLow)})</span>
+                  <span className="mono" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-muted)', textAlign: 'right' }}>({roiCurrency(out.investmentHigh)})</span>
+                </div>
+
+                {/* Net Benefit */}
                 <div
                   style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 100px 100px',
+                    gap: 8,
                     borderTop: '1px solid var(--border)',
-                    marginTop: 16,
+                    marginTop: 8,
                     paddingTop: 16,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
                   }}
                 >
                   <span className="sans" style={{ fontSize: 'var(--fs-md)', fontWeight: 600 }}>
-                    Total Savings
+                    Net Benefit
                   </span>
                   <span
                     className="mono"
                     style={{
-                      fontSize: 28,
+                      fontSize: 'var(--fs-md)',
                       fontWeight: 700,
                       color: 'var(--green)',
-                      letterSpacing: '-0.02em',
+                      textAlign: 'right',
                     }}
                   >
-                    {roiCurrency(out.total)}
+                    {roiCurrency(out.netLow)}
+                  </span>
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: 'var(--fs-md)',
+                      fontWeight: 700,
+                      color: 'var(--green)',
+                      textAlign: 'right',
+                    }}
+                  >
+                    {roiCurrency(out.netHigh)}
                   </span>
                 </div>
 
@@ -363,7 +393,7 @@
                         strokeLinejoin="round"
                       />
                     </svg>
-                    Calculation Assumptions
+                    Calculation Summary &amp; Assumptions / Benchmarks
                   </div>
                   {showAssumptions && (
                     <div
@@ -375,24 +405,36 @@
                         color: 'var(--text-muted)',
                       }}
                     >
-                      <div>
-                        Productivity = teamMembers {'\u00D7'} avgComp {'\u00D7'} manualTimeShare{' '}
-                        {'\u00D7'} automationTimeSaved
+                      <div>All calculations are done in USD.</div>
+                      <div style={{ marginTop: 6 }}>
+                        <strong>Productivity Savings:</strong> Assumes 70{'\u2013'}80% time savings from
+                        validation, update, and analysis tasks.
                       </div>
-                      <div>
-                        USMCA errors = importValue {'\u00D7'} (1 {'\u2212'} nonUsmcaShare){' '}
-                        {'\u00D7'} tariffRate {'\u00D7'} usmcaAddressable {'\u00D7'}{' '}
-                        errorSavingsPct {'\u00D7'} capturablePct
+                      <div style={{ marginTop: 6 }}>
+                        <strong>Tariff Savings from Errors:</strong> 10{'\u2013'}15% savings from errors
+                        made on 25{'\u2013'}35% of imports (USMCA and 25{'\u2013'}37.5% of non-USMCA imports).
                       </div>
-                      <div>
-                        non-USMCA errors = importValue {'\u00D7'} nonUsmcaShare {'\u00D7'}{' '}
-                        tariffRate {'\u00D7'} nonUsmcaAddressable {'\u00D7'} errorSavingsPct{' '}
-                        {'\u00D7'} capturablePct
+                      <div style={{ marginTop: 6 }}>
+                        <strong>Tariff Savings from Calculations:</strong> 24{'\u2013'}37.5% savings from
+                        50% of non-USMCA imports.
                       </div>
-                      <div>
-                        non-USMCA optimization = importValue {'\u00D7'} nonUsmcaShare {'\u00D7'}{' '}
-                        tariffRate {'\u00D7'} optimizationSavingsPct {'\u00D7'}{' '}
-                        nonUsmcaAddressable {'\u00D7'} capturablePct
+                      <div style={{ marginTop: 6 }}>
+                        <strong>NeoTariff Investment:</strong> $1,000/month to $2,500/month.
+                      </div>
+                      <div
+                        style={{
+                          marginTop: 12,
+                          paddingTop: 10,
+                          borderTop: '1px solid var(--border)',
+                          fontStyle: 'italic',
+                          fontSize: 11,
+                          lineHeight: 1.7,
+                        }}
+                      >
+                        <strong>Disclaimer:</strong> The results of the NeoTariff Benefits Calculator
+                        are illustrative only and not a guarantee or commitment. Actual results may vary
+                        depending on classification accuracy, policy adherence, market conditions, and
+                        tariff management maturity.
                       </div>
                     </div>
                   )}
@@ -411,11 +453,11 @@
         const sections = [
           { id: 'hero', label: 'Top' },
           { id: 'prob', label: 'The Problem' },
-          { id: 'pill-h', label: 'The Engine' },
-          { id: 'roi-h', label: 'ROI Calculator' },
+          { id: 'pill-h', label: 'The Architecture' },
           { id: 'use-h', label: 'Access & Integration' },
           { id: 'cmp-h', label: 'NeoTariff vs. The Rest' },
           { id: 'fq-h', label: 'FAQ' },
+          { id: 'roi-h', label: 'ROI Calculator' },
         ];
 
         const features = [
@@ -686,13 +728,14 @@
                   className={`anim ${isV('pill-h') ? 'vis' : ''}`}
                   style={{ marginBottom: 48 }}
                 >
-                  <div className="section-label">How the Engine Works</div>
+                  <div className="section-label">The Architecture</div>
                   <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
-                    Three pillars. One engine.
+                    Built on law. Powered by logic. Applied at scale.
                   </h2>
-                  <p className="sans section-desc" style={{ maxWidth: 580 }}>
-                    Ingest the law, model it as a graph, compute against it deterministically, and
-                    let you explore scenarios on top.
+                  <p className="sans section-desc" style={{ maxWidth: 620 }}>
+                    Most tariff tools look things up. NeoTariff computes them — from a versioned
+                    graph of the actual law, through a rules-based engine that shows its work,
+                    across your entire portfolio.
                   </p>
                 </div>
                 <div
@@ -710,22 +753,22 @@
                     {
                       num: '01',
                       title: 'NeoTariff RuleGraph™',
-                      hl: 'What is it grounded in?',
-                      desc: 'A structured, version-controlled knowledge graph built from official U.S. HTS releases. Codes, rates, conditions, Chapter 99 rules, notes, cross-references, and relationships — every release stored as a distinct version with full change history. The foundation for every calculation.',
+                      hl: 'The law, structured and versioned',
+                      desc: 'The U.S. HTS — including Chapter 99 rules, general and chapter notes, footnotes, exclusions, trade program conditions, and cross-references — is continuously ingested, structured, and stored as a versioned, machine-readable graph. Not a data feed. Not a static table. A living model of what the tariff law actually says at any point in time. Every official HTS release becomes a distinct version with full change history. A comparison engine diffs each new version so every rule change, scope shift, and new heading is reviewed before it goes live. You can answer: "What was the correct duty for this product, from this country, on this date, under these rules?"',
                       color: 'var(--accent)',
                     },
                     {
                       num: '02',
                       title: 'Deterministic Duty Engine',
-                      hl: 'How does it compute?',
-                      desc: 'Given a tariff version, the RuleGraph™, and your transaction inputs, the engine deterministically computes duties. It handles the complexity most tools skip: component-based surcharges, supersessions, priority logic, exclusion hierarchies, and transit windows. Every answer includes legal citations.',
+                      hl: 'Rules-based. Traceable. Never a black box.',
+                      desc: 'Given a tariff version, your transaction inputs, and the NeoTariff RuleGraph™, the engine deterministically computes the correct duty outcome — applying every layer of complexity in the right order: base MFN rates, Section 301 and 232 surcharges, IEEPA reciprocal tariffs, exclusions, trade program eligibility, supersession logic, and conditional flags. Same inputs always produce the same output. No inference. No guessing. And every answer includes the complete rule path and legal citations that produced it — so you can defend the number with Customs, in a board deck, or in a due diligence file.',
                       color: 'var(--green)',
                     },
                     {
                       num: '03',
                       title: 'Scenario & Portfolio Modeling',
-                      hl: 'What can I do with it?',
-                      desc: 'Model the financial impact of changing suppliers, shifting countries of origin, or new tariff policies — across your entire product catalog. See tariffs in the context of total landed cost, gross margin, and portfolio-level exposure.',
+                      hl: 'From one product to your entire business',
+                      desc: 'Built on top of the same engine and the same RuleGraph™, the modeling layer scales a single calculation to your entire product catalog — and from today\u2019s tariff regime to any scenario you want to test. Change a supplier, shift a country of origin, apply a new executive order: the engine recomputes every affected SKU instantly. See tariffs in the context that matters: total landed cost, gross margin impact, and portfolio-level exposure. The same calculations that power a spot check power a full due diligence stress test or a board-level strategic planning model.',
                       color: 'var(--orange)',
                     },
                   ].map((p, i) => (
@@ -794,25 +837,6 @@
                   ))}
                 </div>
                 <div
-                  id="st-h"
-                  data-animate
-                  className={`anim ${isV('st-h') ? 'vis' : ''}`}
-                  style={{ marginBottom: 20 }}
-                >
-                  <div className="section-label">By the Numbers</div>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-sm)',
-                      color: 'var(--text-secondary)',
-                      maxWidth: 480,
-                    }}
-                  >
-                    Coverage as of 2025 Revision 23 — sourced from HTSUS, USTR, and CBP official
-                    publications.
-                  </p>
-                </div>
-                <div
                   id="st-g"
                   data-animate
                   className={`stat-grid anim ${isV('st-g') ? 'vis' : ''}`}
@@ -829,28 +853,6 @@
                   <a href="/neotariff/technology/" className="sans accent-link">
                     Explore the full technology deep dive <ArrowIcon size={14} />
                   </a>
-                </div>
-              </div>
-            </section>
-            <NeoDivider />
-
-            {/* ══ ROI Calculator ══ */}
-            <section id="roi-calculator" style={{ padding: 'var(--section-pad)' }}>
-              <div className="section-inner">
-                <div
-                  id="roi-h"
-                  data-animate
-                  className={`anim ${isV('roi-h') ? 'vis' : ''}`}
-                >
-                  <div className="section-label">ROI Calculator</div>
-                  <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
-                    Calculate Your Potential Savings
-                  </h2>
-                  <p className="sans section-desc" style={{ maxWidth: 600, marginBottom: 32 }}>
-                    Estimate the tariff savings your organization could realize using NeoTariff's
-                    deterministic engine and scenario modeling capabilities.
-                  </p>
-                  <RoiCalculator />
                 </div>
               </div>
             </section>
@@ -1378,6 +1380,28 @@
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            </section>
+            <NeoDivider />
+
+            {/* ══ ROI Calculator ══ */}
+            <section id="roi-calculator" style={{ padding: 'var(--section-pad)' }}>
+              <div className="section-inner">
+                <div
+                  id="roi-h"
+                  data-animate
+                  className={`anim ${isV('roi-h') ? 'vis' : ''}`}
+                >
+                  <div className="section-label">ROI Calculator</div>
+                  <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
+                    Calculate Your Potential Savings
+                  </h2>
+                  <p className="sans section-desc" style={{ maxWidth: 600, marginBottom: 32 }}>
+                    Estimate the tariff savings your organization could realize using NeoTariff's
+                    deterministic engine and scenario modeling capabilities.
+                  </p>
+                  <RoiCalculator />
                 </div>
               </div>
             </section>
