@@ -37,12 +37,10 @@
           { id: 'tariff-simulator', label: 'Tariff Simulator' },
           { id: 'bulk-simulator', label: 'Bulk Simulator' },
           { id: 'hts-browser-schedule', label: 'HTS Navigator' },
-          { id: 'hts-browser-notes', label: 'HTS Notes' },
-          { id: 'scenario-dashboard', label: 'Scenarios' },
+          { id: 'scenario-dashboard', label: 'Analysis Dashboard' },
           { id: 'alternate-vendor', label: 'Vendor Discovery' },
           { id: 'news-insights', label: 'News & Insights' },
-          { id: 'pwrd', label: 'What Powers It' },
-          { id: 'cta', label: 'Get Started' },
+          { id: 'pwrd', label: 'The Engine' },
         ];
 
         const isV = useScrollAnimation();
@@ -318,15 +316,15 @@
 
             {/* Hero */}
             <NeoHero
-              label="Product Tour"
-              title="Platform Features"
-              description="Every tool in the NeoTariff platform is powered by the same versioned RuleGraph™ and deterministic calculation engine. From single-entry simulations to portfolio analytics and supplier discovery — here's what you get."
+              label="NeoTariff &middot; Platform"
+              title="Every Tool. One Engine."
+              description="NeoTariff's web platform allows users to assess tariffs on a single product or an entire portfolio, build scenarios for potential changes in tariffs, stay current on the latest tariff-related news, and access a database of 295MM+ suppliers located globally."
               glow="right"
               descMaxWidth={640}
               stats={[
                 { val: '7', label: 'Platform tools' },
-                { val: '4', label: 'Tariff essentials' },
-                { val: '3', label: 'Intelligence suite' },
+                { val: '', label: 'Calculation + Analytics + Discovery' },
+                { val: '', label: 'Single engine underneath' },
               ]}
             />
 
@@ -411,7 +409,7 @@
                     TARIFF MANAGEMENT ESSENTIALS
                   </div>
                   <h2 className="section-heading" style={{ marginTop: 14 }}>
-                    Core tools for tariff calculation and HTS navigation
+                    Calculate Duties. Navigate the HTS. Instantly.
                   </h2>
                   <p className="sans section-desc" style={{ marginTop: 10, maxWidth: 580 }}>
                     The foundation of the NeoTariff platform — deterministic duty calculations,
@@ -449,7 +447,7 @@
                     MARKET & SUPPLIER INTELLIGENCE
                   </div>
                   <h2 className="section-heading" style={{ marginTop: 14 }}>
-                    Analytics, scenarios, and supplier discovery
+                    Understand Exposure. Model Scenarios. Find Better Suppliers.
                   </h2>
                   <p className="sans section-desc" style={{ marginTop: 10, maxWidth: 580 }}>
                     Turn tariff data into strategic intelligence — scenario modeling, portfolio
@@ -467,7 +465,7 @@
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
                 <div id="pwrd" data-animate className={`anim ${isV('pwrd') ? 'vis' : ''}`}>
-                  <div className="section-label">What Powers It All</div>
+                  <div className="section-label">Powered by One Engine</div>
                   <h2 className="section-heading" style={{ marginBottom: 36 }}>
                     Every tool runs on the same engine.
                   </h2>
@@ -540,7 +538,7 @@
               <div className="section-inner-narrow" style={{ position: 'relative' }}>
                 <div id="cta" data-animate className={`anim ${isV('cta') ? 'vis' : ''}`}>
                   <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
-                    Ready to see it in action?
+                    Start Free. See Every Tool.
                   </h2>
                   <p className="sans section-desc" style={{ marginBottom: 32 }}>
                     Get a guided walkthrough of the NeoTariff platform tailored to your team's use
@@ -549,7 +547,7 @@
                   <div className="cta-row">
                     <button className="cta-btn w200 sans">Request a Demo</button>
                     <a
-                      href="/product/api"
+                      href="/neotariff/api/"
                       className="cta-btn w200 cta-btn-outline sans"
                       style={{ textDecoration: 'none' }}
                     >
