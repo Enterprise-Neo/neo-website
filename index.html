@@ -15,6 +15,7 @@
     <form name="demo-request" netlify netlify-honeypot="bot-field" hidden>
       <input name="form-name" type="hidden" value="demo-request" />
       <input name="bot-field" />
+      <select name="inquiry-type"><option value="demo"></option><option value="general"></option><option value="broker"></option></select>
       <input name="name" />
       <input name="company" />
       <input name="email" type="email" />
@@ -37,6 +38,7 @@
         NeoScreenshot,
         NeoSideNav,
         NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
         useHashScroll,
         ArrowIcon,
@@ -45,6 +47,7 @@
 
       const EnterpriseNeoHome = () => {
         const [activeFeature, setActiveFeature] = useState(0);
+        const [showContact, setShowContact] = useState(false);
         const isV = useScrollAnimation(0.12);
         const cycleTimer = useRef(null);
         const pauseTimer = useRef(null);
@@ -274,7 +277,8 @@
                   icon: <ArrowIcon size={14} />,
                 },
                 {
-                  href: '/company/',
+                  element: 'button',
+                  onClick: () => setShowContact(true),
                   label: 'Contact Us to Learn More',
                   className: 'cta-btn-outline',
                 },
@@ -618,7 +622,7 @@
                         'Due diligence support',
                         'Post-summary correction sizing',
                       ],
-                      link: '/company/',
+                      onClick: () => setShowContact(true),
                       linkText: 'Contact Us',
                     },
                   ].map((lane, i) => (
@@ -669,9 +673,15 @@
                           </div>
                         ))}
                       </div>
-                      <a href={lane.link} className="sans accent-link">
-                        {lane.linkText} <ArrowIcon size={12} />
-                      </a>
+                      {lane.onClick ? (
+                        <button onClick={lane.onClick} className="sans accent-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                          {lane.linkText} <ArrowIcon size={12} />
+                        </button>
+                      ) : (
+                        <a href={lane.link} className="sans accent-link">
+                          {lane.linkText} <ArrowIcon size={12} />
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -953,19 +963,19 @@
                     >
                       Get Full Access, 7-Day Trial
                     </a>
-                    <a
-                      href="/company/"
+                    <button
                       className="cta-btn w200 cta-btn-outline sans"
-                      style={{ textDecoration: 'none' }}
+                      onClick={() => setShowContact(true)}
                     >
                       Contact Us to Learn More
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
             </section>
 
             <NeoFooter />
+            <NeoContactModal open={showContact} onClose={() => setShowContact(false)} />
           </div>
         );
       };

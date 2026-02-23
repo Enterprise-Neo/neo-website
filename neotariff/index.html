@@ -37,6 +37,7 @@
         NeoScreenshot,
         NeoSideNav,
         NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
         useHashScroll,
         ArrowIcon,
@@ -512,6 +513,7 @@
       const Overview = () => {
         const [activeFaq, setActiveFaq] = useState(null);
         const [activeFeature, setActiveFeature] = useState(0);
+        const [showContact, setShowContact] = useState(false);
         const isV = useScrollAnimation(0.12);
         const cycleTimer = useRef(null);
         const pauseTimer = useRef(null);
@@ -1282,7 +1284,7 @@
                         'Due diligence support',
                         'Post-summary correction sizing',
                       ],
-                      link: '/company',
+                      onClick: () => setShowContact(true),
                       linkText: 'Contact Us',
                     },
                   ].map((lane, i) => (
@@ -1337,9 +1339,15 @@
                           </div>
                         ))}
                       </div>
-                      <a href={lane.link} className="sans accent-link">
-                        {lane.linkText} <ArrowIcon size={12} />
-                      </a>
+                      {lane.onClick ? (
+                        <button onClick={lane.onClick} className="sans accent-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                          {lane.linkText} <ArrowIcon size={12} />
+                        </button>
+                      ) : (
+                        <a href={lane.link} className="sans accent-link">
+                          {lane.linkText} <ArrowIcon size={12} />
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1570,19 +1578,19 @@
                     >
                       Try for Free <ArrowIcon />
                     </a>
-                    <a
-                      href="/company/"
+                    <button
                       className="cta-btn w200 cta-btn-outline sans"
-                      style={{ textDecoration: 'none' }}
+                      onClick={() => setShowContact(true)}
                     >
                       Contact Us
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
             </section>
 
             <NeoFooter />
+            <NeoContactModal open={showContact} onClose={() => setShowContact(false)} />
           </div>
         );
       };
