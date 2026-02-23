@@ -24,7 +24,9 @@
         NeoDivider,
         NeoHero,
         NeoSideNav,
+        NeoSectionLabel,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState, useEffect } = React;
@@ -33,11 +35,12 @@
         const [expandedGroup, setExpandedGroup] = useState(null);
 
         const isV = useScrollAnimation();
+        useHashScroll();
 
         const sideNavSections = [
-          { id: 'feat', label: 'What It Provides' },
-          { id: 'res-h', label: 'Resource Groups' },
-          { id: 'qs', label: 'Quick Start' },
+          { id: 'capabilities', label: 'What It Provides' },
+          { id: 'resources', label: 'Resource Groups' },
+          { id: 'quick-start', label: 'Quick Start' },
         ];
         const resources = [
           {
@@ -253,8 +256,8 @@
             {/* SDK Features */}
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
-                <div id="feat" data-animate className={`anim ${isV('feat') ? 'vis' : ''}`}>
-                  <div className="section-label">What the SDK Provides</div>
+                <div id="capabilities" data-animate className={`anim ${isV('capabilities') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="What the SDK Provides" slug="capabilities" />
                   <div
                     style={{
                       display: 'grid',
@@ -288,12 +291,12 @@
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
                 <div
-                  id="res-h"
+                  id="resources"
                   data-animate
-                  className={`anim ${isV('res-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('resources') ? 'vis' : ''}`}
                   style={{ marginBottom: 32 }}
                 >
-                  <div className="section-label">Resource Groups</div>
+                  <NeoSectionLabel text="Resource Groups" slug="resources" />
                   <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     5 resource groups. {resources.reduce((s, r) => s + r.methods.length, 0)}{' '}
                     methods.
@@ -485,58 +488,11 @@
 
             <div className="divider" />
 
-            {/* Error Handling */}
-            <section style={{ padding: '64px 48px' }}>
-              <div className="section-inner">
-                <div id="err" data-animate className={`anim ${isV('err') ? 'vis' : ''}`}>
-                  <div className="section-label">Error Handling</div>
-                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
-                    Typed exception hierarchy
-                  </h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    {errorClasses.map((e, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          gap: 16,
-                          alignItems: 'center',
-                          padding: '10px 16px',
-                          background: i % 2 === 0 ? 'var(--bg-card)' : 'transparent',
-                          borderLeft:
-                            i < 2 ? '2px solid var(--border)' : '2px solid rgba(251,191,36,0.2)',
-                        }}
-                      >
-                        <code
-                          className="mono"
-                          style={{
-                            fontSize: 'var(--fs-sm)',
-                            color: i < 2 ? 'var(--text-secondary)' : 'var(--orange)',
-                            minWidth: 200,
-                          }}
-                        >
-                          {e.name}
-                        </code>
-                        <span
-                          className="sans"
-                          style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
-                        >
-                          {e.desc}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div className="divider" />
-
             {/* Quick Start */}
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
-                <div id="qs" data-animate className={`anim ${isV('qs') ? 'vis' : ''}`}>
-                  <div className="section-label">Quick Start</div>
+                <div id="quick-start" data-animate className={`anim ${isV('quick-start') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Quick Start" slug="quick-start" />
                   <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     Three lines to your first duty calculation
                   </h2>
@@ -604,6 +560,53 @@
                     </code>{' '}
                     environment variable — no key in code needed.
                   </p>
+                </div>
+              </div>
+            </section>
+
+            <div className="divider" />
+
+            {/* Error Handling */}
+            <section style={{ padding: '64px 48px' }}>
+              <div className="section-inner">
+                <div id="errors" data-animate className={`anim ${isV('errors') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Error Handling" slug="errors" />
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
+                    Typed exception hierarchy
+                  </h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    {errorClasses.map((e, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          display: 'flex',
+                          gap: 16,
+                          alignItems: 'center',
+                          padding: '10px 16px',
+                          background: i % 2 === 0 ? 'var(--bg-card)' : 'transparent',
+                          borderLeft:
+                            i < 2 ? '2px solid var(--border)' : '2px solid rgba(251,191,36,0.2)',
+                        }}
+                      >
+                        <code
+                          className="mono"
+                          style={{
+                            fontSize: 'var(--fs-sm)',
+                            color: i < 2 ? 'var(--text-secondary)' : 'var(--orange)',
+                            minWidth: 200,
+                          }}
+                        >
+                          {e.name}
+                        </code>
+                        <span
+                          className="sans"
+                          style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}
+                        >
+                          {e.desc}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </section>

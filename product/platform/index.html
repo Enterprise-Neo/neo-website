@@ -25,13 +25,17 @@
         NeoHero,
         NeoScreenshot,
         NeoSideNav,
+        NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState, useEffect } = React;
 
       const NeoTariffPlatform = () => {
         const [activeSection, setActiveSection] = useState(null);
+        const [showDemo, setShowDemo] = useState(false);
 
         const sideNavSections = [
           { id: 'tariff-simulator', label: 'Tariff Simulator' },
@@ -41,11 +45,12 @@
           { id: 'scenario-dashboard', label: 'Scenarios' },
           { id: 'alternate-vendor', label: 'Vendor Discovery' },
           { id: 'news-insights', label: 'News & Insights' },
-          { id: 'pwrd', label: 'What Powers It' },
+          { id: 'engine', label: 'What Powers It' },
           { id: 'cta', label: 'Get Started' },
         ];
 
         const isV = useScrollAnimation();
+        useHashScroll();
 
         useEffect(() => {
           const ids = [
@@ -182,7 +187,10 @@
               'Analysis Dashboard providing portfolio duty analytics and executive scenario views',
             gradient: 'linear-gradient(135deg, #1B2D4A 0%, #132240 100%)',
             highlight: 'Connect multiple simulation datasets for cross-scenario comparison',
-            img: null,
+            img: '/images/platform-dashboard.png',
+            zoom: 1.3,
+            focusX: '0%',
+            focusY: '0%',
           },
           {
             id: 'alternate-vendor',
@@ -466,8 +474,8 @@
             {/* Powered by section */}
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="pwrd" data-animate className={`anim ${isV('pwrd') ? 'vis' : ''}`}>
-                  <div className="section-label">What Powers It All</div>
+                <div id="engine" data-animate className={`anim ${isV('engine') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="What Powers It All" slug="engine" />
                   <h2 className="section-heading" style={{ marginBottom: 36 }}>
                     Every tool runs on the same engine.
                   </h2>
@@ -476,7 +484,6 @@
                       display: 'grid',
                       gridTemplateColumns: 'repeat(3,1fr)',
                       gap: 20,
-                      maxWidth: 900,
                     }}
                   >
                     {[
@@ -547,7 +554,7 @@
                     case.
                   </p>
                   <div className="cta-row">
-                    <button className="cta-btn w200 sans">Request a Demo</button>
+                    <button className="cta-btn w200 sans" onClick={() => setShowDemo(true)}>Request a Demo</button>
                     <a
                       href="/product/api"
                       className="cta-btn w200 cta-btn-outline sans"
@@ -567,6 +574,7 @@
               </div>
             </section>
             <NeoFooter />
+            <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} />
           </div>
         );
       };

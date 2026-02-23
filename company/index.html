@@ -24,31 +24,26 @@
         NeoDivider,
         NeoHero,
         NeoSideNav,
+        NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
-      const { useState, useEffect } = React;
+      const { useState } = React;
 
       const NeoTariffCompany = () => {
         const isV = useScrollAnimation();
+        const [showDemo, setShowDemo] = useState(false);
 
-        // Handle hash-based navigation (e.g. /company/#insights)
-        useEffect(() => {
-          const hash = window.location.hash.slice(1);
-          if (hash) {
-            setTimeout(() => {
-              const el = document.getElementById(hash);
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 400);
-          }
-        }, []);
+        useHashScroll();
 
         const sideNavSections = [
-          { id: 'phil', label: 'Our Philosophy' },
+          { id: 'philosophy', label: 'Our Philosophy' },
           { id: 'team', label: 'Our Team' },
-          { id: 'adv', label: 'Advisory Services' },
+          { id: 'advisory', label: 'Advisory Services' },
           { id: 'insights', label: 'Insights' },
-          { id: 'ccta', label: 'Contact Us' },
+          { id: 'contact', label: 'Contact Us' },
         ];
 
         const leadership = [
@@ -220,7 +215,7 @@
                     height: '100%',
                     objectFit: 'cover',
                     objectPosition: 'center top',
-                    transform: 'scale(0.88)',
+                    transform: 'scale(0.80)',
                     transformOrigin: 'center top',
                     filter: hovered ? 'brightness(1.05)' : 'brightness(0.9)',
                     transition: 'all 0.4s var(--ease)',
@@ -382,8 +377,8 @@
             {/* ━━━ Our Philosophy ━━━ */}
             <section style={{ padding: '72px 48px' }}>
               <div className="section-inner">
-                <div id="phil" data-animate className={`anim ${isV('phil') ? 'vis' : ''}`}>
-                  <div className="section-label">Our Philosophy</div>
+                <div id="philosophy" data-animate className={`anim ${isV('philosophy') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Our Philosophy" slug="philosophy" />
                   <h2 className="section-heading" style={{ fontSize: 32, marginBottom: 28 }}>
                     What We Believe About Building Tariff Intelligence
                   </h2>
@@ -437,7 +432,7 @@
               <div className="section-inner">
                 <div id="team" data-animate className={`anim ${isV('team') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 48 }}>
-                    <div className="section-label">Our Team</div>
+                    <NeoSectionLabel text="Our Team" slug="team" />
                     <h2 className="section-heading-lg" style={{ marginBottom: 12 }}>
                       Meet the Experts Behind NeoTariff
                     </h2>
@@ -518,8 +513,8 @@
             {/* ━━━ Advisory Services ━━━ */}
             <section style={{ padding: '72px 48px' }}>
               <div className="section-inner">
-                <div id="adv" data-animate className={`anim ${isV('adv') ? 'vis' : ''}`}>
-                  <div className="section-label">Advisory Services</div>
+                <div id="advisory" data-animate className={`anim ${isV('advisory') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Advisory Services" slug="advisory" />
                   <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
                     Expert-Led Engagements, Powered by the Engine
                   </h2>
@@ -580,7 +575,7 @@
             <section style={{ padding: '72px 48px' }}>
               <div className="section-inner">
                 <div id="insights" data-animate className={`anim ${isV('insights') ? 'vis' : ''}`}>
-                  <div className="section-label">Insights &amp; Perspectives</div>
+                  <NeoSectionLabel text="Insights &amp; Perspectives" slug="insights" />
                   <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 14 }}>
                     Perspectives on tariff intelligence, trade regulation, and operational strategy.
                   </h2>
@@ -791,7 +786,7 @@
             >
               <div className="cta-glow" />
               <div className="section-inner-narrow" style={{ position: 'relative' }}>
-                <div id="ccta" data-animate className={`anim ${isV('ccta') ? 'vis' : ''}`}>
+                <div id="contact" data-animate className={`anim ${isV('contact') ? 'vis' : ''}`}>
                   <h2 className="section-heading-lg" style={{ marginBottom: 16 }}>
                     Let's Talk About Your Tariff Challenges
                   </h2>
@@ -800,7 +795,7 @@
                     understand your situation and show you what's possible.
                   </p>
                   <div className="cta-row">
-                    <button className="cta-btn w200 sans">Request a Demo</button>
+                    <button className="cta-btn w200 sans" onClick={() => setShowDemo(true)}>Request a Demo</button>
                     <a
                       href={SITE.signupUrl}
                       className="cta-btn w200 cta-btn-outline sans"
@@ -821,6 +816,7 @@
               </div>
             </section>
             <NeoFooter />
+            <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} />
           </div>
         );
       };

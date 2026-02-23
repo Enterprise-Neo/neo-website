@@ -24,7 +24,9 @@
         NeoDivider,
         NeoHero,
         NeoSideNav,
+        NeoSectionLabel,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState, useEffect } = React;
@@ -33,11 +35,12 @@
         const [expandedGroup, setExpandedGroup] = useState(null);
 
         const isV = useScrollAnimation();
+        useHashScroll();
 
         const sideNavSections = [
-          { id: 'caps', label: 'What It Delivers' },
-          { id: 'grp-h', label: 'Endpoint Reference' },
-          { id: 'qs', label: 'Quick Start' },
+          { id: 'capabilities', label: 'What It Delivers' },
+          { id: 'endpoints', label: 'Endpoint Reference' },
+          { id: 'quick-start', label: 'Quick Start' },
         ];
         const groups = [
           {
@@ -444,8 +447,8 @@
             {/* API Capabilities */}
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
-                <div id="caps" data-animate className={`anim ${isV('caps') ? 'vis' : ''}`}>
-                  <div className="section-label">What the API Delivers</div>
+                <div id="capabilities" data-animate className={`anim ${isV('capabilities') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="What the API Delivers" slug="capabilities" />
                   <div
                     style={{
                       display: 'grid',
@@ -510,12 +513,12 @@
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
                 <div
-                  id="grp-h"
+                  id="endpoints"
                   data-animate
-                  className={`anim ${isV('grp-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('endpoints') ? 'vis' : ''}`}
                   style={{ marginBottom: 32 }}
                 >
-                  <div className="section-label">Endpoint Reference</div>
+                  <NeoSectionLabel text="Endpoint Reference" slug="endpoints" />
                   <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     {groups.length} groups. {totalEndpoints} endpoints.
                   </h2>
@@ -693,11 +696,100 @@
 
             <div className="divider" />
 
+            {/* Quick Start */}
+            <section style={{ padding: '64px 48px' }}>
+              <div className="section-inner">
+                <div id="quick-start" data-animate className={`anim ${isV('quick-start') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Quick Start" slug="quick-start" />
+                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
+                    One request to your first duty calculation
+                  </h2>
+                  <div
+                    style={{
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius)',
+                      padding: '24px 28px',
+                      fontFamily: "'JetBrains Mono',monospace",
+                      fontSize: 'var(--fs-sm)',
+                      lineHeight: 1.75,
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    <div>
+                      <span style={{ color: 'var(--green)' }}>curl</span> -X{' '}
+                      <span style={{ color: 'var(--accent)' }}>POST</span> \
+                    </div>
+                    <div style={{ paddingLeft: 32 }}>
+                      <span style={{ color: 'var(--orange)' }}>{SITE.apiBaseUrl}/rates/entry</span>{' '}
+                      \
+                    </div>
+                    <div style={{ paddingLeft: 32 }}>
+                      -H{' '}
+                      <span style={{ color: 'var(--orange)' }}>
+                        "Authorization: Bearer your-api-key"
+                      </span>{' '}
+                      \
+                    </div>
+                    <div style={{ paddingLeft: 32 }}>
+                      -H{' '}
+                      <span style={{ color: 'var(--orange)' }}>
+                        "Content-Type: application/json"
+                      </span>{' '}
+                      \
+                    </div>
+                    <div style={{ paddingLeft: 32 }}>
+                      -d <span style={{ color: 'var(--orange)' }}>'{`{`}</span>
+                    </div>
+                    <div style={{ paddingLeft: 64 }}>
+                      <span style={{ color: 'var(--green)' }}>"hts_code"</span>:{' '}
+                      <span style={{ color: 'var(--orange)' }}>"6109.10.00.12"</span>,
+                    </div>
+                    <div style={{ paddingLeft: 64 }}>
+                      <span style={{ color: 'var(--green)' }}>"country_of_origin"</span>:{' '}
+                      <span style={{ color: 'var(--orange)' }}>"CN"</span>,
+                    </div>
+                    <div style={{ paddingLeft: 64 }}>
+                      <span style={{ color: 'var(--green)' }}>"cost"</span>:{' '}
+                      <span style={{ color: 'var(--orange)' }}>1000</span>,
+                    </div>
+                    <div style={{ paddingLeft: 64 }}>
+                      <span style={{ color: 'var(--green)' }}>"qty"</span>:{' '}
+                      <span style={{ color: 'var(--orange)' }}>1000</span>,
+                    </div>
+                    <div style={{ paddingLeft: 64 }}>
+                      <span style={{ color: 'var(--green)' }}>"reciprocal"</span>:{' '}
+                      <span style={{ color: 'var(--blue)' }}>true</span>
+                    </div>
+                    <div style={{ paddingLeft: 32 }}>
+                      <span style={{ color: 'var(--orange)' }}>{`}`}</span>'
+                    </div>
+                  </div>
+                  <p
+                    className="sans"
+                    style={{
+                      fontSize: 'var(--fs-sm)',
+                      color: 'var(--text-secondary)',
+                      marginTop: 14,
+                    }}
+                  >
+                    Pass your API key via the{' '}
+                    <code className="mono" style={{ color: 'var(--text-secondary)' }}>
+                      Authorization: Bearer
+                    </code>{' '}
+                    header. The response includes the full duty breakdown with legal citations.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <div className="divider" />
+
             {/* Error Handling */}
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
-                <div id="err" data-animate className={`anim ${isV('err') ? 'vis' : ''}`}>
-                  <div className="section-label">Error Handling</div>
+                <div id="errors" data-animate className={`anim ${isV('errors') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Error Handling" slug="errors" />
                   <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
                     Standard HTTP status codes
                   </h2>
@@ -789,95 +881,6 @@
                       style={{ color: 'var(--text-secondary)' }}
                     >{`{success: false, error: {code, message}}`}</code>{' '}
                     envelope.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <div className="divider" />
-
-            {/* Quick Start */}
-            <section style={{ padding: '64px 48px' }}>
-              <div className="section-inner">
-                <div id="qs" data-animate className={`anim ${isV('qs') ? 'vis' : ''}`}>
-                  <div className="section-label">Quick Start</div>
-                  <h2 className="section-heading-sm" style={{ marginBottom: 24 }}>
-                    One request to your first duty calculation
-                  </h2>
-                  <div
-                    style={{
-                      background: 'var(--bg-card)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 'var(--radius)',
-                      padding: '24px 28px',
-                      fontFamily: "'JetBrains Mono',monospace",
-                      fontSize: 'var(--fs-sm)',
-                      lineHeight: 1.75,
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    <div>
-                      <span style={{ color: 'var(--green)' }}>curl</span> -X{' '}
-                      <span style={{ color: 'var(--accent)' }}>POST</span> \
-                    </div>
-                    <div style={{ paddingLeft: 32 }}>
-                      <span style={{ color: 'var(--orange)' }}>{SITE.apiBaseUrl}/rates/entry</span>{' '}
-                      \
-                    </div>
-                    <div style={{ paddingLeft: 32 }}>
-                      -H{' '}
-                      <span style={{ color: 'var(--orange)' }}>
-                        "Authorization: Bearer your-api-key"
-                      </span>{' '}
-                      \
-                    </div>
-                    <div style={{ paddingLeft: 32 }}>
-                      -H{' '}
-                      <span style={{ color: 'var(--orange)' }}>
-                        "Content-Type: application/json"
-                      </span>{' '}
-                      \
-                    </div>
-                    <div style={{ paddingLeft: 32 }}>
-                      -d <span style={{ color: 'var(--orange)' }}>'{`{`}</span>
-                    </div>
-                    <div style={{ paddingLeft: 64 }}>
-                      <span style={{ color: 'var(--green)' }}>"hts_code"</span>:{' '}
-                      <span style={{ color: 'var(--orange)' }}>"6109.10.00.12"</span>,
-                    </div>
-                    <div style={{ paddingLeft: 64 }}>
-                      <span style={{ color: 'var(--green)' }}>"country_of_origin"</span>:{' '}
-                      <span style={{ color: 'var(--orange)' }}>"CN"</span>,
-                    </div>
-                    <div style={{ paddingLeft: 64 }}>
-                      <span style={{ color: 'var(--green)' }}>"cost"</span>:{' '}
-                      <span style={{ color: 'var(--orange)' }}>1000</span>,
-                    </div>
-                    <div style={{ paddingLeft: 64 }}>
-                      <span style={{ color: 'var(--green)' }}>"qty"</span>:{' '}
-                      <span style={{ color: 'var(--orange)' }}>1000</span>,
-                    </div>
-                    <div style={{ paddingLeft: 64 }}>
-                      <span style={{ color: 'var(--green)' }}>"reciprocal"</span>:{' '}
-                      <span style={{ color: 'var(--blue)' }}>true</span>
-                    </div>
-                    <div style={{ paddingLeft: 32 }}>
-                      <span style={{ color: 'var(--orange)' }}>{`}`}</span>'
-                    </div>
-                  </div>
-                  <p
-                    className="sans"
-                    style={{
-                      fontSize: 'var(--fs-sm)',
-                      color: 'var(--text-secondary)',
-                      marginTop: 14,
-                    }}
-                  >
-                    Pass your API key via the{' '}
-                    <code className="mono" style={{ color: 'var(--text-secondary)' }}>
-                      Authorization: Bearer
-                    </code>{' '}
-                    header. The response includes the full duty breakdown with legal citations.
                   </p>
                 </div>
               </div>

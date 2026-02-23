@@ -25,13 +25,17 @@
         NeoHero,
         NeoScreenshot,
         NeoSideNav,
+        NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState, useEffect } = React;
 
       const NeoTariffPlatform = () => {
         const [activeSection, setActiveSection] = useState(null);
+        const [showDemo, setShowDemo] = useState(false);
 
         const sideNavSections = [
           { id: 'tariff-simulator', label: 'Tariff Simulator' },
@@ -40,10 +44,11 @@
           { id: 'scenario-dashboard', label: 'Analysis Dashboard' },
           { id: 'alternate-vendor', label: 'Vendor Discovery' },
           { id: 'news-insights', label: 'News & Insights' },
-          { id: 'pwrd', label: 'The Engine' },
+          { id: 'engine', label: 'The Engine' },
         ];
 
         const isV = useScrollAnimation();
+        useHashScroll();
 
         useEffect(() => {
           const ids = [
@@ -73,7 +78,7 @@
           {
             id: 'tariff-simulator',
             title: 'Tariff Simulator',
-            subtitle: 'Scenario-true landed cost for any shipment',
+            subtitle: 'Scenario-true landed cost for any shipment including country of origin shifts',
             desc: 'The Tariff Simulator is the primary interface for single-entry duty calculations. Enter an HTS code, country of origin, import date, declared value, and quantity — and get back the complete duty picture instantly. The engine evaluates base MFN rates alongside all applicable Chapter 99 rules (Section 301, Section 232, IEEPA reciprocal duties) with automatic handling of supersession, exclusion, and priority logic.',
             keyFeatures: [
               'Compute base and additional duties per shipment, including Sections 232 and 301',
@@ -95,7 +100,7 @@
           {
             id: 'bulk-simulator',
             title: 'Bulk Tariff and Scenario Simulator',
-            subtitle: 'Portfolio-wide tariff exposure from your data',
+            subtitle: 'Portfolio-wide analysis including future scenarios',
             desc: 'Upload entry histories or SKU catalogs via CSV and run the same deterministic tariff engine across your entire portfolio. The Bulk Simulator compares as-reported duties against the latest tariff schedule, surfacing rate deltas and quantifying exposure. Use it for portfolio audits, identifying overcharges, or modeling the impact of tariff changes across thousands of SKUs.',
             keyFeatures: [
               'Ingest thousands of records via CSV or system exports for calculation',
@@ -118,7 +123,7 @@
           {
             id: 'hts-browser-schedule',
             title: 'HTS Document Navigator — Schedule View',
-            subtitle: 'Navigate HTS schedules, notes, and revisions',
+            subtitle: 'Simplified HTS schedule, notes and revisions navigation',
             desc: "Explore the full U.S. Harmonized Tariff Schedule through NeoTariff's structured RuleGraph™. The Schedule view shows codes by chapter and section with general, special, and column 2 rates. Click any code to see its reciprocal rate details — including rule scope, conditions, effective dates, deference chains, and defining notes.",
             keyFeatures: [
               'Complete U.S. HTS schedule coverage with structured navigation',
@@ -180,13 +185,16 @@
               'Analysis Dashboard providing portfolio duty analytics and executive scenario views',
             gradient: 'linear-gradient(135deg, #1B2D4A 0%, #132240 100%)',
             highlight: 'Connect multiple simulation datasets for cross-scenario comparison',
-            img: null,
+            img: '/images/platform-dashboard.png',
+            zoom: 1.3,
+            focusX: '0%',
+            focusY: '0%',
           },
           {
             id: 'alternate-vendor',
             title: 'Alternate Vendor Discovery',
             premium: false,
-            subtitle: 'Find alternative suppliers by profile or capability',
+            subtitle: 'Alternative suppliers by profile or capability from a database of 295M entities globally',
             desc: 'Search for alternative vendors using two discovery modes: Business Profile (find vendors with a similar fingerprint to a reference company) and Product Capability (find vendors by specific product capability). Results include a fit score out of 100, company summary, capabilities, industry classifications, and specs.',
             keyFeatures: [
               'Two search modes: Business Profile similarity and Product Capability match',
@@ -464,8 +472,8 @@
             {/* Powered by section */}
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="pwrd" data-animate className={`anim ${isV('pwrd') ? 'vis' : ''}`}>
-                  <div className="section-label">Powered by One Engine</div>
+                <div id="engine" data-animate className={`anim ${isV('engine') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="Powered by One Engine" slug="engine" />
                   <h2 className="section-heading" style={{ marginBottom: 36 }}>
                     Every tool runs on the same engine.
                   </h2>
@@ -474,7 +482,6 @@
                       display: 'grid',
                       gridTemplateColumns: 'repeat(3,1fr)',
                       gap: 20,
-                      maxWidth: 900,
                     }}
                   >
                     {[
@@ -545,7 +552,7 @@
                     case.
                   </p>
                   <div className="cta-row">
-                    <button className="cta-btn w200 sans">Request a Demo</button>
+                    <button className="cta-btn w200 sans" onClick={() => setShowDemo(true)}>Request a Demo</button>
                     <a
                       href="/neotariff/api/"
                       className="cta-btn w200 cta-btn-outline sans"
@@ -565,6 +572,7 @@
               </div>
             </section>
             <NeoFooter />
+            <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} />
           </div>
         );
       };
