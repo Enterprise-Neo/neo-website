@@ -24,7 +24,9 @@
         NeoDivider,
         NeoHero,
         NeoSideNav,
+        NeoSectionLabel,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState, useEffect, useRef, useCallback } = React;
@@ -466,11 +468,26 @@
             resizeRaf = requestAnimationFrame(layout);
           };
           window.addEventListener('resize', onResize);
+
+          /* Re-layout when parent .anim transitions to .vis (transform changes) */
+          let mutObs;
+          const diagram = diagramRef.current;
+          const animParent = diagram?.closest('.anim');
+          if (animParent) {
+            mutObs = new MutationObserver(() => {
+              if (animParent.classList.contains('vis')) {
+                requestAnimationFrame(layout);
+              }
+            });
+            mutObs.observe(animParent, { attributes: true, attributeFilter: ['class'] });
+          }
+
           return () => {
             cancelAnimationFrame(initRaf);
             clearTimeout(cycleTimerRef.current);
             clearTimeout(resumeTimerRef.current);
             window.removeEventListener('resize', onResize);
+            if (mutObs) mutObs.disconnect();
           };
         }, [layout, startCycle]);
 
@@ -930,12 +947,13 @@
 
       const NeoTariffTechnology = () => {
         const isV = useScrollAnimation();
+        useHashScroll();
 
         const sideNavSections = [
-          { id: 'arch', label: 'Architecture' },
-          { id: 'pipe', label: 'Pipeline' },
-          { id: 'stats', label: 'By the Numbers' },
-          { id: 'aipos', label: 'AI & Engine' },
+          { id: 'architecture', label: 'Architecture' },
+          { id: 'pipeline', label: 'Pipeline' },
+          { id: 'performance', label: 'By the Numbers' },
+          { id: 'ai-role', label: 'The Role of AI' },
           { id: 'cta2', label: 'Get Started' },
         ];
 
@@ -970,8 +988,8 @@
             {/* ━━━ Interactive Architecture Diagram ━━━ */}
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="arch" data-animate className={`anim ${isV('arch') ? 'vis' : ''}`}>
-                  <div className="section-label">System Architecture</div>
+                <div id="architecture" data-animate className={`anim ${isV('architecture') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="System Architecture" slug="architecture" />
                   <h2 className="section-heading" style={{ marginBottom: 10 }}>
                     Three access points. One engine.
                   </h2>
@@ -991,10 +1009,10 @@
             <div className="divider" />
 
             {/* ━━━ Pipeline Deep Dive ━━━ */}
-            <section id="pipeline" style={{ padding: '80px 48px' }}>
+            <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="pipe" data-animate className={`anim ${isV('pipe') ? 'vis' : ''}`}>
-                  <div className="section-label">The Pipeline</div>
+                <div id="pipeline" data-animate className={`anim ${isV('pipeline') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="The 7-Stage Pipeline" slug="pipeline" />
                   <h2 className="section-heading" style={{ lineHeight: 1.15, marginBottom: 16 }}>
                     From government PDF to duty determination.
                   </h2>
@@ -1017,9 +1035,9 @@
             {/* ━━━ By the Numbers ━━━ */}
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="stats" data-animate className={`anim ${isV('stats') ? 'vis' : ''}`}>
+                <div id="performance" data-animate className={`anim ${isV('performance') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 48 }}>
-                    <div className="section-label">By the Numbers</div>
+                    <NeoSectionLabel text="Performance at Scale" slug="performance" />
                     <h2 className="section-heading">What's behind the API.</h2>
                   </div>
                   <div className="stat-grid">
@@ -1062,8 +1080,8 @@
             {/* ━━━ AI Positioning ━━━ */}
             <section style={{ padding: '80px 48px' }}>
               <div className="section-inner">
-                <div id="aipos" data-animate className={`anim ${isV('aipos') ? 'vis' : ''}`}>
-                  <div className="section-label">AI Positioning</div>
+                <div id="ai-role" data-animate className={`anim ${isV('ai-role') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="The Role of AI" slug="ai-role" />
                   <h2 className="section-heading" style={{ fontSize: 30, marginBottom: 32 }}>
                     What AI does — and doesn't — do.
                   </h2>

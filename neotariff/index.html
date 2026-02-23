@@ -36,10 +36,12 @@
         NeoHero,
         NeoScreenshot,
         NeoSideNav,
+        NeoSectionLabel,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
-      const { useState, useEffect, useMemo } = React;
+      const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
       /* ── ROI Calculator ── */
       const roiCurrency = (n) =>
@@ -510,21 +512,25 @@
         const [activeFaq, setActiveFaq] = useState(null);
         const [activeFeature, setActiveFeature] = useState(0);
         const isV = useScrollAnimation(0.12);
+        const cycleTimer = useRef(null);
+        const pauseTimer = useRef(null);
+        const isPaused = useRef(false);
+        const featureCount = useRef(0);
+        useHashScroll();
 
         const sections = [
-          { id: 'hero', label: 'Top' },
-          { id: 'prob', label: 'The Problem' },
-          { id: 'pill-h', label: 'The Architecture' },
-          { id: 'use-h', label: 'Access & Integration' },
-          { id: 'cmp-h', label: 'NeoTariff vs. The Rest' },
-          { id: 'fq-h', label: 'FAQ' },
-          { id: 'roi-h', label: 'ROI Calculator' },
+          { id: 'problem', label: 'The Problem' },
+          { id: 'architecture', label: 'The Architecture' },
+          { id: 'access', label: 'Access & Integration' },
+          { id: 'comparison', label: 'NeoTariff vs. The Rest' },
+          { id: 'faq', label: 'FAQ' },
+          { id: 'roi-calculator', label: 'ROI Calculator' },
         ];
 
         const features = [
           {
             title: 'Tariff Simulator',
-            subtitle: 'Scenario-true landed cost for any shipment',
+            subtitle: 'Scenario-true landed cost for any shipment including country of origin shifts',
             desc: 'Enter an HTS code, country, import date, and values — get the full duty breakdown instantly. Base MFN rates, Section 301/232/IEEPA surcharges, Chapter 99 rules, and conditional flags all evaluated together with a transparent component-by-component breakdown.',
             tags: ['Scenario-true', 'HTS + 232/301 aware', 'No setup required'],
             note: 'Screenshot: Tariff Simulator showing a China import (HTS 6109.10.00.12) with 44% net effective rate',
@@ -536,7 +542,7 @@
           },
           {
             title: 'Bulk Tariff and Scenario Simulator',
-            subtitle: 'Portfolio-wide tariff exposure from your data',
+            subtitle: 'Portfolio-wide analysis including future scenarios',
             desc: 'Upload entry histories or SKU catalogs via CSV and run the deterministic tariff engine across your full portfolio. Compare as-reported duty vs. latest schedule, surface rate deltas, and aggregate exposure by origin, HTS, description, or date.',
             tags: ['CSV / ERP uploads', 'Portfolio analytics', 'Scenario modeling'],
             note: 'Screenshot: Bulk Simulator processing 120 records with per-line tariff results and duty breakdown',
@@ -548,7 +554,7 @@
           },
           {
             title: 'HTS Document Navigator',
-            subtitle: 'Navigate HTS schedules, notes, and revisions',
+            subtitle: 'Simplified HTS schedule, notes and revisions navigation',
             desc: "Explore the full U.S. Harmonized Tariff Schedule through NeoTariff's structured RuleGraph™. Browse by section, chapter, and code. View reciprocal rate details, rule conditions, defining notes, and timeline history.",
             tags: ['Official USITC source', 'Notes + schedule views', 'Revision-aware'],
             note: 'Screenshot: HTS Navigator showing Chapter 99 reciprocal trade rules with schedule view and rule detail',
@@ -565,11 +571,14 @@
             tags: ['Scenario comparison', 'P&L impact', 'Executive-ready'],
             note: 'Screenshot: Analysis Dashboard with current vs. optimized tariff scenario views',
             grad: 'linear-gradient(135deg,#1B2D4A,#132240)',
-            img: null,
+            img: '/images/platform-dashboard.png',
+            zoom: 1.3,
+            focusX: '0%',
+            focusY: '0%',
           },
           {
             title: 'Alternate Vendor Discovery',
-            subtitle: 'Find alternative suppliers by profile or capability',
+            subtitle: 'Alternative suppliers by profile or capability from a database of 295M entities globally',
             desc: 'Search across 295M+ global business entities to find alternative vendors by business profile similarity or specific product capabilities. Filter by country, region, and capability match. Each result includes a fit score, industry classifications, and product specs.',
             tags: ['Supplier intelligence', 'Fit scoring', 'Country filtering'],
             note: 'Screenshot: Alternate Vendor search showing results for Japan-based apparel companies with fit scores',
@@ -592,6 +601,35 @@
             focusY: '0%',
           },
         ];
+
+        featureCount.current = features.length;
+
+        // Auto-cycle through features every 5s; pause 10s on manual click
+        const startCycle = useCallback(() => {
+          clearInterval(cycleTimer.current);
+          cycleTimer.current = setInterval(() => {
+            if (!isPaused.current) {
+              setActiveFeature((prev) => (prev + 1) % featureCount.current);
+            }
+          }, 5000);
+        }, []);
+
+        useEffect(() => {
+          startCycle();
+          return () => {
+            clearInterval(cycleTimer.current);
+            clearTimeout(pauseTimer.current);
+          };
+        }, [startCycle]);
+
+        const handleFeatureClick = (i) => {
+          setActiveFeature(i);
+          isPaused.current = true;
+          clearTimeout(pauseTimer.current);
+          pauseTimer.current = setTimeout(() => {
+            isPaused.current = false;
+          }, 10000);
+        };
 
         const stats = [
           { value: '30,067', label: 'HTS Entries', sub: 'per revision' },
@@ -707,10 +745,10 @@
             />
 
             {/* ══ The Problem ══ */}
-            <section id="problem" style={{ padding: 'var(--section-pad)' }}>
+            <section style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
-                <div id="prob" data-animate className={`anim ${isV('prob') ? 'vis' : ''}`}>
-                  <div className="section-label">The Problem</div>
+                <div id="problem" data-animate className={`anim ${isV('problem') ? 'vis' : ''}`}>
+                  <NeoSectionLabel text="The Problem" slug="problem" />
                   <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
                     Tariffs are not "a rate on a code."
                   </h2>
@@ -731,7 +769,8 @@
                         gridTemplateColumns: '200px 1fr 1fr',
                         background: 'var(--bg-elevated)',
                         borderBottom: '1px solid var(--border)',
-                        padding: '14px 24px',
+                        padding: '10px 16px',
+                        gap: 16,
                       }}
                     >
                       <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', color: 'var(--text-muted)' }}>CHALLENGE</div>
@@ -761,15 +800,15 @@
                         style={{
                           display: 'grid',
                           gridTemplateColumns: '200px 1fr 1fr',
-                          padding: '16px 24px',
+                          padding: '12px 16px',
                           borderBottom: i < 3 ? '1px solid var(--border)' : 'none',
                           alignItems: 'start',
                           gap: 16,
                         }}
                       >
-                        <div style={{ fontWeight: 600, fontSize: 'var(--fs-base)' }}>{row.t}</div>
-                        <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{row.problem}</div>
-                        <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', lineHeight: 1.6 }}>{row.solution}</div>
+                        <div style={{ fontWeight: 600, fontSize: 'var(--fs-base)', textAlign: 'left' }}>{row.t}</div>
+                        <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.6, textAlign: 'left' }}>{row.problem}</div>
+                        <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-primary)', lineHeight: 1.6, textAlign: 'left' }}>{row.solution}</div>
                       </div>
                     ))}
                   </div>
@@ -784,12 +823,12 @@
             <section id="how-it-works" style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
                 <div
-                  id="pill-h"
+                  id="architecture"
                   data-animate
-                  className={`anim ${isV('pill-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('architecture') ? 'vis' : ''}`}
                   style={{ marginBottom: 48 }}
                 >
-                  <div className="section-label">The Architecture</div>
+                  <NeoSectionLabel text="The Architecture" slug="architecture" />
                   <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
                     Built on law. Powered by logic. Applied at scale.
                   </h2>
@@ -923,12 +962,12 @@
             <section id="how-you-use-it" style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
                 <div
-                  id="use-h"
+                  id="access"
                   data-animate
-                  className={`anim ${isV('use-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('access') ? 'vis' : ''}`}
                   style={{ marginBottom: 48 }}
                 >
-                  <div className="section-label">Access &amp; Integration</div>
+                  <NeoSectionLabel text="Access &amp; Integration" slug="access" />
                   <h2
                     className="section-heading-lg"
                     style={{ fontSize: 38, maxWidth: 700, marginBottom: 16 }}
@@ -1011,7 +1050,7 @@
                         <div
                           key={i}
                           className={`feature-tab ${activeFeature === i ? 'active' : ''}`}
-                          onClick={() => setActiveFeature(i)}
+                          onClick={() => handleFeatureClick(i)}
                         >
                           <div
                             className="sans"
@@ -1275,15 +1314,15 @@
             <NeoDivider />
 
             {/* ══ Lookup vs. Logic ══ */}
-            <section id="comparison" style={{ padding: 'var(--section-pad)' }}>
+            <section style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
                 <div
-                  id="cmp-h"
+                  id="comparison"
                   data-animate
-                  className={`anim ${isV('cmp-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('comparison') ? 'vis' : ''}`}
                   style={{ marginBottom: 40 }}
                 >
-                  <div className="section-label">NeoTariff vs. The Rest</div>
+                  <NeoSectionLabel text="NeoTariff vs. The Rest" slug="comparison" />
                   <h2 className="section-heading-lg">
                     Most tools help you find codes and text.
                     <br />
@@ -1360,15 +1399,8 @@
                     </div>
                   ))}
                 </div>
-              </div>
-            </section>
-            <NeoDivider />
 
-            {/* ══ AI Approach — REMOVED (see _deprecated/sections/ai-approach.jsx) ══ */}
-
-            {/* ══ Underlying Technology Callout ══ */}
-            <section style={{ padding: '48px 48px' }}>
-              <div className="section-inner">
+                {/* ── Underlying Technology Callout ── */}
                 <div
                   className="info-card"
                   style={{
@@ -1377,6 +1409,7 @@
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     borderLeft: '3px solid var(--accent)',
+                    marginTop: 40,
                   }}
                 >
                   <div>
@@ -1403,17 +1436,18 @@
                 </div>
               </div>
             </section>
+            <NeoDivider />
 
             {/* ══ FAQ ══ */}
-            <section id="faq" style={{ padding: 'var(--section-pad)' }}>
+            <section style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
                 <div
-                  id="fq-h"
+                  id="faq"
                   data-animate
-                  className={`anim ${isV('fq-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('faq') ? 'vis' : ''}`}
                   style={{ marginBottom: 40 }}
                 >
-                  <div className="section-label">FAQ</div>
+                  <NeoSectionLabel text="FAQ" slug="faq" />
                   <h2 className="section-heading">Common questions</h2>
                 </div>
                 <div id="fq-l" data-animate className={`anim ${isV('fq-l') ? 'vis' : ''}`}>
@@ -1447,14 +1481,14 @@
             <NeoDivider />
 
             {/* ══ ROI Calculator ══ */}
-            <section id="roi-calculator" style={{ padding: 'var(--section-pad)' }}>
+            <section style={{ padding: 'var(--section-pad)' }}>
               <div className="section-inner">
                 <div
-                  id="roi-h"
+                  id="roi-calculator"
                   data-animate
-                  className={`anim ${isV('roi-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('roi-calculator') ? 'vis' : ''}`}
                 >
-                  <div className="section-label">ROI Calculator</div>
+                  <NeoSectionLabel text="ROI Calculator" slug="roi-calculator" />
                   <h2 className="section-heading-lg" style={{ marginBottom: 14 }}>
                     Calculate Your Potential Savings
                   </h2>

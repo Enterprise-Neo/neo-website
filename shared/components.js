@@ -234,6 +234,12 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
               NeoTariff <ChevronDown open={neotariffOpen} />
             </a>
             <div className={`dropdown-menu ${neotariffOpen ? 'open' : ''}`}>
+              <a
+                href="/neotariff/"
+                style={activePage === 'neotariff' ? { color: 'var(--accent)' } : {}}
+              >
+                NeoTariff Overview
+              </a>
               <div className="dd-label sans">PRODUCT FEATURES</div>
               <a
                 href="/neotariff/platform/"
@@ -273,7 +279,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
               Company <ChevronDown open={companyOpen} />
             </a>
             <div className={`dropdown-menu ${companyOpen ? 'open' : ''}`}>
-              <a href="/company/#phil">
+              <a href="/company/#philosophy">
                 Our Philosophy
               </a>
               <a
@@ -764,6 +770,9 @@ window.NeoSideNav = ({ sections }) => {
           if (el && el.getBoundingClientRect().top <= 100) current = s.id;
         }
         setActiveSection(current);
+        if (current && window.location.hash !== '#' + current) {
+          history.replaceState(null, '', '#' + current);
+        }
         ticking = false;
       });
     };
@@ -772,8 +781,11 @@ window.NeoSideNav = ({ sections }) => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = (id) =>
+  const scrollTo = (e, id) => {
+    e.preventDefault();
+    history.pushState(null, '', '#' + id);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div
@@ -791,17 +803,19 @@ window.NeoSideNav = ({ sections }) => {
       }}
     >
       {sections.map((s) => (
-        <div
+        <a
           key={s.id}
+          href={'#' + s.id}
           className={`side-dot ${activeSection === s.id ? 'active' : ''}`}
-          onClick={() => scrollTo(s.id)}
+          onClick={(e) => scrollTo(e, s.id)}
           onMouseEnter={() => setHoveredDot(s.id)}
           onMouseLeave={() => setHoveredDot(null)}
+          style={{ textDecoration: 'none' }}
         >
           <div className={`side-dot-label sans ${hoveredDot === s.id ? 'show' : ''}`}>
             {s.label}
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );
@@ -812,3 +826,201 @@ window.NeoSideNav = ({ sections }) => {
    ════════════════════════════════════════════ */
 window.NeoGrain = () => <div className="grain" />;
 window.NeoDivider = () => <div className="divider" />;
+
+/* ════════════════════════════════════════════
+   SECTION LABEL WITH ANCHOR LINK
+   ════════════════════════════════════════════ */
+window.NeoSectionLabel = ({ text, slug }) => {
+  const [copied, setCopied] = React.useState(false);
+  const timerRef = React.useRef(null);
+
+  const handleLabelClick = (e) => {
+    e.preventDefault();
+    history.pushState(null, '', '#' + slug);
+    document.getElementById(slug)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleIconClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const fullUrl = window.location.origin + window.location.pathname + '#' + slug;
+    try {
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        setCopied(true);
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), 1500);
+      });
+    } catch (_) { /* clipboard unavailable (http) */ }
+    history.pushState(null, '', '#' + slug);
+  };
+
+  return (
+    <div className="section-label section-label--anchor">
+      <a href={'#' + slug} className="section-label__link" onClick={handleLabelClick}>
+        {text}
+        <span className="section-label__icon" onClick={handleIconClick} title="Copy link">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+            <path d="M6.75 9.25a3.25 3.25 0 004.596.148l1.9-1.9a3.25 3.25 0 00-4.596-4.597l-1.09 1.083" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M9.25 6.75a3.25 3.25 0 00-4.596-.148l-1.9 1.9a3.25 3.25 0 004.596 4.597l1.083-1.083" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
+      </a>
+      {copied && <span className="section-label__tooltip">Copied!</span>}
+    </div>
+  );
+};
+
+/* ════════════════════════════════════════════
+   HASH SCROLL ON PAGE LOAD
+   ════════════════════════════════════════════ */
+window.useHashScroll = (delay = 400) => {
+  React.useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, delay);
+    }
+  }, []);
+};
+
+/* ════════════════════════════════════════════
+   DEMO REQUEST MODAL  (Netlify Forms)
+   ════════════════════════════════════════════ */
+window.NeoContactModal = ({ open, onClose }) => {
+  const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const formRef = React.useRef(null);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open]);
+
+  // Lock body scroll while open
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  // Reset form state when modal opens
+  useEffect(() => {
+    if (open) {
+      setStatus('idle');
+      if (formRef.current) formRef.current.reset();
+    }
+  }, [open]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    const formData = new FormData(e.target);
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        setStatus('success');
+      })
+      .catch(() => setStatus('error'));
+  };
+
+  if (!open) return null;
+
+  return ReactDOM.createPortal(
+    <div className="neo-modal" onClick={onClose}>
+      <div className="neo-modal__panel" onClick={(e) => e.stopPropagation()}>
+        <button className="neo-modal__close sans" onClick={onClose}>✕</button>
+
+        {status === 'success' ? (
+          <div className="neo-modal__success">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ marginBottom: 16 }}>
+              <circle cx="12" cy="12" r="10" stroke="var(--accent)" strokeWidth="1.5" />
+              <path d="M8 12.5l2.5 2.5 5-5" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <h3 className="neo-modal__title" style={{ marginBottom: 8 }}>Thank You</h3>
+            <p className="sans" style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-base)', lineHeight: 1.6 }}>
+              Your demo request has been received. Our team will be in touch shortly.
+            </p>
+            <button
+              className="cta-btn sans neo-modal__submit"
+              onClick={onClose}
+              style={{ marginTop: 24 }}
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <>
+            <h3 className="neo-modal__title">Request a Demo</h3>
+            <p className="sans" style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)', marginBottom: 24, lineHeight: 1.5 }}>
+              Tell us about your needs and we'll set up a personalized walkthrough.
+            </p>
+
+            <form
+              ref={formRef}
+              name="demo-request"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={handleSubmit}
+            >
+              <input type="hidden" name="form-name" value="demo-request" />
+              <input type="hidden" name="subject" value="Demo Request from enterprise-neo.com" />
+              <p style={{ display: 'none' }}>
+                <label>Don't fill this out: <input name="bot-field" /></label>
+              </p>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-name">Name *</label>
+                <input className="neo-modal__input sans" id="dm-name" name="name" type="text" required autoComplete="name" />
+              </div>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-company">Company *</label>
+                <input className="neo-modal__input sans" id="dm-company" name="company" type="text" required autoComplete="organization" />
+              </div>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-email">Email *</label>
+                <input className="neo-modal__input sans" id="dm-email" name="email" type="email" required autoComplete="email" />
+              </div>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-phone">Phone</label>
+                <input className="neo-modal__input sans" id="dm-phone" name="phone" type="tel" autoComplete="tel" />
+              </div>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-message">Message</label>
+                <textarea className="neo-modal__input neo-modal__textarea sans" id="dm-message" name="message" rows="3" placeholder="Tell us about your use case..."></textarea>
+              </div>
+
+              {status === 'error' && (
+                <p className="sans" style={{ color: 'var(--red)', fontSize: 'var(--fs-sm)', marginBottom: 12 }}>
+                  Something went wrong. Please try again or email us directly.
+                </p>
+              )}
+
+              <button
+                type="submit"
+                className="cta-btn sans neo-modal__submit"
+                disabled={status === 'sending'}
+              >
+                {status === 'sending' ? 'Sending...' : 'Submit Request'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+};

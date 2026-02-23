@@ -335,6 +335,50 @@ h3 {
   color: var(--accent);
   margin-bottom: 14px;
 }
+.section-label--anchor {
+  position: relative;
+  display: inline-block;
+}
+.section-label__link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-label__icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.2s;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.section-label--anchor:hover .section-label__icon {
+  opacity: 1;
+}
+.section-label__icon:hover {
+  color: var(--accent);
+}
+.section-label__tooltip {
+  position: absolute;
+  left: 0;
+  top: -28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeIn 0.15s var(--ease);
+}
 
 /* Divider line */
 .divider {
@@ -596,7 +640,7 @@ h3 {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--text-muted);
   padding: 12px 20px 4px;
   cursor: default;
   border-top: 1px solid var(--border);
@@ -720,7 +764,7 @@ h3 {
   border-bottom: 1px solid var(--border-light);
 }
 .comparison-row > div {
-  padding: 18px 22px;
+  padding: 12px 16px;
 }
 .comparison-row:hover {
   background: var(--accent-subtle);
@@ -762,6 +806,7 @@ h3 {
 
 /* ── Side Nav dots (Overview) ── */
 .side-dot {
+  display: block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -1378,6 +1423,118 @@ h3 {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+/* ════════════════════════════════════════════
+   CONTACT / DEMO REQUEST MODAL
+   ════════════════════════════════════════════ */
+.neo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(var(--bg-rgb), 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lbFadeIn 0.2s var(--ease) both;
+  padding: 24px;
+}
+.neo-modal__panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px 32px 32px;
+  animation: lbScaleIn 0.25s var(--ease) both;
+}
+.neo-modal__panel::-webkit-scrollbar {
+  width: 4px;
+}
+.neo-modal__panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.neo-modal__panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+.neo-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+.neo-modal__close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.neo-modal__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  color: var(--accent);
+}
+.neo-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+.neo-modal__label {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.neo-modal__input {
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--fs-base);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.neo-modal__input::placeholder {
+  color: var(--text-muted);
+}
+.neo-modal__input:focus {
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+.neo-modal__textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+.neo-modal__submit {
+  width: 100%;
+  margin-top: 8px;
+}
+.neo-modal__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.neo-modal__success {
+  text-align: center;
+  padding: 16px 0 8px;
 }
 
 /* ── Pricing: Trial Strip ── */
