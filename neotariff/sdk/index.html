@@ -25,6 +25,7 @@
         NeoHero,
         NeoSideNav,
         NeoSectionLabel,
+        NeoPageNav,
         useScrollAnimation,
         useHashScroll,
         ArrowIcon,
@@ -652,6 +653,10 @@
                 </div>
               </div>
             </section>
+            <NeoPageNav
+              prev={{ href: '/neotariff/api/', label: 'REST API' }}
+              next={{ href: '/neotariff/technology/', label: 'Technology' }}
+            />
             <NeoFooter />
           </div>
         );

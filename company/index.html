@@ -211,12 +211,10 @@
                   src={person.img}
                   alt={person.name}
                   style={{
-                    width: '100%',
+                    width: 'auto',
                     height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center top',
-                    transform: 'scale(0.80)',
-                    transformOrigin: 'center top',
+                    display: 'block',
+                    margin: '0 auto',
                     filter: hovered ? 'brightness(1.05)' : 'brightness(0.9)',
                     transition: 'all 0.4s var(--ease)',
                   }}
@@ -824,7 +822,7 @@
               </div>
             </section>
             <NeoFooter />
-            <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} />
+            <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} defaultIntent="demo" />
           </div>
         );
       };
