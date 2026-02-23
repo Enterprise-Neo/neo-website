@@ -363,7 +363,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
       </button>
       {mobileOpen && (
         <div className="nav-mobile-drawer sans" onClick={() => setMobileOpen(false)}>
-          <div className="nav-mobile-drawer__inner" onClick={(e) => e.stopPropagation()}>
+          <div className="nav-mobile-drawer__inner" onClick={(e) => { if (!e.target.closest('a')) e.stopPropagation(); }}>
             <a href="/neotariff/" className={`nav-mobile-link${activePage === 'neotariff' ? ' nav-mobile-link--active' : ''}`}>NeoTariff</a>
             <a href="/neotariff/platform/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'platform' ? ' nav-mobile-link--active' : ''}`}>Platform</a>
             <a href="/neotariff/api/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'api' ? ' nav-mobile-link--active' : ''}`}>REST API</a>
@@ -957,11 +957,34 @@ window.NeoContactModal = ({ open, onClose }) => {
     return () => document.removeEventListener('keydown', handleKey);
   }, [open]);
 
-  // Lock body scroll while open
+  // Lock body scroll while open (iOS-compatible position:fixed technique)
   useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
+    if (open) {
+      const scrollY = window.scrollY;
+      document.body.dataset.scrollLock = scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+    } else {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    }
+    return () => {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
   }, [open]);
 
   // Reset form state when modal opens
@@ -992,7 +1015,7 @@ window.NeoContactModal = ({ open, onClose }) => {
   if (!open) return null;
 
   return ReactDOM.createPortal(
-    <div className="neo-modal" onClick={onClose}>
+    <div className="neo-modal" role="dialog" aria-modal="true" aria-label="Request a Demo" onClick={onClose}>
       <div className="neo-modal__panel" onClick={(e) => e.stopPropagation()}>
         <button className="neo-modal__close sans" onClick={onClose}>✕</button>
 

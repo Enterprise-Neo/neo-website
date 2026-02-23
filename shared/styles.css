@@ -234,6 +234,7 @@ h3 {
 }
 .neo-hero--full {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -516,7 +517,7 @@ h3 {
   letter-spacing: 0.02em;
   border: none;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
   border-radius: var(--radius-btn);
   white-space: nowrap;
 }
@@ -584,7 +585,7 @@ h3 {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
-  transition: all 0.3s var(--ease);
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 .neo-nav--transparent {
   background: transparent;
@@ -623,7 +624,7 @@ h3 {
   min-width: 200px;
   opacity: 0;
   pointer-events: none;
-  transition: all 0.2s var(--ease);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
   transform: translateX(-50%) translateY(4px);
   z-index: 200;
 }
@@ -2831,6 +2832,20 @@ h3 {
     flex-wrap: wrap;
     gap: 16px;
   }
+  .section-heading { font-size: 26px; }
+  .section-heading-sm { font-size: 22px; }
+  .section-heading-lg { font-size: 28px; }
+  .neo-modal__input,
+  .neo-modal__textarea {
+    font-size: 16px;
+  }
+  .neo-modal__panel {
+    padding: 28px 20px 24px;
+  }
+  .neo-modal__close {
+    top: 8px;
+    right: 8px;
+  }
 }
 @media (max-width: 480px) {
   .neo-hero {
@@ -2845,6 +2860,9 @@ h3 {
   .neo-hero__title--lg {
     font-size: 32px;
   }
+  .section-heading { font-size: 22px; }
+  .section-heading-sm { font-size: 20px; }
+  .section-heading-lg { font-size: 24px; }
 }
 
 /* ── Button width overrides ── */
