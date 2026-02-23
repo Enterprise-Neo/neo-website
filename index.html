@@ -41,16 +41,19 @@
         useHashScroll,
         ArrowIcon,
       } = window;
-      const { useState, useEffect } = React;
+      const { useState, useEffect, useRef, useCallback } = React;
 
       const EnterpriseNeoHome = () => {
         const [activeFeature, setActiveFeature] = useState(0);
         const isV = useScrollAnimation(0.12);
+        const cycleTimer = useRef(null);
+        const pauseTimer = useRef(null);
+        const isPaused = useRef(false);
+        const featureCount = useRef(0);
 
         useHashScroll();
 
         const sections = [
-          { id: 'hero', label: 'Top' },
           { id: 'overview', label: 'NeoTariff Overview' },
           { id: 'use-cases', label: 'Use Cases' },
           { id: 'team', label: 'Our Team' },
@@ -132,6 +135,35 @@
             focusY: '0%',
           },
         ];
+
+        featureCount.current = features.length;
+
+        // Auto-cycle through features every 5s; pause 10s on manual click
+        const startCycle = useCallback(() => {
+          clearInterval(cycleTimer.current);
+          cycleTimer.current = setInterval(() => {
+            if (!isPaused.current) {
+              setActiveFeature((prev) => (prev + 1) % featureCount.current);
+            }
+          }, 5000);
+        }, []);
+
+        useEffect(() => {
+          startCycle();
+          return () => {
+            clearInterval(cycleTimer.current);
+            clearTimeout(pauseTimer.current);
+          };
+        }, [startCycle]);
+
+        const handleFeatureClick = (i) => {
+          setActiveFeature(i);
+          isPaused.current = true;
+          clearTimeout(pauseTimer.current);
+          pauseTimer.current = setTimeout(() => {
+            isPaused.current = false;
+          }, 10000);
+        };
 
         /* ── Use case proof points ── */
         const proofPoints = [
@@ -347,7 +379,7 @@
                         <div
                           key={i}
                           className={`feature-tab ${activeFeature === i ? 'active' : ''}`}
-                          onClick={() => setActiveFeature(i)}
+                          onClick={() => handleFeatureClick(i)}
                         >
                           <div
                             className="sans"
