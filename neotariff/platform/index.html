@@ -27,6 +27,7 @@
         NeoSideNav,
         NeoSectionLabel,
         NeoContactModal,
+        NeoPageNav,
         useScrollAnimation,
         useHashScroll,
         ArrowIcon,
@@ -572,6 +573,10 @@
                 </div>
               </div>
             </section>
+            <NeoPageNav
+              prev={{ href: '/neotariff/', label: 'NeoTariff Overview' }}
+              next={{ href: '/neotariff/api/', label: 'REST API' }}
+            />
             <NeoFooter />
             <NeoContactModal open={showDemo} onClose={() => setShowDemo(false)} defaultIntent="demo" />
           </div>

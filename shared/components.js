@@ -887,6 +887,41 @@ window.NeoGrain = () => <div className="grain" />;
 window.NeoDivider = () => <div className="divider" />;
 
 /* ════════════════════════════════════════════
+   PAGE NAV (Prev / Next)
+   ────────────────────────────────────────────
+   Props:
+     prev: { href, label } | null
+     next: { href, label } | null
+   ════════════════════════════════════════════ */
+window.NeoPageNav = ({ prev, next }) => {
+  if (!prev && !next) return null;
+  return (
+    <nav className="neo-page-nav sans">
+      <div className="neo-page-nav__inner">
+        {prev ? (
+          <a href={prev.href} className="neo-page-nav__link neo-page-nav__link--prev">
+            <span className="neo-page-nav__arrow">←</span>
+            <span className="neo-page-nav__meta">
+              <span className="neo-page-nav__dir">Previous</span>
+              <span className="neo-page-nav__label">{prev.label}</span>
+            </span>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a href={next.href} className="neo-page-nav__link neo-page-nav__link--next">
+            <span className="neo-page-nav__meta" style={{ textAlign: 'right' }}>
+              <span className="neo-page-nav__dir">Next</span>
+              <span className="neo-page-nav__label">{next.label}</span>
+            </span>
+            <span className="neo-page-nav__arrow">→</span>
+          </a>
+        ) : <span />}
+      </div>
+    </nav>
+  );
+};
+
+/* ════════════════════════════════════════════
    SECTION LABEL WITH ANCHOR LINK
    ════════════════════════════════════════════ */
 window.NeoSectionLabel = ({ text, slug }) => {

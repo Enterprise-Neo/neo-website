@@ -1013,6 +1013,7 @@ h3 {
 }
 .pb-cta {
   display: block;
+  width: 100%;
   text-align: center;
   padding: 7px 12px;
   border-radius: var(--radius-btn);
@@ -3165,6 +3166,52 @@ h3 {
   width: 100%;
   min-width: 0;
   justify-content: center;
+}
+
+/* ════════════════════════════════════════════
+   PAGE NAV (Prev / Next)
+   ════════════════════════════════════════════ */
+.neo-page-nav {
+  border-top: 1px solid var(--border);
+  padding: 0 var(--px);
+}
+.neo-page-nav__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 28px 0;
+}
+.neo-page-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.neo-page-nav__link:hover {
+  color: var(--accent);
+}
+.neo-page-nav__arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+.neo-page-nav__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.neo-page-nav__dir {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.neo-page-nav__label {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: inherit;
 }
 
 /* ════════════════════════════════════════════
