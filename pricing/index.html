@@ -24,7 +24,9 @@
         NeoDivider,
         NeoHero,
         NeoSideNav,
+        NeoSectionLabel,
         useScrollAnimation,
+        useHashScroll,
         ArrowIcon,
       } = window;
       const { useState } = React;
@@ -34,10 +36,12 @@
         const [showPrepaid, setShowPrepaid] = useState(false);
         const isV = useScrollAnimation();
 
+        useHashScroll();
+
         const sideNavSections = [
-          { id: 'plans-h', label: 'Plans' },
-          { id: 'included-h', label: "What's Included" },
-          { id: 'pfaq', label: 'FAQ' },
+          { id: 'plans', label: 'Plans' },
+          { id: 'included', label: "What's Included" },
+          { id: 'faq', label: 'FAQ' },
         ];
 
         /* ── 3 Pricing Panels ── */
@@ -184,9 +188,9 @@
             {/* ━━━ Unified Pricing Bar ━━━ */}
             <section style={{ padding: '0 48px 48px' }}>
               <div
-                id="plans-h"
+                id="plans"
                 data-animate
-                className={`section-inner anim ${isV('plans-h') ? 'vis' : ''}`}
+                className={`section-inner anim ${isV('plans') ? 'vis' : ''}`}
               >
                 <div className="pricing-bar">
                   {/* Header row */}
@@ -279,12 +283,12 @@
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
                 <div
-                  id="included-h"
+                  id="included"
                   data-animate
-                  className={`anim ${isV('included-h') ? 'vis' : ''}`}
+                  className={`anim ${isV('included') ? 'vis' : ''}`}
                 >
                   <div style={{ marginBottom: 14 }}>
-                    <div className="section-label">What's Included</div>
+                    <NeoSectionLabel text="What's Included" slug="included" />
                     <h2 className="section-heading" style={{ fontSize: 22, marginBottom: 4 }}>
                       Full Platform. Every Plan.
                     </h2>
@@ -311,9 +315,9 @@
             {/* ━━━ FAQ ━━━ */}
             <section style={{ padding: '64px 48px' }}>
               <div className="section-inner">
-                <div id="pfaq" data-animate className={`anim ${isV('pfaq') ? 'vis' : ''}`}>
+                <div id="faq" data-animate className={`anim ${isV('faq') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 36 }}>
-                    <div className="section-label">FAQ</div>
+                    <NeoSectionLabel text="FAQ" slug="faq" />
                     <h2 className="section-heading" style={{ fontSize: 30 }}>
                       Frequently Asked Questions
                     </h2>
