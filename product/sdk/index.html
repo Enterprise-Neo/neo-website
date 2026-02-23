@@ -256,14 +256,14 @@
             <div className="divider" />
 
             {/* SDK Features */}
-            <section style={{ padding: '64px 48px' }}>
+            <section style={{ padding: '64px var(--px)' }}>
               <div className="section-inner">
                 <div id="capabilities" data-animate className={`anim ${isV('capabilities') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="SDK Capabilities" slug="capabilities" />
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3,1fr)',
+                      gridTemplateColumns: 'var(--grid-3)',
                       gap: 14,
                       marginTop: 20,
                     }}
@@ -290,7 +290,7 @@
             <div className="divider" />
 
             {/* Resource Groups */}
-            <section style={{ padding: '64px 48px' }}>
+            <section style={{ padding: '64px var(--px)' }}>
               <div className="section-inner">
                 <div
                   id="resources"
@@ -390,7 +390,7 @@
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                             <span
-                              className="mono"
+                              className="endpoint-count mono"
                               style={{
                                 fontSize: 'var(--fs-xs)',
                                 color: isExp ? 'var(--accent)' : 'var(--text-muted)',
@@ -491,7 +491,7 @@
             <div className="divider" />
 
             {/* Quick Start */}
-            <section style={{ padding: '64px 48px' }}>
+            <section style={{ padding: '64px var(--px)' }}>
               <div className="section-inner">
                 <div id="quick-start" data-animate className={`anim ${isV('quick-start') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Quick Start" slug="quick-start" />
@@ -569,7 +569,7 @@
             <div className="divider" />
 
             {/* Error Handling */}
-            <section style={{ padding: '64px 48px' }}>
+            <section style={{ padding: '64px var(--px)' }}>
               <div className="section-inner">
                 <div id="errors" data-animate className={`anim ${isV('errors') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Error Handling" slug="errors" />
@@ -618,7 +618,7 @@
             {/* CTA */}
             <section
               style={{
-                padding: '96px 48px',
+                padding: '96px var(--px)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',
