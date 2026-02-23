@@ -25,6 +25,7 @@
         NeoHero,
         NeoSideNav,
         NeoSectionLabel,
+        NeoContactModal,
         useScrollAnimation,
         useHashScroll,
         ArrowIcon,
@@ -34,6 +35,8 @@
       const NeoTariffPricing = () => {
         const [activeFaq, setActiveFaq] = useState(null);
         const [showPrepaid, setShowPrepaid] = useState(false);
+        const [showContact, setShowContact] = useState(false);
+        const [contactIntent, setContactIntent] = useState('general');
         const isV = useScrollAnimation();
 
         useHashScroll();
@@ -80,7 +83,7 @@
               'Full platform + API access',
             ],
             cta: 'Contact Us',
-            ctaHref: '/company/',
+            ctaOnClick: () => { setContactIntent('broker'); setShowContact(true); },
             ctaClass: 'pb-cta-outline',
             accent: 'var(--orange)',
           },
@@ -205,9 +208,15 @@
                           {p.name.toUpperCase()}
                         </div>
                         <div className="pb-price mono">{p.highlight}</div>
-                        <a href={p.ctaHref} className={`pb-cta sans ${p.ctaClass}`}>
-                          {p.cta} →
-                        </a>
+                        {p.ctaOnClick ? (
+                          <button onClick={p.ctaOnClick} className={`pb-cta sans ${p.ctaClass}`}>
+                            {p.cta} →
+                          </button>
+                        ) : (
+                          <a href={p.ctaHref} className={`pb-cta sans ${p.ctaClass}`}>
+                            {p.cta} →
+                          </a>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -393,18 +402,18 @@
                     >
                       Start Free Trial
                     </a>
-                    <a
-                      href="/company/"
+                    <button
                       className="cta-btn w200 cta-btn-outline sans"
-                      style={{ textDecoration: 'none' }}
+                      onClick={() => setShowContact(true)}
                     >
                       Contact Us
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
             </section>
             <NeoFooter />
+            <NeoContactModal open={showContact} onClose={() => setShowContact(false)} defaultIntent={contactIntent} />
           </div>
         );
       };

@@ -419,15 +419,17 @@ window.NeoFooter = () => (
             >
               <span style={{ color: '#fff', fontSize: 11, fontWeight: 800 }}>N</span>
             </div>
-            <span
-              style={{ fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--text-primary)' }}
-            >
-              Neo
-            </span>
-            <span
-              style={{ fontSize: 'var(--fs-base)', fontWeight: 400, color: 'var(--accent-bright)' }}
-            >
-              Tariff
+            <span style={{ display: 'flex', alignItems: 'baseline' }}>
+              <span
+                style={{ fontSize: 'var(--fs-base)', fontWeight: 700, color: 'var(--text-primary)' }}
+              >
+                Neo
+              </span>
+              <span
+                style={{ fontSize: 'var(--fs-base)', fontWeight: 400, color: 'var(--accent-bright)' }}
+              >
+                Tariff
+              </span>
             </span>
           </a>
           <p
@@ -767,7 +769,7 @@ window.NeoHero = ({
           <div className="neo-hero__ctas" style={{ animation: makeAnim(delays.ctas) }}>
             {ctas.map((cta, i) =>
               cta.element === 'button' ? (
-                <button key={i} className={`cta-btn sans ${cta.className || ''}`}>
+                <button key={i} className={`cta-btn sans ${cta.className || ''}`} onClick={cta.onClick}>
                   {cta.label} {cta.icon}
                 </button>
               ) : (
@@ -885,6 +887,41 @@ window.NeoGrain = () => <div className="grain" />;
 window.NeoDivider = () => <div className="divider" />;
 
 /* ════════════════════════════════════════════
+   PAGE NAV (Prev / Next)
+   ────────────────────────────────────────────
+   Props:
+     prev: { href, label } | null
+     next: { href, label } | null
+   ════════════════════════════════════════════ */
+window.NeoPageNav = ({ prev, next }) => {
+  if (!prev && !next) return null;
+  return (
+    <nav className="neo-page-nav sans">
+      <div className="neo-page-nav__inner">
+        {prev ? (
+          <a href={prev.href} className="neo-page-nav__link neo-page-nav__link--prev">
+            <span className="neo-page-nav__arrow">←</span>
+            <span className="neo-page-nav__meta">
+              <span className="neo-page-nav__dir">Previous</span>
+              <span className="neo-page-nav__label">{prev.label}</span>
+            </span>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a href={next.href} className="neo-page-nav__link neo-page-nav__link--next">
+            <span className="neo-page-nav__meta" style={{ textAlign: 'right' }}>
+              <span className="neo-page-nav__dir">Next</span>
+              <span className="neo-page-nav__label">{next.label}</span>
+            </span>
+            <span className="neo-page-nav__arrow">→</span>
+          </a>
+        ) : <span />}
+      </div>
+    </nav>
+  );
+};
+
+/* ════════════════════════════════════════════
    SECTION LABEL WITH ANCHOR LINK
    ════════════════════════════════════════════ */
 window.NeoSectionLabel = ({ text, slug }) => {
@@ -943,10 +980,22 @@ window.useHashScroll = (delay = 400) => {
 };
 
 /* ════════════════════════════════════════════
-   DEMO REQUEST MODAL  (Netlify Forms)
+   CONTACT MODAL  (Netlify Forms)
+   ────────────────────────────────────────────
+   Props:
+     open:          boolean
+     onClose:       () => void
+     defaultIntent: 'demo'|'general'|'broker' (default 'general')
    ════════════════════════════════════════════ */
-window.NeoContactModal = ({ open, onClose }) => {
+const INTENT_LABELS = {
+  demo: 'Request a Demo',
+  general: 'General Inquiry',
+  broker: 'Broker Pricing',
+};
+
+window.NeoContactModal = ({ open, onClose, defaultIntent = 'general' }) => {
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
+  const [intent, setIntent] = useState(defaultIntent);
   const formRef = React.useRef(null);
 
   // Close on Escape
@@ -988,12 +1037,13 @@ window.NeoContactModal = ({ open, onClose }) => {
   }, [open]);
 
   // Reset form state when modal opens
+  // (The form itself is freshly mounted each time since we return null when !open)
   useEffect(() => {
     if (open) {
       setStatus('idle');
-      if (formRef.current) formRef.current.reset();
+      setIntent(defaultIntent);
     }
-  }, [open]);
+  }, [open, defaultIntent]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1015,7 +1065,7 @@ window.NeoContactModal = ({ open, onClose }) => {
   if (!open) return null;
 
   return ReactDOM.createPortal(
-    <div className="neo-modal" role="dialog" aria-modal="true" aria-label="Request a Demo" onClick={onClose}>
+    <div className="neo-modal" role="dialog" aria-modal="true" aria-label="Contact Us" onClick={onClose}>
       <div className="neo-modal__panel" onClick={(e) => e.stopPropagation()}>
         <button className="neo-modal__close sans" onClick={onClose}>✕</button>
 
@@ -1027,7 +1077,7 @@ window.NeoContactModal = ({ open, onClose }) => {
             </svg>
             <h3 className="neo-modal__title" style={{ marginBottom: 8 }}>Thank You</h3>
             <p className="sans" style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-base)', lineHeight: 1.6 }}>
-              Your demo request has been received. Our team will be in touch shortly.
+              Your message has been received. Our team will be in touch shortly.
             </p>
             <button
               className="cta-btn sans neo-modal__submit"
@@ -1039,9 +1089,9 @@ window.NeoContactModal = ({ open, onClose }) => {
           </div>
         ) : (
           <>
-            <h3 className="neo-modal__title">Request a Demo</h3>
+            <h3 className="neo-modal__title">Get in Touch</h3>
             <p className="sans" style={{ color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)', marginBottom: 24, lineHeight: 1.5 }}>
-              Tell us about your needs and we'll set up a personalized walkthrough.
+              Tell us what you're looking for and we'll follow up.
             </p>
 
             <form
@@ -1053,10 +1103,25 @@ window.NeoContactModal = ({ open, onClose }) => {
               onSubmit={handleSubmit}
             >
               <input type="hidden" name="form-name" value="demo-request" />
-              <input type="hidden" name="subject" value="Demo Request from enterprise-neo.com" />
+              <input type="hidden" name="subject" value={INTENT_LABELS[intent] + ' from enterprise-neo.com'} />
               <p style={{ display: 'none' }}>
                 <label>Don't fill this out: <input name="bot-field" /></label>
               </p>
+
+              <div className="neo-modal__field">
+                <label className="neo-modal__label sans" htmlFor="dm-inquiry">Inquiry Type</label>
+                <select
+                  className="neo-modal__input neo-modal__select sans"
+                  id="dm-inquiry"
+                  name="inquiry-type"
+                  value={intent}
+                  onChange={(e) => setIntent(e.target.value)}
+                >
+                  <option value="demo">Request a Demo</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="broker">Broker Pricing</option>
+                </select>
+              </div>
 
               <div className="neo-modal__field">
                 <label className="neo-modal__label sans" htmlFor="dm-name">Name *</label>
@@ -1094,7 +1159,7 @@ window.NeoContactModal = ({ open, onClose }) => {
                 className="cta-btn sans neo-modal__submit"
                 disabled={status === 'sending'}
               >
-                {status === 'sending' ? 'Sending...' : 'Submit Request'}
+                {status === 'sending' ? 'Sending...' : 'Submit'}
               </button>
             </form>
           </>
