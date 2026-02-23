@@ -375,14 +375,14 @@
             <div className="divider" />
 
             {/* ━━━ Our Philosophy ━━━ */}
-            <section style={{ padding: '72px 48px' }}>
+            <section style={{ padding: '72px var(--px)' }}>
               <div className="section-inner">
                 <div id="philosophy" data-animate className={`anim ${isV('philosophy') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Our Philosophy" slug="philosophy" />
                   <h2 className="section-heading" style={{ fontSize: 32, marginBottom: 28 }}>
                     What We Believe About Building Tariff Intelligence
                   </h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-2)', gap: 16 }}>
                     {[
                       {
                         title: 'Data engine first, UI second',
@@ -428,7 +428,7 @@
             <div className="divider" />
 
             {/* ━━━ Meet the Team ━━━ */}
-            <section style={{ padding: '72px 48px' }}>
+            <section style={{ padding: '72px var(--px)' }}>
               <div className="section-inner">
                 <div id="team" data-animate className={`anim ${isV('team') ? 'vis' : ''}`}>
                   <div style={{ marginBottom: 48 }}>
@@ -456,7 +456,7 @@
                     >
                       [ LEADERSHIP ]
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 20 }}>
                       {leadership.map((p, i) => (
                         <PersonCard key={i} person={p} size="large" />
                       ))}
@@ -477,7 +477,7 @@
                     >
                       [ ADVISORS ]
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 16 }}>
                       {advisors.map((p, i) => (
                         <PersonCard key={i} person={p} size="medium" />
                       ))}
@@ -498,7 +498,7 @@
                     >
                       [ EXTENDED TEAM ]
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 16 }}>
                       {extended.map((p, i) => (
                         <PersonCard key={i} person={p} size="medium" />
                       ))}
@@ -511,7 +511,7 @@
             <div className="divider" />
 
             {/* ━━━ Advisory Services ━━━ */}
-            <section style={{ padding: '72px 48px' }}>
+            <section style={{ padding: '72px var(--px)' }}>
               <div className="section-inner">
                 <div id="advisory" data-animate className={`anim ${isV('advisory') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Advisory Services" slug="advisory" />
@@ -525,7 +525,7 @@
                     For organizations that need more than self-serve access. Targeted engagements
                     scoped to your specific challenges.
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 14 }}>
                     {[
                       {
                         title: 'Tariff Exposure Analysis',
@@ -572,7 +572,7 @@
             <div className="divider" />
 
             {/* ━━━ Insights & Perspectives ━━━ */}
-            <section style={{ padding: '72px 48px' }}>
+            <section style={{ padding: '72px var(--px)' }}>
               <div className="section-inner">
                 <div id="insights" data-animate className={`anim ${isV('insights') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Insights &amp; Perspectives" slug="insights" />
@@ -586,7 +586,7 @@
                     Our team shares analysis, frameworks, and lessons learned from working at the
                     intersection of trade policy, data engineering, and enterprise decision-making.
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 20 }}>
                     {[
                       {
                         title: "The CEO\u2019s Tariff Playbook: Why Scenario Planning Beats Crystal Ball Gazing",
@@ -760,15 +760,23 @@
             <div className="divider" />
 
             {/* ━━━ Quote ━━━ */}
-            <section style={{ padding: '80px 48px' }}>
-              <div className="section-inner" style={{ textAlign: 'center' }}>
+            <section style={{ padding: '80px var(--px)' }}>
+              <div className="section-inner">
                 <div id="qt" data-animate className={`anim ${isV('qt') ? 'vis' : ''}`}>
-                  <p className="blockquote" style={{ marginBottom: 20 }}>
-                    "If you can't explain why a specific rate applies to a specific product from a
-                    specific country on a specific date — citing the exact rule, its conditions, and
-                    its legal authority — then you don't have an answer. You have a guess."
-                  </p>
-                  <div className="blockquote-attr">— The principle behind every line of code</div>
+                  <div
+                    className="info-card"
+                    style={{
+                      padding: '20px 28px',
+                      borderLeft: '3px solid var(--accent)',
+                    }}
+                  >
+                    <p className="blockquote" style={{ fontSize: 16, margin: 0, marginBottom: 12 }}>
+                      "If you can't explain why a specific rate applies to a specific product from a
+                      specific country on a specific date — citing the exact rule, its conditions, and
+                      its legal authority — then you don't have an answer. You have a guess."
+                    </p>
+                    <div className="blockquote-attr">— The principle behind every line of code</div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -778,7 +786,7 @@
             {/* ━━━ CTA ━━━ */}
             <section
               style={{
-                padding: '88px 48px',
+                padding: '88px var(--px)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',

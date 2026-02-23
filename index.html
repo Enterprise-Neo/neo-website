@@ -50,6 +50,7 @@
         const pauseTimer = useRef(null);
         const isPaused = useRef(false);
         const featureCount = useRef(0);
+        const tabsRef = useRef(null);
 
         useHashScroll();
 
@@ -156,6 +157,16 @@
           };
         }, [startCycle]);
 
+        // Auto-scroll active tab into view on mobile
+        useEffect(() => {
+          if (tabsRef.current) {
+            const activeTab = tabsRef.current.querySelector('.feature-tab.active');
+            if (activeTab) {
+              activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+        }, [activeFeature]);
+
         const handleFeatureClick = (i) => {
           setActiveFeature(i);
           isPaused.current = true;
@@ -167,9 +178,9 @@
 
         /* ── Use case proof points ── */
         const proofPoints = [
-          { stat: '20–30%', label: 'Landed Cost Savings', sub: 'D2C Brand' },
-          { stat: '30–40%', label: 'Landed Cost Gap vs. P&L', sub: 'B2B Equipment Manufacturer' },
-          { stat: '25–30%', label: 'Tariff Overestimation for 2026', sub: 'Branded Consumer Products' },
+          { stat: '20–30%', label: 'Landed Cost Savings', sub: 'D2C Brand', bg: '/images/generic/generic-1.png' },
+          { stat: '30–40%', label: 'Landed Cost Gap vs. P&L', sub: 'B2B Equipment Manufacturer', bg: '/images/generic/generic-2.png' },
+          { stat: '25–30%', label: 'Tariff Overestimation for 2026', sub: 'Branded Consumer Products', bg: '/images/generic/generic-3.png' },
         ];
 
         const useCases = [
@@ -273,14 +284,22 @@
             />
 
             {/* Hero quote */}
-            <div style={{ padding: '0 48px 64px' }}>
+            <div style={{ padding: '0 var(--px) 64px' }}>
               <div className="section-inner" style={{ textAlign: 'left' }}>
-                <p className="blockquote" style={{ marginBottom: 20 }}>
-                  "If you can't explain why a specific rate applies to a specific product from a
-                  specific country on a specific date — citing the exact rule, its conditions, and
-                  its legal authority — then you don't have an answer. You have a guess."
-                </p>
-                <div className="blockquote-attr">— The principle behind every line of code</div>
+                <div
+                  className="info-card"
+                  style={{
+                    padding: '20px 28px',
+                    borderLeft: '3px solid var(--accent)',
+                  }}
+                >
+                  <p className="blockquote" style={{ fontSize: 16, margin: 0, marginBottom: 12 }}>
+                    "If you can't explain why a specific rate applies to a specific product from a
+                    specific country on a specific date — citing the exact rule, its conditions, and
+                    its legal authority — then you don't have an answer. You have a guess."
+                  </p>
+                  <div className="blockquote-attr">— The principle behind every line of code</div>
+                </div>
               </div>
             </div>
 
@@ -344,6 +363,7 @@
                     </a>
                   </div>
                   <div
+                    className="feature-panel"
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '320px 1fr',
@@ -356,6 +376,8 @@
                     }}
                   >
                     <div
+                      ref={tabsRef}
+                      className="feature-panel__tabs"
                       style={{
                         borderRight: '1px solid var(--border)',
                         display: 'flex',
@@ -363,7 +385,7 @@
                       }}
                     >
                       <div
-                        className="sans"
+                        className="sans feature-panel__tabs-header"
                         style={{
                           padding: '16px 20px',
                           borderBottom: '1px solid var(--border)',
@@ -396,7 +418,7 @@
                             {f.title}
                           </div>
                           <div
-                            className="sans"
+                            className="sans feature-tab__subtitle"
                             style={{
                               fontSize: 'var(--fs-xs)',
                               color: 'var(--text-muted)',
@@ -409,6 +431,7 @@
                       ))}
                     </div>
                     <div
+                      className="feature-panel__content"
                       style={{
                         padding: '32px 36px',
                         display: 'flex',
@@ -527,6 +550,22 @@
                             </span>
                           ))}
                         </div>
+                        <div className="feature-panel__nav" style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginTop: 20 }}>
+                          <button
+                            className="cta-btn-condensed sans"
+                            onClick={() => handleFeatureClick((activeFeature - 1 + features.length) % features.length)}
+                            style={{ fontSize: 'var(--fs-xs)', cursor: 'pointer', background: 'none', border: '1px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius-btn)', padding: '6px 14px', transition: 'all 0.2s' }}
+                          >
+                            ← Previous
+                          </button>
+                          <button
+                            className="cta-btn-condensed sans"
+                            onClick={() => handleFeatureClick((activeFeature + 1) % features.length)}
+                            style={{ fontSize: 'var(--fs-xs)', cursor: 'pointer', background: 'none', border: '1px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 'var(--radius-btn)', padding: '6px 14px', transition: 'all 0.2s' }}
+                          >
+                            Next →
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -535,7 +574,7 @@
                   id="platform-lanes"
                   data-animate
                   className={`anim ${isV('platform-lanes') ? 'vis' : ''}`}
-                  style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}
+                  style={{ display: 'grid', gridTemplateColumns: 'var(--grid-3)', gap: 20 }}
                 >
                   {[
                     {
@@ -662,12 +701,12 @@
                   style={{ border: '1px solid var(--border)', marginBottom: 48 }}
                 >
                   <div
-                    className="sans"
+                    className="sans data-table__header"
                     style={{
                       background: 'var(--bg-elevated)',
                       borderBottom: '1px solid var(--border)',
                       display: 'grid',
-                      gridTemplateColumns: '280px 1fr',
+                      gridTemplateColumns: 'var(--uc-cols)',
                       padding: '10px 16px',
                     }}
                   >
@@ -698,7 +737,7 @@
                       className="sans"
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: '280px 1fr',
+                        gridTemplateColumns: 'var(--uc-cols)',
                         padding: '12px 16px',
                         borderBottom: i < useCases.length - 1 ? '1px solid var(--border)' : 'none',
                         alignItems: 'center',
@@ -727,12 +766,27 @@
                   className={`anim ${isV('uc-stats') ? 'vis' : ''}`}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'var(--grid-3)',
                     gap: 18,
                   }}
                 >
                   {proofPoints.map((p, i) => (
-                    <div key={i} className="info-card" style={{ padding: '32px 28px', textAlign: 'center' }}>
+                    <div key={i} className="info-card" style={{
+                      padding: '32px 28px',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      border: 'none',
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundImage: `url(${p.bg})`,
+                        backgroundSize: '100% 100%',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        opacity: 0.15,
+                      }} />
                       <div
                         className="mono"
                         style={{
@@ -741,6 +795,8 @@
                           color: 'var(--accent)',
                           marginBottom: 8,
                           letterSpacing: '-0.02em',
+                          position: 'relative',
+                          zIndex: 1,
                         }}
                       >
                         {p.stat}
@@ -751,6 +807,8 @@
                           fontSize: 'var(--fs-base)',
                           fontWeight: 600,
                           marginBottom: 6,
+                          position: 'relative',
+                          zIndex: 1,
                         }}
                       >
                         {p.label}
@@ -760,6 +818,8 @@
                         style={{
                           fontSize: 'var(--fs-sm)',
                           color: 'var(--text-muted)',
+                          position: 'relative',
+                          zIndex: 1,
                         }}
                       >
                         {p.sub}
@@ -792,7 +852,7 @@
                   className={`anim ${isV('team-cards') ? 'vis' : ''}`}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'var(--grid-3)',
                     gap: 20,
                     marginBottom: 32,
                   }}
@@ -867,7 +927,7 @@
             {/* ━━━ Contact Us / CTA ━━━ */}
             <section
               style={{
-                padding: '96px 48px',
+                padding: '96px var(--px)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',

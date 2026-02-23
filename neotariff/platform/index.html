@@ -244,7 +244,7 @@
         const renderFeatureCard = (feature, idx) => {
           const isFlip = idx % 2 !== 0;
           return (
-            <section key={idx} style={{ padding: '48px 48px' }}>
+            <section key={idx} style={{ padding: '48px var(--px)' }}>
               <div className="section-inner">
                 <div
                   id={feature.id}
@@ -340,8 +340,9 @@
 
             {/* Jump nav */}
             <section
+              className="tool-nav"
               style={{
-                padding: '8px 48px',
+                padding: '8px var(--px)',
                 position: 'sticky',
                 top: 60,
                 zIndex: 90,
@@ -394,7 +395,7 @@
             </section>
 
             {/* Tariff Management Essentials */}
-            <section style={{ padding: '64px 48px 0' }}>
+            <section style={{ padding: '64px var(--px) 0' }}>
               <div className="section-inner">
                 <div
                   id="ess-h"
@@ -432,7 +433,7 @@
             <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Market & Supplier Intelligence */}
-            <section style={{ padding: '64px 48px 0' }}>
+            <section style={{ padding: '64px var(--px) 0' }}>
               <div className="section-inner">
                 <div
                   id="int-h"
@@ -470,7 +471,7 @@
             <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Powered by section */}
-            <section style={{ padding: '80px 48px' }}>
+            <section style={{ padding: '80px var(--px)' }}>
               <div className="section-inner">
                 <div id="engine" data-animate className={`anim ${isV('engine') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="Powered by One Engine" slug="engine" />
@@ -480,7 +481,7 @@
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3,1fr)',
+                      gridTemplateColumns: 'var(--grid-3)',
                       gap: 20,
                     }}
                   >
@@ -535,7 +536,7 @@
             {/* CTA */}
             <section
               style={{
-                padding: '96px 48px',
+                padding: '96px var(--px)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',
