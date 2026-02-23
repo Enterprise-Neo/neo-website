@@ -85,6 +85,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
   const [neotariffOpen, setNeotariffOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const ntTimer = React.useRef(null);
   const coTimer = React.useRef(null);
 
@@ -94,6 +95,35 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
     window.addEventListener('scroll', h);
     return () => window.removeEventListener('scroll', h);
   }, [transparent]);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      const scrollY = window.scrollY;
+      document.body.dataset.scrollLock = scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+    } else {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    }
+    return () => {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, [mobileOpen]);
 
   // Click-outside fallback
   useEffect(() => {
@@ -217,7 +247,7 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
         )}
       </a>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
+      <div className="nav-desktop-links">
         <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
           {/* NeoTariff dropdown — hover to show, click navigates */}
           <div
@@ -230,6 +260,13 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
               href="/neotariff/"
               className="sans"
               style={dropdownTriggerStyle(isNeoTariffPage)}
+              onClick={(e) => {
+                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                  e.preventDefault();
+                  setNeotariffOpen((p) => !p);
+                  setCompanyOpen(false);
+                }
+              }}
             >
               NeoTariff <ChevronDown open={neotariffOpen} />
             </a>
@@ -275,6 +312,13 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
               href="/company/"
               className="sans"
               style={dropdownTriggerStyle(isCompanyPage)}
+              onClick={(e) => {
+                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                  e.preventDefault();
+                  setCompanyOpen((p) => !p);
+                  setNeotariffOpen(false);
+                }
+              }}
             >
               Company <ChevronDown open={companyOpen} />
             </a>
@@ -309,6 +353,37 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
           </a>
         </div>
       </div>
+      <button
+        className="nav-hamburger sans"
+        onClick={() => setMobileOpen((p) => !p)}
+        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={mobileOpen}
+      >
+        {mobileOpen ? '\u2715' : '\u2630'}
+      </button>
+      {mobileOpen && (
+        <div className="nav-mobile-drawer sans" onClick={() => setMobileOpen(false)}>
+          <div className="nav-mobile-drawer__inner" onClick={(e) => { if (!e.target.closest('a')) e.stopPropagation(); }}>
+            <a href="/neotariff/" className={`nav-mobile-link${activePage === 'neotariff' ? ' nav-mobile-link--active' : ''}`}>NeoTariff</a>
+            <a href="/neotariff/platform/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'platform' ? ' nav-mobile-link--active' : ''}`}>Platform</a>
+            <a href="/neotariff/api/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'api' ? ' nav-mobile-link--active' : ''}`}>REST API</a>
+            <a href="/neotariff/sdk/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'sdk' ? ' nav-mobile-link--active' : ''}`}>Python SDK</a>
+            <a href="/neotariff/technology/" className={`nav-mobile-link nav-mobile-link--sub${activePage === 'technology' ? ' nav-mobile-link--active' : ''}`}>Technology</a>
+            <div className="nav-mobile-divider" />
+            <a href="/pricing/" className={`nav-mobile-link${activePage === 'pricing' ? ' nav-mobile-link--active' : ''}`}>Pricing</a>
+            <div className="nav-mobile-divider" />
+            <a href="/company/" className={`nav-mobile-link${activePage === 'company' ? ' nav-mobile-link--active' : ''}`}>Company</a>
+            <a href="/company/#philosophy" className="nav-mobile-link nav-mobile-link--sub">Our Philosophy</a>
+            <a href="/company/#team" className="nav-mobile-link nav-mobile-link--sub">Leadership &amp; Team</a>
+            <a href="/company/#insights" className="nav-mobile-link nav-mobile-link--sub">Insights</a>
+            <div className="nav-mobile-divider" />
+            <div className="nav-mobile-ctas">
+              <a href={SITE.loginUrl} className="cta-btn cta-btn-outline sans">Sign In</a>
+              <a href={SITE.signupUrl} className="cta-btn sans">Sign Up</a>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
@@ -317,19 +392,9 @@ window.NeoNav = ({ activePage = 'home', transparent = true }) => {
    FOOTER COMPONENT
    ════════════════════════════════════════════ */
 window.NeoFooter = () => (
-  <footer
-    className="sans"
-    style={{ padding: '32px 48px 24px', borderTop: '1px solid var(--border)' }}
-  >
+  <footer className="neo-footer sans">
     <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr',
-          gap: 32,
-          marginBottom: 24,
-        }}
-      >
+      <div className="neo-footer__grid">
         <div>
           <a
             href="/"
@@ -468,15 +533,7 @@ window.NeoFooter = () => (
           </div>
         </div>
       </div>
-      <div
-        style={{
-          borderTop: '1px solid var(--border-light)',
-          paddingTop: 14,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <div className="neo-footer__bottom">
         <span style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{SITE.copyright}</span>
         <div style={{ display: 'flex', gap: 20 }}>
           <a href="#" className="nav-link" style={{ fontSize: 11.5 }}>
@@ -900,11 +957,34 @@ window.NeoContactModal = ({ open, onClose }) => {
     return () => document.removeEventListener('keydown', handleKey);
   }, [open]);
 
-  // Lock body scroll while open
+  // Lock body scroll while open (iOS-compatible position:fixed technique)
   useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
+    if (open) {
+      const scrollY = window.scrollY;
+      document.body.dataset.scrollLock = scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+    } else {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    }
+    return () => {
+      const scrollY = parseInt(document.body.dataset.scrollLock || '0', 10);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
   }, [open]);
 
   // Reset form state when modal opens
@@ -935,7 +1015,7 @@ window.NeoContactModal = ({ open, onClose }) => {
   if (!open) return null;
 
   return ReactDOM.createPortal(
-    <div className="neo-modal" onClick={onClose}>
+    <div className="neo-modal" role="dialog" aria-modal="true" aria-label="Request a Demo" onClick={onClose}>
       <div className="neo-modal__panel" onClick={(e) => e.stopPropagation()}>
         <button className="neo-modal__close sans" onClick={onClose}>✕</button>
 

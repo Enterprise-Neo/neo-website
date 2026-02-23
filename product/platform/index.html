@@ -94,7 +94,7 @@
               'Tariff Simulator calculating duties for a cotton t-shirt (HTS 6109.10.00.12) imported from China. The result shows a $1,440 total landed cost with a 44% net effective rate — broken down across base duty (16.5%), 9903.01.24 (10%), 9903.01.25 (10%), and 9903.88.15 (7.5%).',
             gradient: 'linear-gradient(135deg, #2D2A6E 0%, #1A1845 100%)',
             highlight: '44% net effective rate — 4 duty components evaluated automatically',
-            img: '/images/simulatorSingle.png',
+            img: '/images/platform/simulatorSingle.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -117,7 +117,7 @@
               'Bulk Tariff and Scenario Simulator processing 120 apparel records. The grid shows per-line results with As-Reported vs. Latest Schedule columns side by side. Red delta values highlight where current tariffs deviate from reported rates.',
             gradient: 'linear-gradient(135deg, #1A2745 0%, #162040 100%)',
             highlight: '$28,171 total portfolio delta identified across 120 records',
-            img: '/images/simulatorBulk.png',
+            img: '/images/platform/simulatorBulk.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -140,7 +140,7 @@
               'HTS Document Navigator showing Chapter 99, Subchapter 3 (temporary legislation and modifications). The schedule view lists reciprocal trade rules with the detail panel showing reciprocal rate details for 9903.01.24.',
             gradient: 'linear-gradient(135deg, #1E2A4A 0%, #141D38 100%)',
             highlight: '65 of 691 active rules shown — 359 deprecated rules hidden by default',
-            img: '/images/docBrowserSchedule.png',
+            img: '/images/platform/docBrowserSchedule.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -162,7 +162,7 @@
               'HTS Notes view for Chapter 99, showing U.S. Notes (38 total). Note 19-a-iii is expanded, displaying the full legal text for derivative aluminum products with referenced HTS codes.',
             gradient: 'linear-gradient(135deg, #1B2840 0%, #131D35 100%)',
             highlight: '4,406 notes structured and cross-referenced across the full HTS',
-            img: '/images/docBrowserNotes.png',
+            img: '/images/platform/docBrowserNotes.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -187,7 +187,7 @@
               'Analysis Dashboard providing portfolio duty analytics and executive scenario views',
             gradient: 'linear-gradient(135deg, #1B2D4A 0%, #132240 100%)',
             highlight: 'Connect multiple simulation datasets for cross-scenario comparison',
-            img: '/images/platform-dashboard.png',
+            img: '/images/platform/platform-dashboard.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -211,7 +211,7 @@
             gradient: 'linear-gradient(135deg, #2A1E4A 0%, #1D1540 100%)',
             highlight:
               '587 alternative vendors identified with fit scoring and capability matching',
-            img: '/images/altVendor.png',
+            img: '/images/platform/altVendor.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -234,7 +234,7 @@
               'News & Insights showing tariff news with articles from global sources. Sidebar shows HTSUS revisions from 2025 Rev 25 through 2026 Rev 0.',
             gradient: 'linear-gradient(135deg, #1A2842 0%, #131D35 100%)',
             highlight: 'Real-time news aggregation paired with HTSUS revision tracking',
-            img: '/images/newfeed.png',
+            img: '/images/platform/newfeed.png',
             zoom: 1.3,
             focusX: '0%',
             focusY: '0%',
@@ -246,7 +246,7 @@
         const renderFeatureCard = (feature, idx) => {
           const isFlip = idx % 2 !== 0;
           return (
-            <section key={idx} style={{ padding: '48px 48px' }}>
+            <section key={idx} style={{ padding: '48px var(--px)' }}>
               <div className="section-inner">
                 <div
                   id={feature.id}
@@ -342,8 +342,9 @@
 
             {/* Jump nav */}
             <section
+              className="tool-nav"
               style={{
-                padding: '8px 48px',
+                padding: '8px var(--px)',
                 position: 'sticky',
                 top: 60,
                 zIndex: 90,
@@ -396,7 +397,7 @@
             </section>
 
             {/* Tariff Management Essentials */}
-            <section style={{ padding: '64px 48px 0' }}>
+            <section style={{ padding: '64px var(--px) 0' }}>
               <div className="section-inner">
                 <div
                   id="ess-h"
@@ -434,7 +435,7 @@
             <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Market & Supplier Intelligence */}
-            <section style={{ padding: '64px 48px 0' }}>
+            <section style={{ padding: '64px var(--px) 0' }}>
               <div className="section-inner">
                 <div
                   id="int-h"
@@ -472,7 +473,7 @@
             <div className="divider" style={{ marginTop: 32 }} />
 
             {/* Powered by section */}
-            <section style={{ padding: '80px 48px' }}>
+            <section style={{ padding: '80px var(--px)' }}>
               <div className="section-inner">
                 <div id="engine" data-animate className={`anim ${isV('engine') ? 'vis' : ''}`}>
                   <NeoSectionLabel text="What Powers It All" slug="engine" />
@@ -482,7 +483,7 @@
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(3,1fr)',
+                      gridTemplateColumns: 'var(--grid-3)',
                       gap: 20,
                     }}
                   >
@@ -537,7 +538,7 @@
             {/* CTA */}
             <section
               style={{
-                padding: '96px 48px',
+                padding: '96px var(--px)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',
